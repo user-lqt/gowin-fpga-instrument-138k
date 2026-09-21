@@ -32,6 +32,8 @@
 2. [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) —— 接口冻结卡、采样率/位宽/定点、延迟预算
 3. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md) —— 分支、提交、合并、评审规则
 
+**成员 C 另需先读**：[`docs/C_官方例程与板载音频通路分析.md`](docs/C_官方例程与板载音频通路分析.md) —— 已核实板载 DAC/功放通路与实机 I2S 管脚，是 C1 出声的第一步依据。
+
 ---
 
 ## 二、仓库结构

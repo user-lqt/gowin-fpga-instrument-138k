@@ -54,3 +54,7 @@ Desktop.ini
 *.license
 *.lic
 license*.txt
+
+# 官方例程与手动抓取资料的本地暂存（只留 URL 说明，不入库）
+_ref/
+_extract/

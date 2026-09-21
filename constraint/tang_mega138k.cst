@@ -3,101 +3,105 @@
 //
 // 归属：成员 C 独占维护。A/B 不得修改。
 //
-// ⚠️ 本文件当前是【模板】，管脚号全部是占位符，直接使用会烧不出正确功能。
-//    必须按下列步骤填写后才能上板：
-//      1) 确认实物器件版本（B/C），把结论写到下面 DEVICE 注释里；
-//      2) 打开 Sipeed 官方原理图，逐个信号查出 FPGA 管脚号；
-//      3) 交叉核对 UG986-1.2.7_GW5AST-138 器件 Pinout 手册的管脚定义；
-//      4) 每填一项，在行的末尾标注来源（原理图页码 / 手册页码）。
-//
 // 器件信息（已核实）：
-//   DEVICE      : GW5AST-LV138PG484AC1/I0
-//   IDE 封装选择 : PBG484A
-//   DEVICE VER  : TODO —— 按实物丝印填写 B 或 C
-//   核对日期     : TODO
-//   核对人       : TODO
+//   DEVICE        : GW5AST-LV138PG484AC1/I0
+//   IDE 封装选择   : PBG484A
+//   DEVICE VER    : B（Sipeed 官方例程 audio.cst 标头为 "Device Version: B"）
+//                   上板前请用实物丝印复核；若为 C 版请改这里并重新综合。
+//   核对日期       : 2026-09-21
+//   依据           : sipeed/TangMega-138K-example → audio_i2s/eda_proj/src/audio.cst
+//                   （官方 I2S 出声例程的约束文件，管脚可直接采信）
+//
+// 本文件已完成部分：I2S 音频输出三线 + 音频功放使能 + 复位键 + LED
+// 本文件未完成部分：键盘 / 编码器 / OLED / UART —— 见文件末尾待办
 //
 // 安全红线：外接 GPIO 只允许 3.3V；HC-SR04 的 ECHO 必须分压后接入。
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// 时钟与复位
+// I2S 音频输出  ★ 已核实 —— 来自 Sipeed 官方例程的实机约束
+//
+//   信号命名沿用官方约束，避免与硬件原理图脱节：
+//     HP_BCK  = 位时钟（官方例用 1.536 MHz；本设计用 3.072 MHz 以支持 24bit）
+//     HP_WS   = 声道选择（低电平 = 左声道）
+//     HP_DIN  = DAC 串行数据
+//     PA_EN   = 板载音频功放使能（高电平有效）
+//
+//   ★ 结论：板载 DAC + 功放已完整存在，无需外置 PCM5102A / PAM8403
 //-----------------------------------------------------------------------------
-// 来源：TODO（Sipeed 原理图 第 __ 页）
-IO_LOC  "clk_50m" TODO_PIN;
-IO_PORT "clk_50m" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-
-// 外部复位（用户按键之一，低有效）
-IO_LOC  "rst_n_ext" TODO_PIN;
-IO_PORT "rst_n_ext" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-
-//-----------------------------------------------------------------------------
-// 按键与 LED（板载）
-//-----------------------------------------------------------------------------
-// 3 个用户按键 + 4 个电池指示 LED + 8 个 PMOD_LED
-IO_LOC  "key[0]" TODO_PIN;
-IO_LOC  "key[1]" TODO_PIN;
-IO_LOC  "key[2]" TODO_PIN;
-IO_PORT "key[2:0]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-
-IO_LOC  "led[7:0]" TODO_PIN_BASE;
-IO_PORT "led[7:0]" IO_TYPE=LVCMOS33 DRIVE=8;
+IO_LOC  "HP_BCK"  Y17;
+IO_PORT "HP_BCK"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "HP_WS"   AB17;
+IO_PORT "HP_WS"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "HP_DIN"  AA16;
+IO_PORT "HP_DIN"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "PA_EN"   AB16;
+IO_PORT "PA_EN"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 
 //-----------------------------------------------------------------------------
-// I2S 音频输出（→ PCM5102A 或板载音频通路）
-//   i2s_bck  = 64 x LRCK = 3.072 MHz
-//   i2s_lrck = 48 kHz
-//   i2s_data = 24bit 左对齐置于 32bit 槽高位
+// 复位与指示灯  ★ 已核实
 //-----------------------------------------------------------------------------
-// 来源：TODO（Sipeed 原理图 第 __ 页；UG986 第 __ 页核对）
-IO_LOC  "i2s_bck"  TODO_PIN;
-IO_LOC  "i2s_lrck" TODO_PIN;
-IO_LOC  "i2s_data" TODO_PIN;
-IO_PORT "i2s_bck"  IO_TYPE=LVCMOS33 DRIVE=8;
-IO_PORT "i2s_lrck" IO_TYPE=LVCMOS33 DRIVE=8;
-IO_PORT "i2s_data" IO_TYPE=LVCMOS33 DRIVE=8;
+// S2 按键作复位。注意：此管脚的 BANK_VCCIO 为 1.5V，官方用 LVCMOS15
+IO_LOC  "rst_ext" F4;
+IO_PORT "rst_ext" IO_TYPE=LVCMOS15 PULL_MODE=NONE BANK_VCCIO=1.5;
+
+IO_LOC  "led" W21;
+IO_PORT "led" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+
+//=============================================================================
+// 以下为尚未核实的管脚 —— 阶段 0 内必须由 C 查原理图/手册后补齐
+// 补齐前不要把对应信号接进 synth_top，否则综合会报无约束管脚
+//=============================================================================
 
 //-----------------------------------------------------------------------------
-// 矩阵键盘（4x4 x 2）—— 成员 B
+// 时钟输入（TODO：确认板载晶振频率与管脚）
+//   官方例程使用 Gowin_OSC 内部振荡器，未用外部晶振；若要精确 12.288 MHz，
+//   建议改用外部晶振 + PLL，需先确认晶振频率与管脚。
+//-----------------------------------------------------------------------------
+// IO_LOC  "clk_in" TODO_PIN;
+// IO_PORT "clk_in" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+//-----------------------------------------------------------------------------
+// 矩阵键盘（4x4 × 2）—— 成员 B 使用
 //   行输出：FPGA 驱动；列输入：内部上拉 + 10k 外部上拉至 3.3V
 //-----------------------------------------------------------------------------
-IO_LOC  "kb_row[3:0]" TODO_PIN_BASE;
-IO_PORT "kb_row[3:0]" IO_TYPE=LVCMOS33 DRIVE=4;
-IO_LOC  "kb_col[7:0]" TODO_PIN_BASE;
-IO_PORT "kb_col[7:0]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+// IO_LOC  "kb_row[3:0]" TODO_PIN_BASE;
+// IO_PORT "kb_row[3:0]" IO_TYPE=LVCMOS33 DRIVE=4;
+// IO_LOC  "kb_col[7:0]" TODO_PIN_BASE;
+// IO_PORT "kb_col[7:0]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
 //-----------------------------------------------------------------------------
-// EC11 旋转编码器 —— 成员 B
+// EC11 旋转编码器 —— 成员 B 使用
 //-----------------------------------------------------------------------------
-IO_LOC  "enc_a" TODO_PIN;
-IO_LOC  "enc_b" TODO_PIN;
-IO_LOC  "enc_btn" TODO_PIN;
-IO_PORT "enc_a" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-IO_PORT "enc_b" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-IO_PORT "enc_btn" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+// IO_LOC  "enc_a"   TODO_PIN;
+// IO_LOC  "enc_b"   TODO_PIN;
+// IO_LOC  "enc_btn" TODO_PIN;
+// IO_PORT "enc_a"   IO_TYPE=LVCMOS33 PULL_MODE=UP;
+// IO_PORT "enc_b"   IO_TYPE=LVCMOS33 PULL_MODE=UP;
+// IO_PORT "enc_btn" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
 //-----------------------------------------------------------------------------
 // OLED SSD1306 (I2C, 3.3V, 四针版) —— 低级 I2C 时序由 C 维护
 //-----------------------------------------------------------------------------
-IO_LOC  "oled_scl" TODO_PIN;
-IO_LOC  "oled_sda" TODO_PIN;
-IO_PORT "oled_scl" IO_TYPE=LVCMOS33 DRIVE=8 OPENDRAIN=ON;
-IO_PORT "oled_sda" IO_TYPE=LVCMOS33 DRIVE=8 OPENDRAIN=ON;
+// IO_LOC  "oled_scl" TODO_PIN;
+// IO_LOC  "oled_sda" TODO_PIN;
+// IO_PORT "oled_scl" IO_TYPE=LVCMOS33 DRIVE=8 OPENDRAIN=ON;
+// IO_PORT "oled_sda" IO_TYPE=LVCMOS33 DRIVE=8 OPENDRAIN=ON;
 
 //-----------------------------------------------------------------------------
 // 调试串口（可走板载 USB JTAG&UART）
 //-----------------------------------------------------------------------------
-IO_LOC  "uart_tx" TODO_PIN;
-IO_LOC  "uart_rx" TODO_PIN;
-IO_PORT "uart_tx" IO_TYPE=LVCMOS33 DRIVE=8;
-IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+// IO_LOC  "uart_tx" TODO_PIN;
+// IO_LOC  "uart_rx" TODO_PIN;
+// IO_PORT "uart_tx" IO_TYPE=LVCMOS33 DRIVE=8;
+// IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
-//-----------------------------------------------------------------------------
+//=============================================================================
 // 待办清单（阶段 0 内必须全部完成）
-//   [ ] 器件版本 B/C 确认并填入文件头
-//   [ ] I2S 三线管脚号确认
-//   [ ] 按键 / LED 管脚号确认
-//   [ ] 键盘 / 编码器 / OLED / UART 管脚号确认
+//   [x] I2S 三线 + PA_EN + 复位 + LED 管脚
+//   [ ] 板载晶振频率与管脚
+//   [ ] 键盘 / 编码器 / OLED / UART 管脚
+//   [ ] 实物器件版本丝印复核（B 或 C）
+//   [ ] 上述信号与 synth_top.v 端口名逐一对齐
 //   [ ] 全部 IO_TYPE 与板上实际电平一致（只允许 3.3V）
-//   [ ] 与 synth_top.v 的端口名逐一对齐
-//-----------------------------------------------------------------------------
+//=============================================================================
