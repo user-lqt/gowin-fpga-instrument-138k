@@ -1,0 +1,34 @@
+# 统一换行符：仓库内一律 LF，避免 Windows / macOS 混用导致整文件 diff
+* text=auto eol=lf
+
+# RTL 与仿真源码
+*.v      text eol=lf
+*.vh     text eol=lf
+*.sv     text eol=lf
+*.svh    text eol=lf
+
+# 约束与工程文件
+*.cst    text eol=lf
+*.sdc    text eol=lf
+*.gprj    text eol=lf
+*.gao    text eol=lf
+
+# 文档与脚本
+*.md     text eol=lf
+*.txt    text eol=lf
+*.py     text eol=lf
+*.sh     text eol=lf
+*.ps1    text eol=crlf
+
+# 二进制文件：不做换行转换
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.bmp    binary
+*.bit    binary
+*.bin    binary
+*.pdf    binary
+
+# GitHub 语言统计：RTL 与脚本为主
+*.v      linguist-language=Verilog
+*.vh     linguist-language=Verilog

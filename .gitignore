@@ -1,0 +1,56 @@
+# 高云 FPGA / 云源软件（Gowin EDA）
+project/impl/
+project/prj/
+*.fs
+*.ipc
+*.log
+*.gao
+*.bak
+*.tmp
+.temp/
+*_bak/
+*.gprj.user
+
+# bitstream 与固化文件（单独归档，不进仓库）
+*.bit
+*.bin
+*.fs
+
+# 仿真产物
+*.vcd
+*.wlf
+*.sav
+*.dsn
+*.stx
+obj_dir/
+xsim.dir/
+simv
+simv.daidir
+csrc/
+*.jou
+*.pbw
+
+# 办公 / 压缩 / 大二进制
+*.doc
+*.docx
+*.pdf
+*.rar
+*.zip
+*.7z
+*.exe
+*.msi
+*.iso
+
+# 操作系统与编辑器
+Thumbs.db
+Desktop.ini
+.DS_Store
+*~
+*.swp
+.vscode/
+.idea/
+
+# 敏感信息
+*.license
+*.lic
+license*.txt
