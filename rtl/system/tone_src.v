@@ -32,8 +32,10 @@ module tone_src #(
     wire [ROM_ADDR_W-1:0] rom_addr = phase[PHASE_W-1 -: ROM_ADDR_W];
     wire signed [ROM_DATA_W-1:0] rom_data;
 
-    // 波表例化
+    // 波表例化（同步 ROM，1 拍读延迟；相位在 sample_tick 间隔内保持稳定，
+    // 因此 sample_tick 时刻读到的就是当前相位对应的数据）
     sine_rom u_sine_rom (
+        .clk  (clk_audio),
         .addr (rom_addr),
         .data (rom_data)
     );

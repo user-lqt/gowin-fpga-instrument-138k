@@ -36,7 +36,10 @@ if (Test-Path work) { Remove-Item work -Recurse -Force }
 $rtl = @(
     "$ROOT\rtl\common\reset_sync.v",
     "$ROOT\rtl\system\clock_gen.v",
-    "$ROOT\rtl\system\sample_scheduler.v"
+    "$ROOT\rtl\system\sample_scheduler.v",
+    "$ROOT\rtl\system\sine_rom.v",
+    "$ROOT\rtl\system\tone_src.v",
+    "$ROOT\rtl\system\i2s_tx.v"
 )
 $tbFile = "$ROOT\tb\$Tb.v"
 

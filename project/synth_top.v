@@ -44,9 +44,9 @@ module synth_top (
     clock_gen #(
         .FCLKIN           ("50.0"),
         .USE_INTERNAL_OSC (0),
-        .MDIV_SEL         (7'd59),      // VCO = 50MHz * 59 = 2950 MHz
+        .MDIV_SEL         (7'd59),      // 详见 clock_gen.v 头的分频推导
         .ODIV0_SEL        (7'd80),      // -> 12.29167 MHz 音频域
-        .ODIV1_SEL        (7'd10)       // -> 295 MHz 系统域
+        .ODIV1_SEL        (7'd10)       // -> 98.333 MHz 系统域
     ) u_clock_gen (
         .i_clk_in     (i_clk_in),
         .i_rst_n      (i_rst_n),
@@ -99,8 +99,7 @@ module synth_top (
 
     i2s_tx #(
         .DATA_BITS (24),
-        .SLOT_BITS (32),
-        .WS_LEAD   (1)
+        .SLOT_BITS (32)
     ) u_i2s_tx (
         .clk_audio   (clk_audio),
         .rst_n       (rst_n),

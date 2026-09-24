@@ -1,34 +1,36 @@
 //=============================================================================
-// tb_i2s_tx.v —— I2S 发送器自检（含接收端模型）
+// tb_i2s_tx.v —— I2S 发送器自检 v2（左对齐格式，含接收端模型）
 //
-// 方法：在本 tb 内实现一个与真实 DAC 行为一致的 I2S 接收端模型：
-//         - 监听 o_ws 跳变，跳变处为该声道槽的第 1 位（MSB）
-//         - 在随后 SLOT_BITS 个 o_bck 上升沿依次采样 o_din
-//       把重建出的左右采样与发送值逐位比对。
-//
-// 这样验证的是"接收端能否正确解出数据"，比数边沿、看相位更贴近真实器件。
+// 接收端模型依据：Sipeed 官方例程 audio_drive.v 的实测时序（见 i2s_tx.v 头）
+//   - 在 o_bck 上升沿同时采样 o_ws 与 o_din
+//   - o_ws 发生跳变的那个采样点 = 新声道槽的第 1 位（MSB）
+//   - 每声道槽连续 SLOT_BITS 位，MSB 先出，低 PAD 位为填充 0
+//   - 收到的 32bit 槽字 = { sample[23:0], 8'b0 }，故比对 rx[SLOT_BITS-1 -: DATA_BITS]
 //
 // 检查项：
 //   1) 复位期间三线全为 0
-//   2) 一帧含 2*SLOT_BITS 个 bck 周期
+//   2) 一帧含 2*SLOT_BITS 个 bck 上升沿
 //   3) 数据重建逐位相等（含 0 / 正 / 负 / 满量程 / 典型值）
 //   4) 左右声道不串道
+//
+// 【纪律】每次修改后先改 TB_VERSION，确认仿真输出里的版本号已更新，
+//         再读结果（ModelSim 编译失败会静默复用旧库，曾因此误判多轮）。
 //=============================================================================
 `timescale 1ns/1ps
 
 module tb_i2s_tx;
 
-    localparam integer DATA_BITS = 24;
-    localparam integer SLOT_BITS = 32;
-    localparam integer WS_LEAD   = 1;
+    localparam integer DATA_BITS  = 24;
+    localparam integer SLOT_BITS  = 32;
     localparam integer FRAME_BITS = SLOT_BITS * 2;
+    localparam [255:0] TB_VERSION = "v2.2 2026-09-24 bcnt starts at 1 on ws edge";
 
     reg clk_audio = 1'b0;
     reg rst_n     = 1'b0;
     always #5 clk_audio = ~clk_audio;      // 10 ns 周期
 
     //------------------------------------------------------------
-    // 位周期使能：每 2 拍一个脉冲（与硬件 CLK_DIV_BCK=2 一致）
+    // 位周期使能：每 2 拍一个半周期脉冲（与硬件 CLK_DIV_BCK=2 一致）
     //------------------------------------------------------------
     reg [0:0] div = 1'b0;
     wire bck_en = (div == 1'b1);
@@ -60,64 +62,53 @@ module tb_i2s_tx;
     );
 
     //------------------------------------------------------------
-    // 接收端模型
-    //   关键：非阻塞地在 bck 上升沿更新状态，用"上一拍"的值做判断，
-    //         避免同一拍内读写竞争。
+    // 接收端模型（左对齐：WS 跳变处即该声道 MSB）
+    //   sh_l/sh_r 逐位移入；bcnt 计满 SLOT_BITS 位时锁存整槽。
+    //   ws 跳变沿把 bcnt 清零 —— 帧回绕处必须清零，否则丢 MSB（踩过的坑）。
+    //
+    //   ⚠️ ws_d 必须只在采样点更新（保存"上一个采样点"的 ws），
+    //      若像 bck_d 那样每拍都更新，等检测到 bck 上升沿时 ws_d 早已
+    //      追上 o_ws，WS 跳变永远检测不到，bcnt 退化成自由计数器
+    //      （v1/v2.0 实测：左声道侥幸对齐、右声道永远锁存失败）。
     //------------------------------------------------------------
     reg        bck_d = 1'b0;
     reg        ws_d  = 1'b0;
     reg [5:0]  bcnt  = 6'd0;
+    reg [SLOT_BITS-1:0] sh_l = {SLOT_BITS{1'b0}};
+    reg [SLOT_BITS-1:0] sh_r = {SLOT_BITS{1'b0}};
     reg [SLOT_BITS-1:0] rx_l = {SLOT_BITS{1'b0}};
     reg [SLOT_BITS-1:0] rx_r = {SLOT_BITS{1'b0}};
-    reg        l_new = 1'b0, r_new = 1'b0;
-    reg [SLOT_BITS-1:0] rxsh = {SLOT_BITS{1'b0}};
     integer    bck_rise = 0;
 
-    // ⚠️ 踩坑记录：这里最初写成
-    //      rxsh <= {rxsh[SLOT_BITS-2:0], o_din};   // 左移
-    //      rx_l <= {rxsh[SLOT_BITS-2:0], o_din};
-    //    结果收到的字**位序整体镜像**（每一位都落在相反的位置），
-    //    表现为"接收值 = 发送值算术右移一位"之类的错觉。
-    //    修正：用**位索引直接置位**，不做移位：
-    //      收到第 k 位（k 从 0 开始，0 = MSB）时：
-    //        若 k < DATA_BITS，则 word[DATA_BITS-1-k] = din
-    //        否则该位是低位填充，忽略
-    //    这样位序与发送端严格一致，且不会因移位顺序出错。
+    wire [5:0] SLOT_MAX = SLOT_BITS[5:0] - 6'd1;
+
     always @(posedge clk_audio or negedge rst_n) begin
         if (!rst_n) begin
             bck_d <= 1'b0;
             ws_d  <= 1'b0;
             bcnt  <= 6'd0;
-            rxsh  <= {SLOT_BITS{1'b0}};
+            sh_l  <= {SLOT_BITS{1'b0}};
+            sh_r  <= {SLOT_BITS{1'b0}};
             rx_l  <= {SLOT_BITS{1'b0}};
             rx_r  <= {SLOT_BITS{1'b0}};
-            l_new <= 1'b0;
-            r_new <= 1'b0;
         end else begin
-            l_new <= 1'b0;
-            r_new <= 1'b0;
-
-            if (o_bck && !bck_d) begin          // 采样沿
+            if (o_bck && !bck_d) begin               // BCK 上升沿：采样
                 bck_rise <= bck_rise + 1;
-                rxsh     <= {rxsh[SLOT_BITS-2:0], o_din};
 
-                if (o_ws != ws_d) begin
-                    bcnt <= 6'd1;               // 该位即新槽 MSB
-                end else if (bcnt < SLOT_BITS[5:0]) begin
-                    bcnt <= bcnt + 6'd1;
-                    if (bcnt == SLOT_BITS[5:0] - 6'd1) begin
-                        if (o_ws == 1'b0) begin
-                            rx_l  <= {rxsh[SLOT_BITS-2:0], o_din};
-                            l_new <= 1'b1;
-                        end else begin
-                            rx_r  <= {rxsh[SLOT_BITS-2:0], o_din};
-                            r_new <= 1'b1;
-                        end
-                    end
+                if (o_ws != ws_d) bcnt <= 6'd1;      // 新槽起点：本位即第 1 位（MSB）
+                else              bcnt <= bcnt + 6'd1;
+
+                if (o_ws == 1'b0) begin              // 左声道槽
+                    if (bcnt == SLOT_MAX) rx_l <= {sh_l[SLOT_BITS-2:0], o_din};
+                    sh_l <= {sh_l[SLOT_BITS-2:0], o_din};
+                end else begin                       // 右声道槽
+                    if (bcnt == SLOT_MAX) rx_r <= {sh_r[SLOT_BITS-2:0], o_din};
+                    sh_r <= {sh_r[SLOT_BITS-2:0], o_din};
                 end
+
+                ws_d <= o_ws;   // 只在采样点更新：保存上一个采样点的 ws
             end
             bck_d <= o_bck;
-            ws_d  <= o_ws;
         end
     end
 
@@ -139,16 +130,21 @@ module tb_i2s_tx;
         end
     endtask
 
+    // 槽字高 DATA_BITS 位是有效数据（左对齐）
     task check_data;
         input [255:0] name;
         input signed [DATA_BITS-1:0] el;
         input signed [DATA_BITS-1:0] er;
         begin
-            if (rx_l[DATA_BITS-1:0] === el && rx_r[DATA_BITS-1:0] === er)
-                $display("  [PASS] %0s  L=%0d R=%0d", name, rx_l[DATA_BITS-1:0], rx_r[DATA_BITS-1:0]);
+            if (rx_l[SLOT_BITS-1 -: DATA_BITS] === el &&
+                rx_r[SLOT_BITS-1 -: DATA_BITS] === er)
+                $display("  [PASS] %0s  L=%0d R=%0d", name,
+                         rx_l[SLOT_BITS-1 -: DATA_BITS], rx_r[SLOT_BITS-1 -: DATA_BITS]);
             else begin
                 $display("  [FAIL] %0s  got L=%0d R=%0d  expected L=%0d R=%0d",
-                         name, rx_l[DATA_BITS-1:0], rx_r[DATA_BITS-1:0], el, er);
+                         name,
+                         rx_l[SLOT_BITS-1 -: DATA_BITS], rx_r[SLOT_BITS-1 -: DATA_BITS],
+                         el, er);
                 errors = errors + 1;
             end
         end
@@ -160,9 +156,9 @@ module tb_i2s_tx;
 
         $display("");
         $display("==================================================");
-        $display(" tb_i2s_tx -- I2S transmitter self-test");
-        $display("   DATA_BITS=%0d SLOT_BITS=%0d WS_LEAD=%0d FRAME_BITS=%0d",
-                 DATA_BITS, SLOT_BITS, WS_LEAD, FRAME_BITS);
+        $display(" tb_i2s_tx  TB_VERSION: %0s", TB_VERSION);
+        $display("   DATA_BITS=%0d SLOT_BITS=%0d FRAME_BITS=%0d",
+                 DATA_BITS, SLOT_BITS, FRAME_BITS);
         $display("==================================================");
 
         //============ 复位 ============
@@ -229,11 +225,12 @@ module tb_i2s_tx;
         tx_l = 24'sd8388607;
         tx_r = -24'sd8388608;
         wait_frames(2);
-        if (rx_l[DATA_BITS-1:0] === 24'sd8388607 && rx_r[DATA_BITS-1:0] === -24'sd8388608)
+        if (rx_l[SLOT_BITS-1 -: DATA_BITS] === 24'sd8388607 &&
+            rx_r[SLOT_BITS-1 -: DATA_BITS] === -24'sd8388608)
             $display("  [PASS] L=+full, R=-full, no crosstalk");
         else begin
             $display("  [FAIL] L=%0d R=%0d (crosstalk or misalignment)",
-                     rx_l[DATA_BITS-1:0], rx_r[DATA_BITS-1:0]);
+                     rx_l[SLOT_BITS-1 -: DATA_BITS], rx_r[SLOT_BITS-1 -: DATA_BITS]);
             errors = errors + 1;
         end
 
