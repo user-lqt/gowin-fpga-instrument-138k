@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
+    <FileList>
+        <File path="../../rtl/input/input_defs.vh" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/key_debounce.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/matrix_scan.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/matrix_keyboard.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/key_map.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/keyboard_input.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/input_top.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/parameter_manager.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/ui_state.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/oled_content.v" type="file.verilog" enable="1"/>
+    </FileList>
+</Project>

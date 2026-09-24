@@ -1,0 +1,48 @@
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\encoder.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\encoder_control.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\encoder_volume.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\input_top.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\keyboard_input.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_debounce.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_map.v'
+Analyzing included file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\input_defs.vh'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_map.v":2)
+Back to file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_map.v'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_map.v":2)
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\matrix_keyboard.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\matrix_scan.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\oled_content.v'
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\parameter_manager.v'
+Analyzing included file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\..\input\input_defs.vh'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\parameter_manager.v":2)
+Back to file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\parameter_manager.v'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\parameter_manager.v":2)
+Analyzing Verilog file 'E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\ui_state.v'
+Compiling module 'input_top'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\input_top.v":9)
+Compiling module 'keyboard_input'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\keyboard_input.v":4)
+Compiling module 'matrix_keyboard'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\matrix_keyboard.v":7)
+Compiling module 'matrix_scan'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\matrix_scan.v":7)
+Compiling module 'key_map'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_map.v":11)
+Compiling module 'encoder_control'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\encoder_control.v":7)
+Compiling module 'encoder'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\encoder.v":13)
+Compiling module 'key_debounce(DEBOUNCE_CYCLES=1000000)'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\input\key_debounce.v":6)
+Compiling module 'parameter_manager(ENABLE_INSTRUMENT=1)'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\parameter_manager.v":16)
+Compiling module 'ui_state'("E:\Gowin\Prj_music\Stage_1\music\music\rtl\ui\ui_state.v":4)
+NOTE  (EX0101) : Current top module is "input_top"
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+[95%] Generate netlist file "E:\Gowin\Prj_music\Stage_1\music\music\sim\input_ui_tb\results\synth_input\impl\gwsynthesis\input_top.vg" completed
+[100%] Generate report file "E:\Gowin\Prj_music\Stage_1\music\music\sim\input_ui_tb\results\synth_input\impl\gwsynthesis\input_top_syn.rpt.html" completed
+GowinSynthesis finish
