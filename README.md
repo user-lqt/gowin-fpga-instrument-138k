@@ -1,143 +1,99 @@
-# 高云 FPGA 实时多音色合成电子乐器引擎
+﻿# 楂樹簯 FPGA 瀹炴椂澶氶煶鑹插悎鎴愮數瀛愪箰鍣ㄥ紩鎿?
+> 鍏ㄥ浗澶у鐢熷祵鍏ュ紡鑺墖涓庣郴缁熻璁＄珵璧?2026 路 FPGA 鍒涙柊璁捐璧涢亾 路 **楂樹簯鍗婂浣?閫夐浜?*
+> 骞冲彴锛?*Sipeed Tang Mega 138K Dock** 路 鑺墖 **GW5AST-LV138PG484AC1/I0**
 
-> 全国大学生嵌入式芯片与系统设计竞赛 2026 · FPGA 创新设计赛道 · **高云半导体 选题二**
-> 平台：**Sipeed Tang Mega 138K Dock** · 芯片 **GW5AST-LV138PG484AC1/I0**
+杩欐槸涓€鍙?*鐢辨紨濂忓姩浣滈┍鍔ㄣ€佺敱 FPGA 纭欢閫昏緫閫愭牱鏈敓鎴愬０闊?*鐨勫疄鏃剁數瀛愪箰鍣ㄣ€?
+绯荤粺鐨勬牳蹇冨睘鎬э紙涔熸槸璇勫垎渚濇嵁锛夛細
 
-这是一台**由演奏动作驱动、由 FPGA 硬件逻辑逐样本生成声音**的实时电子乐器。
-
-系统的核心属性（也是评分依据）：
-
-- 音频通路的每一个样本都由 FPGA 在硬件逻辑层实时计算，**不是预录 PCM 播放**
-- 演奏动作 → 事件 → 声部 / 振荡器 → 混音 → I2S → DAC，端到端延迟 **≤ 10 ms**（冲刺 ≤ 5 ms）
-- 基础目标：**≥ 4 复音**、**≥ 2 个独立演奏维度**、独立 ADSR、实时变调
-- 冲奖目标：**≥ 32 独立振荡器**、**≥ 3 维表情**、**≥ 2 种音色**、硬件音效、可视化反馈
+- 闊抽閫氳矾鐨勬瘡涓€涓牱鏈兘鐢?FPGA 鍦ㄧ‖浠堕€昏緫灞傚疄鏃惰绠楋紝**涓嶆槸棰勫綍 PCM 鎾斁**
+- 婕斿鍔ㄤ綔 鈫?浜嬩欢 鈫?澹伴儴 / 鎸崱鍣?鈫?娣烽煶 鈫?I2S 鈫?DAC锛岀鍒扮寤惰繜 **鈮?10 ms**锛堝啿鍒?鈮?5 ms锛?- 鍩虹鐩爣锛?*鈮?4 澶嶉煶**銆?*鈮?2 涓嫭绔嬫紨濂忕淮搴?*銆佺嫭绔?ADSR銆佸疄鏃跺彉璋?- 鍐插鐩爣锛?*鈮?32 鐙珛鎸崱鍣?*銆?*鈮?3 缁磋〃鎯?*銆?*鈮?2 绉嶉煶鑹?*銆佺‖浠堕煶鏁堛€佸彲瑙嗗寲鍙嶉
 
 ---
 
-## 一、团队成员与任务的唯一入口
+## 涓€銆佸洟闃熸垚鍛樹笌浠诲姟鐨勫敮涓€鍏ュ彛
 
-**每个人只读自己那一份任务书，不要读别人的。** 任务书是你在本仓库中的权限边界说明书。
-
-| 成员 | 任务书 | 负责目录 | 独立工程 | 分支 | Git 账号 |
+**姣忎釜浜哄彧璇昏嚜宸遍偅涓€浠戒换鍔′功锛屼笉瑕佽鍒汉鐨勩€?* 浠诲姟涔︽槸浣犲湪鏈粨搴撲腑鐨勬潈闄愯竟鐣岃鏄庝功銆?
+| 鎴愬憳 | 浠诲姟涔?| 璐熻矗鐩綍 | 鐙珛宸ョ▼ | 鍒嗘敮 | Git 璐﹀彿 |
 |---|---|---|---|---|---|
-| **A** 音频合成与音质优化 | [`docs/成员A_音频合成与音质优化任务书.md`](docs/成员A_音频合成与音质优化任务书.md) | `rtl/audio_core/`、`sim/audio_core_tb/` | `audio_core_sim.gprj` | `dev-audio` | TODO 填写 |
-| **B** 演奏输入与参数界面 | [`docs/成员B_演奏输入与参数界面任务书.md`](docs/成员B_演奏输入与参数界面任务书.md) | `rtl/input/`、`rtl/ui/`、`sim/input_ui_tb/` | `input_ui_sim.gprj` | `dev-input` | TODO 填写 |
-| **C** 音频输出与 FPGA 系统平台 | [`docs/成员C_音频输出与FPGA系统平台任务书.md`](docs/成员C_音频输出与FPGA系统平台任务书.md) | `rtl/system/`、`rtl/common/`、`project/`、`constraint/`、`sim/system_tb/` | `audio_system_sim.gprj`、`synth_top.gprj` | `dev-system` | TODO 填写 |
+| **A** 闊抽鍚堟垚涓庨煶璐ㄤ紭鍖?| [`docs/鎴愬憳A_闊抽鍚堟垚涓庨煶璐ㄤ紭鍖栦换鍔′功.md`](docs/鎴愬憳A_闊抽鍚堟垚涓庨煶璐ㄤ紭鍖栦换鍔′功.md) | `rtl/audio_core/`銆乣sim/audio_core_tb/` | `audio_core_sim.gprj` | `dev-audio` | TODO 濉啓 |
+| **B** 婕斿杈撳叆涓庡弬鏁扮晫闈?| [`docs/鎴愬憳B_婕斿杈撳叆涓庡弬鏁扮晫闈换鍔′功.md`](docs/鎴愬憳B_婕斿杈撳叆涓庡弬鏁扮晫闈换鍔′功.md) | `rtl/input/`銆乣rtl/ui/`銆乣sim/input_ui_tb/` | `input_ui_sim.gprj` | `dev-input` | TODO 濉啓 |
+| **C** 闊抽杈撳嚭涓?FPGA 绯荤粺骞冲彴 | [`docs/鎴愬憳C_闊抽杈撳嚭涓嶧PGA绯荤粺骞冲彴浠诲姟涔?md`](docs/鎴愬憳C_闊抽杈撳嚭涓嶧PGA绯荤粺骞冲彴浠诲姟涔?md) | `rtl/system/`銆乣rtl/common/`銆乣project/`銆乣constraint/`銆乣tb/` | `audio_system_sim.gprj`銆乣synth_top.gprj` | `dev-system` | TODO 濉啓 |
 
-先读 [`docs/高云FPGA电子乐器项目总计划书_最终版.md`](docs/高云FPGA电子乐器项目总计划书_最终版.md)（总控与作战手册），再读自己的任务书，最后只浏览另外两人的"接口与边界"章节。
+鍏堣 [`docs/楂樹簯FPGA鐢靛瓙涔愬櫒椤圭洰鎬昏鍒掍功_鏈€缁堢増.md`](docs/楂樹簯FPGA鐢靛瓙涔愬櫒椤圭洰鎬昏鍒掍功_鏈€缁堢増.md)锛堟€绘帶涓庝綔鎴樻墜鍐岋級锛屽啀璇昏嚜宸辩殑浠诲姟涔︼紝鏈€鍚庡彧娴忚鍙﹀涓や汉鐨?鎺ュ彛涓庤竟鐣?绔犺妭銆?
+**寮€宸ュ墠蹇呴』鍏堣鐨勪笁浠芥枃浠?*
 
-**开工前必须先读的三份文件**
-
-1. [`docs/PLATFORM_TANG_MEGA_138K.md`](docs/PLATFORM_TANG_MEGA_138K.md) —— 板卡与器件、IDE 版本、管脚、安全红线
-2. [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) —— 接口冻结卡、采样率/位宽/定点、延迟预算
-3. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md) —— 分支、提交、合并、评审规则
-
-**成员 C 另需先读**：[`docs/C_官方例程与板载音频通路分析.md`](docs/C_官方例程与板载音频通路分析.md) —— 已核实板载 DAC/功放通路与实机 I2S 管脚，是 C1 出声的第一步依据。
-
+1. [`docs/PLATFORM_TANG_MEGA_138K.md`](docs/PLATFORM_TANG_MEGA_138K.md) 鈥斺€?鏉垮崱涓庡櫒浠躲€両DE 鐗堟湰銆佺鑴氥€佸畨鍏ㄧ孩绾?2. [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 鈥斺€?鎺ュ彛鍐荤粨鍗°€侀噰鏍风巼/浣嶅/瀹氱偣銆佸欢杩熼绠?3. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md) 鈥斺€?鍒嗘敮銆佹彁浜ゃ€佸悎骞躲€佽瘎瀹¤鍒?
+**鎴愬憳 C 鍙﹂渶鍏堣**锛歔`docs/C_瀹樻柟渚嬬▼涓庢澘杞介煶棰戦€氳矾鍒嗘瀽.md`](docs/C_瀹樻柟渚嬬▼涓庢澘杞介煶棰戦€氳矾鍒嗘瀽.md) 鈥斺€?宸叉牳瀹炴澘杞?DAC/鍔熸斁閫氳矾涓庡疄鏈?I2S 绠¤剼锛屾槸 C1 鍑哄０鐨勭涓€姝ヤ緷鎹€?
 ---
 
-## 二、仓库结构
-
+## 浜屻€佷粨搴撶粨鏋?
 ```
 gowin-fpga-instrument-138k/
-├─ README.md                     本文件
-├─ rtl/
-│  ├─ common/                    ★ C 维护，A/B/C 共用（改动必须通知全员）
-│  │  ├─ event_defs.vh           事件/参数/音频的唯一契约
-│  │  ├─ status_defs.vh          状态与错误码
-│  │  └─ reset_sync.v            复位同步器
-│  ├─ audio_core/                A 独占：DDS、波表、FM、ADSR、声部、混音
-│  ├─ input/                     B 独占：键盘、编码器、触摸、力度、滤波
-│  ├─ ui/                        B 独占：参数管理、页面状态与内容
-│  └─ system/                    C 独占：时钟、采样节拍、I2S、音效、状态
-├─ sim/
-│  ├─ audio_core_tb/             A：tb_audio_core.v + audio_core_sim.gprj
-│  ├─ input_ui_tb/               B：tb_input / tb_encoder / tb_sensor / tb_ui
-│  └─ system_tb/                 C：tb_system.v + audio_system_sim.gprj
-├─ project/                      C 独占：synth_top.v、各 *.gprj
-├─ constraint/                   C 独占：tang_mega138k.cst / .sdc
-├─ docs/                         任务书、计划书、平台卡、接口冻结、采购清单
-├─ tools/                        仿真与综合辅助脚本
-├─ waveforms/                    保存的仿真波形配置与截图
-└─ evidence/                     验收证据：综合报告、时序、延迟、频谱
-```
+鈹溾攢 README.md                     鏈枃浠?鈹溾攢 rtl/
+鈹? 鈹溾攢 common/                    鈽?C 缁存姢锛孉/B/C 鍏辩敤锛堟敼鍔ㄥ繀椤婚€氱煡鍏ㄥ憳锛?鈹? 鈹? 鈹溾攢 event_defs.vh           浜嬩欢/鍙傛暟/闊抽鐨勫敮涓€濂戠害
+鈹? 鈹? 鈹溾攢 status_defs.vh          鐘舵€佷笌閿欒鐮?鈹? 鈹? 鈹斺攢 reset_sync.v            澶嶄綅鍚屾鍣?鈹? 鈹溾攢 audio_core/                A 鐙崰锛欴DS銆佹尝琛ㄣ€丗M銆丄DSR銆佸０閮ㄣ€佹贩闊?鈹? 鈹溾攢 input/                     B 鐙崰锛氶敭鐩樸€佺紪鐮佸櫒銆佽Е鎽搞€佸姏搴︺€佹护娉?鈹? 鈹溾攢 ui/                        B 鐙崰锛氬弬鏁扮鐞嗐€侀〉闈㈢姸鎬佷笌鍐呭
+鈹? 鈹斺攢 system/                    C 鐙崰锛氭椂閽熴€侀噰鏍疯妭鎷嶃€両2S銆侀煶鏁堛€佺姸鎬?鈹溾攢 sim/
+鈹? 鈹溾攢 audio_core_tb/             A锛歵b_audio_core.v + audio_core_sim.gprj
+鈹? 鈹溾攢 input_ui_tb/               B锛歵b_input / tb_encoder / tb_sensor / tb_ui
+鈹? 鈹斺攢 system_tb/                 C锛歵b_system.v + audio_system_sim.gprj
+鈹溾攢 project/                      C 鐙崰锛歴ynth_top.v銆佸悇 *.gprj
+鈹溾攢 constraint/                   C 鐙崰锛歵ang_mega138k.cst / .sdc
+鈹溾攢 docs/                         浠诲姟涔︺€佽鍒掍功銆佸钩鍙板崱銆佹帴鍙ｅ喕缁撱€侀噰璐竻鍗?鈹溾攢 tools/                        浠跨湡涓庣患鍚堣緟鍔╄剼鏈?鈹溾攢 waveforms/                    淇濆瓨鐨勪豢鐪熸尝褰㈤厤缃笌鎴浘
+鈹斺攢 evidence/                     楠屾敹璇佹嵁锛氱患鍚堟姤鍛娿€佹椂搴忋€佸欢杩熴€侀璋?```
 
-`tools/`、`waveforms/`、`evidence/` 三个目录共用，命名规则见 `docs/GIT_WORKFLOW.md`。
-
+`tools/`銆乣waveforms/`銆乣evidence/` 涓変釜鐩綍鍏辩敤锛屽懡鍚嶈鍒欒 `docs/GIT_WORKFLOW.md`銆?
 ---
 
-## 三、三条铁律
-
-1. **只改自己的目录。** 需要改别人的东西 → 先提接口变更说明，不要直接改。
-2. **接口以 `rtl/common/event_defs.vh` 为唯一真相。** 字段/位宽/编码不一致时，以该文件为准。
-3. **不进版本库的东西：** Gowin 的 `impl/`、`*.fs`、`*.ipc`、`*.log`、`.temp/`、bitstream、PDF 手册、仿真缓存 —— 见 `.gitignore`。
-
+## 涓夈€佷笁鏉￠搧寰?
+1. **鍙敼鑷繁鐨勭洰褰曘€?* 闇€瑕佹敼鍒汉鐨勪笢瑗?鈫?鍏堟彁鎺ュ彛鍙樻洿璇存槑锛屼笉瑕佺洿鎺ユ敼銆?2. **鎺ュ彛浠?`rtl/common/event_defs.vh` 涓哄敮涓€鐪熺浉銆?* 瀛楁/浣嶅/缂栫爜涓嶄竴鑷存椂锛屼互璇ユ枃浠朵负鍑嗐€?3. **涓嶈繘鐗堟湰搴撶殑涓滆タ锛?* Gowin 鐨?`impl/`銆乣*.fs`銆乣*.ipc`銆乣*.log`銆乣.temp/`銆乥itstream銆丳DF 鎵嬪唽銆佷豢鐪熺紦瀛?鈥斺€?瑙?`.gitignore`銆?
 ---
 
-## 四、常用 Git 命令（三分钟上手）
-
+## 鍥涖€佸父鐢?Git 鍛戒护锛堜笁鍒嗛挓涓婃墜锛?
 ```bash
-# 第一次：克隆
+# 绗竴娆★細鍏嬮殕
 git clone https://github.com/user-lqt/gowin-fpga-instrument-138k.git
 cd gowin-fpga-instrument-138k
-git config user.name  "你的名字"
-git config user.email "你的邮箱@example.com"
+git config user.name  "浣犵殑鍚嶅瓧"
+git config user.email "浣犵殑閭@example.com"
 
-# 切到自己的开发分支
-git checkout dev-audio      # A 用
-git checkout dev-input      # B 用
-git checkout dev-system     # C 用
-
-# 日常：改代码 → 提交 → 推送
-git status
+# 鍒囧埌鑷繁鐨勫紑鍙戝垎鏀?git checkout dev-audio      # A 鐢?git checkout dev-input      # B 鐢?git checkout dev-system     # C 鐢?
+# 鏃ュ父锛氭敼浠ｇ爜 鈫?鎻愪氦 鈫?鎺ㄩ€?git status
 git add rtl/audio_core/phase_acc.v
-git commit -m "feat(audio): 实现 32 位相位累加器与波表寻址"
+git commit -m "feat(audio): 瀹炵幇 32 浣嶇浉浣嶇疮鍔犲櫒涓庢尝琛ㄥ鍧€"
 git push
 
-# 开始新工作前，先同步主干（避免长期偏离）
-git fetch origin
-git merge origin/main       # 或 git rebase origin/main
+# 寮€濮嬫柊宸ヤ綔鍓嶏紝鍏堝悓姝ヤ富骞诧紙閬垮厤闀挎湡鍋忕锛?git fetch origin
+git merge origin/main       # 鎴?git rebase origin/main
 
-# 功能做完 → 发 Pull Request 合并到 main
-gh pr create --base main --head dev-audio --title "stage1: 单音 DDS 通路" --body "见 testbench 结果"
+# 鍔熻兘鍋氬畬 鈫?鍙?Pull Request 鍚堝苟鍒?main
+gh pr create --base main --head dev-audio --title "stage1: 鍗曢煶 DDS 閫氳矾" --body "瑙?testbench 缁撴灉"
 ```
 
-完整规则（分支命名、提交信息规范、PR 检查单、冲突处理、阶段标签）见
-[`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md)。
-
+瀹屾暣瑙勫垯锛堝垎鏀懡鍚嶃€佹彁浜や俊鎭鑼冦€丳R 妫€鏌ュ崟銆佸啿绐佸鐞嗐€侀樁娈垫爣绛撅級瑙?[`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md)銆?
 ---
 
-## 五、阶段与 Git 标签
+## 浜斻€侀樁娈典笌 Git 鏍囩
 
-| 阶段 | 目标 | 通过后打的标签 |
+| 闃舵 | 鐩爣 | 閫氳繃鍚庢墦鐨勬爣绛?|
 |---|---|---|
-| **阶段 0** | 三个独立工程可打开、三个 testbench 可运行、接口冻结 | `stage0-freeze` |
-| **阶段 1** | 三条独立最小链路（单音合成 / 键盘输入 / I2S 出声） | `stage1-minimal` |
-| **阶段 2** | 基础可提交版本：≥4 复音、2 维交互、≤10 ms | `stage2-baseline` |
-| **阶段 3** | 冲奖扩展：32 振荡器、3 维表情、音色、音效、≤5 ms | `stage3-award` |
-| **阶段 4** | 成品化与比赛现场冻结 | `stage4-final` |
+| **闃舵 0** | 涓変釜鐙珛宸ョ▼鍙墦寮€銆佷笁涓?testbench 鍙繍琛屻€佹帴鍙ｅ喕缁?| `stage0-freeze` |
+| **闃舵 1** | 涓夋潯鐙珛鏈€灏忛摼璺紙鍗曢煶鍚堟垚 / 閿洏杈撳叆 / I2S 鍑哄０锛?| `stage1-minimal` |
+| **闃舵 2** | 鍩虹鍙彁浜ょ増鏈細鈮? 澶嶉煶銆? 缁翠氦浜掋€佲墹10 ms | `stage2-baseline` |
+| **闃舵 3** | 鍐插鎵╁睍锛?2 鎸崱鍣ㄣ€? 缁磋〃鎯呫€侀煶鑹层€侀煶鏁堛€佲墹5 ms | `stage3-award` |
+| **闃舵 4** | 鎴愬搧鍖栦笌姣旇禌鐜板満鍐荤粨 | `stage4-final` |
 
-**`stage2-baseline` 是保底线。** 冲奖开发一旦破坏它，立即回退到该标签版本，删掉风险最高的功能。
-
+**`stage2-baseline` 鏄繚搴曠嚎銆?* 鍐插寮€鍙戜竴鏃︾牬鍧忓畠锛岀珛鍗冲洖閫€鍒拌鏍囩鐗堟湰锛屽垹鎺夐闄╂渶楂樼殑鍔熻兘銆?
 ---
 
-## 六、当前状态
-
-- [x] 官方赛题与宣讲材料归档
-- [x] 团队总计划书与三份个人任务书归档
-- [x] 硬件采购清单归档
-- [x] 平台与器件信息核实（Tang Mega 138K）
-- [x] 仓库骨架 + 接口文件冻结草案
-- [ ] **阶段 0**：三个 Gowin 工程建立、三个 testbench 跑通、接口正式冻结
-- [ ] **阶段 1**：单音 DAC 出声
-- [ ] **阶段 2**：基础可提交版本
-
-阶段 0 的验收清单见 [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 最后一节。
-
+## 鍏€佸綋鍓嶇姸鎬?
+- [x] 瀹樻柟璧涢涓庡璁叉潗鏂欏綊妗?- [x] 鍥㈤槦鎬昏鍒掍功涓庝笁浠戒釜浜轰换鍔′功褰掓。
+- [x] 纭欢閲囪喘娓呭崟褰掓。
+- [x] 骞冲彴涓庡櫒浠朵俊鎭牳瀹烇紙Tang Mega 138K锛?- [x] 浠撳簱楠ㄦ灦 + 鎺ュ彛鏂囦欢鍐荤粨鑽夋
+- [ ] **闃舵 0**锛氫笁涓?Gowin 宸ョ▼寤虹珛銆佷笁涓?testbench 璺戦€氥€佹帴鍙ｆ寮忓喕缁?- [ ] **闃舵 1**锛氬崟闊?DAC 鍑哄０
+- [ ] **闃舵 2**锛氬熀纭€鍙彁浜ょ増鏈?
+闃舵 0 鐨勯獙鏀舵竻鍗曡 [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 鏈€鍚庝竴鑺傘€?
 ---
 
-## 七、免责与合规
+## 涓冦€佸厤璐ｄ笌鍚堣
 
-- 所有输出音频均由 FPGA 依据实时演奏指令逐音、逐样本生成；**严禁**播放预录 PCM、预置推流或整段录音触发。
-- 外接 GPIO **只允许 3.3 V 电平**；任何 5 V 输出必须分压或电平转换后才能接入 FPGA。
-- 功放为 BTL 差分输出，扬声器负端**不得接地**，左右声道负端不得互连。
+- 鎵€鏈夎緭鍑洪煶棰戝潎鐢?FPGA 渚濇嵁瀹炴椂婕斿鎸囦护閫愰煶銆侀€愭牱鏈敓鎴愶紱**涓ョ**鎾斁棰勫綍 PCM銆侀缃帹娴佹垨鏁存褰曢煶瑙﹀彂銆?- 澶栨帴 GPIO **鍙厑璁?3.3 V 鐢靛钩**锛涗换浣?5 V 杈撳嚭蹇呴』鍒嗗帇鎴栫數骞宠浆鎹㈠悗鎵嶈兘鎺ュ叆 FPGA銆?- 鍔熸斁涓?BTL 宸垎杈撳嚭锛屾壃澹板櫒璐熺**涓嶅緱鎺ュ湴**锛屽乏鍙冲０閬撹礋绔笉寰椾簰杩炪€?
