@@ -28,6 +28,9 @@ module tone_src #(
     output reg  signed [23:0]        sample_r
 );
 
+    // 24 位输出相对 16 位波表的低位填充数
+    localparam integer PAD = 24 - ROM_DATA_W;
+
     reg  [PHASE_W-1:0] phase;
     wire [ROM_ADDR_W-1:0] rom_addr = phase[PHASE_W-1 -: ROM_ADDR_W];
     wire signed [ROM_DATA_W-1:0] rom_data;
@@ -49,8 +52,8 @@ module tone_src #(
             // 推进相位
             phase <= phase + PHASE_INC[PHASE_W-1:0];
             // 16bit -> 24bit：左移 8 位（等比例放大，不引入额外量化）
-            sample_l <= {{8{rom_data[ROM_DATA_W-1]}}, rom_data};
-            sample_r <= {{8{rom_data[ROM_DATA_W-1]}}, rom_data};
+            sample_l <= {{PAD{rom_data[ROM_DATA_W-1]}}, rom_data} << PAD;
+            sample_r <= {{PAD{rom_data[ROM_DATA_W-1]}}, rom_data} << PAD;
         end
     end
 
