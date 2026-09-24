@@ -11,6 +11,10 @@
 //   3) sample_l === sample_r（当前设计左右同源）
 //   4) 幅值不超过 24bit 有符号范围（由 16bit 表左移 8 位得到，天然成立，
 //      但 x/z 传播会破坏它，所以检查无 x/z）
+//   5) 【幅度断言】输出峰值必须接近满量程（>83%）。
+//      踩坑记录：曾把"左移 8 位"误写成符号扩展 {{8{sign}},rom_data}，
+//      峰值只剩满量程 0.39%（约 -48dB），本 tb v1.0 只查"在动"没查
+//      幅度，bug 过测未被发现 —— 故补此条。
 //
 // 【纪律】改完先改 TB_VERSION，确认输出里的版本号已更新再读结果。
 //=============================================================================
@@ -18,7 +22,9 @@
 
 module tb_tone_src;
 
-    localparam [255:0] TB_VERSION = "v1.0 2026-09-24 smoke test";
+    localparam [255:0] TB_VERSION = "v1.1 2026-09-24 + amplitude assertion";
+    localparam signed [23:0] FULL_SCALE  = 24'sd8388607;
+    localparam signed [23:0] PEAK_THRESH = 24'sd7000000;   // 满量程 83%
 
     reg clk_audio = 1'b0;
     reg rst_n     = 1'b0;
@@ -53,6 +59,8 @@ module tb_tone_src;
     integer ticks  = 0;
     integer changes = 0;
     reg signed [23:0] prev;
+    reg signed [23:0] peak = 24'sd0;
+    reg signed [23:0] abs_l;
 
     // 每个 sample_tick 检查一次输出
     always @(posedge clk_audio) begin
@@ -67,6 +75,8 @@ module tb_tone_src;
                 $display("  [FAIL] tick %0d: L(%0d) != R(%0d)", ticks, sample_l, sample_r);
                 errors = errors + 1;
             end
+            abs_l = (sample_l < 0) ? -sample_l : sample_l;
+            if (abs_l > peak) peak = abs_l;
             if (ticks > 1 && sample_l !== prev)
                 changes = changes + 1;
             prev = sample_l;
@@ -93,6 +103,14 @@ module tb_tone_src;
             $display("  [PASS] sample value is moving (%0d/%0d ticks changed)", changes, ticks-1);
         else begin
             $display("  [FAIL] sample value stuck (only %0d/%0d ticks changed)", changes, ticks-1);
+            errors = errors + 1;
+        end
+        if (peak > PEAK_THRESH)
+            $display("  [PASS] amplitude peak = %0d (%.1f%% of full scale)", peak,
+                     peak * 100.0 / FULL_SCALE);
+        else begin
+            $display("  [FAIL] amplitude peak = %0d, only %.1f%% of full scale (expect >%.0f%%)",
+                     peak, peak * 100.0 / FULL_SCALE, PEAK_THRESH * 100.0 / FULL_SCALE);
             errors = errors + 1;
         end
         $display("  [INFO] last sample = %0d (0x%h)", sample_l, sample_l);
