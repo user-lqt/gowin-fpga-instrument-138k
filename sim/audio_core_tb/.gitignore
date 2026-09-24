@@ -1,0 +1,6 @@
+# Questa 仿真生成物
+*.mpf
+*.cr.mti
+work/
+*.wlf
+*.vcd
