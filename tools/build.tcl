@@ -2,7 +2,7 @@
 # build.tcl —— 综合 + 布局布线 + 生成 bitstream
 #
 # 用法（Windows）：
-#   "E:\Gowin\Gowin_V1.9.12_x64\IDE\bin\gw_sh.exe" doc\build.tcl
+#   "E:\Gowin\Gowin_V1.9.12_x64\IDE\bin\gw_sh.exe" tools\build.tcl
 #
 # 注意：脚本内路径全部用绝对路径，因为 gw_sh 的工作目录是"当前目录"。
 #=============================================================================
