@@ -4,31 +4,36 @@
 // 归属：成员 C 独占维护。
 //
 // 器件信息（已核实）：
-//   DEVICE      : GW5AST-LV138PG484AC1/I0
-//   IDE 封装选择 : PBG484A
-//   DEVICE VER  : B（依据 Sipeed 官方例程 audio.cst 标头；上板前请复核丝印）
-//   核对日期     : 2026-09-21
-//   管脚依据     : sipeed/TangMega-138K-example -> audio_i2s/eda_proj/src/audio.cst
-//                  （官方 I2S 出声例程的实机约束，可信）
+//   DEVICE       : GW5AST-LV138PG484AC2/I1
+//   IDE 封装选择  : PBG484A
+//   DEVICE VER   : B
+//   核对日期      : 2026-09-24
 //
-// 端口名与本工程顶层（synth_check_top / 后续 synth_top）保持一致。
+// 管脚依据（全部来自 Sipeed 官方例程，非推测）：
+//   板载 50 MHz 晶振 V22  ：sd_card/eda_proj/src/pin.cst          -> IO_LOC "clk_50M" V22
+//                          ws2812 / pwm_fan / joycon / hdmi 例程 -> IO_LOC "clk" V22
+//   I2S 三线 + PA_EN     ：audio_i2s/eda_proj/src/audio.cst
+//   S2 复位键 F4         ：audio_i2s/eda_proj/src/audio.cst
+//   板载 LED 排           ：pmod_led/eda_proj/src/eda_proj.cst
+//
+// 仓库：https://github.com/sipeed/TangMega-138K-example
 //
 // 安全红线：外接 GPIO 只允许 3.3V；HC-SR04 的 ECHO 必须分压后接入。
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// 时钟输入（50 MHz 参考）
-// TODO: 确认板载可用时钟源与管脚后替换
+// 板载 50 MHz 晶振  ★ 已核实
+//   这是全系统唯一的时钟源：PLL 由它产生音频域 12.29167 MHz 与系统域 98.333 MHz
 //-----------------------------------------------------------------------------
-// IO_LOC  "i_clk_in"  TODO_PIN;
-// IO_PORT "i_clk_in"  IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "i_clk_in"  V22;
+IO_PORT "i_clk_in"  IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
 
 //-----------------------------------------------------------------------------
-// I2S 音频输出  ★ 来自官方例程，可直接采信
-//   o_hp_bck = 位时钟（官方例 1.536 MHz；本设计 3.072 MHz）
-//   o_hp_ws  = 声道选择（低电平 = 左声道）
+// I2S 音频输出  ★ 已核实（板载 DAC + 功放，不需要外置器件）
+//   o_hp_bck = 位时钟 3.072 MHz（= 64 x 48 kHz）
+//   o_hp_ws  = 声道选择，低电平 = 左声道
 //   o_hp_din = DAC 串行数据
-//   o_pa_en  = 板载音频功放使能（高电平有效）
+//   o_pa_en  = 板载音频功放使能，高电平有效
 //-----------------------------------------------------------------------------
 IO_LOC  "o_hp_bck"  Y17;
 IO_PORT "o_hp_bck"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
@@ -40,12 +45,21 @@ IO_LOC  "o_pa_en"   AB16;
 IO_PORT "o_pa_en"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 
 //-----------------------------------------------------------------------------
-// 复位 S2 与指示灯  ★ 来自官方例程
-//   S2 按键所在 BANK_VCCIO 为 1.5V，必须用 LVCMOS15
+// S2 复位键  ★ 已核实
+//   S2 所在 BANK 的 VCCIO 为 1.5V，必须用 LVCMOS15
 //-----------------------------------------------------------------------------
 IO_LOC  "i_rst_n"  F4;
 IO_PORT "i_rst_n"  IO_TYPE=LVCMOS15 PULL_MODE=NONE BANK_VCCIO=1.5;
 
+//-----------------------------------------------------------------------------
+// 状态指示  ★ 已核实：单颗 LED
+//
+// ⚠️ 重要教训：pmod_led 例程里那 16 个 LED 管脚（P19/R19/T21/U21/...）
+//    属于 CPU / SSPI 专用脚，默认被系统功能占用。实测报错：
+//      ERROR (PR2017): 'o_led[0]' cannot be placed ... dedicated pin (CPU/SSPI)
+//    要用它们必须先在 IDE 里关掉对应的多功能 I/O 系统功能。
+//    因此本设计先只用官方 audio 例程验证过的这颗灯。
+//-----------------------------------------------------------------------------
 IO_LOC  "o_led"    W21;
 IO_PORT "o_led"    IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 
@@ -53,8 +67,9 @@ IO_LOC  "o_locked" W22;
 IO_PORT "o_locked" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 
 //=============================================================================
-// 待办（阶段 0/1 内补齐）
-//   [ ] i_clk_in 的板载时钟源与管脚
-//   [ ] o_locked 的管脚（若板载 LED 不够用可去掉）
-//   [ ] 键盘 / 编码器 / OLED / UART 管脚（阶段 2）
+// 待办（阶段 2 补齐）
+//   [ ] 若要使用板载 16 颗 LED：需先在 IDE 的"多功能 I/O"里关掉 CPU/SSPI 系统功能
+//   [ ] 矩阵键盘 / EC11 编码器 / OLED 的可用 GPIO 排针管脚
+//   [ ] 用户按键（除 S2 外的另外两个）管脚
+//   [ ] UART 调试串口管脚
 //=============================================================================

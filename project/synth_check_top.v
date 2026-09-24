@@ -14,8 +14,8 @@ module synth_check_top (
     output wire o_hp_ws,       // 声道选择（低 = 左声道）
     output wire o_hp_din,      // 数据
     output wire o_pa_en,       // 功放使能（高有效）
-    output wire o_led,         // 心跳
-    output wire o_locked
+    output wire o_led,         // 心跳指示
+    output wire o_locked       // PLL 锁定指示
 );
 
     wire clk_audio, clk_sys, pll_locked, rst_n;
@@ -68,6 +68,6 @@ module synth_check_top (
         if (!rst_n) hb <= 24'd0;
         else        hb <= hb + 1'b1;
     end
-    assign o_led = hb[23];
+    assign o_led = hb[23];             // 心跳 ≈ 0.73 Hz
 
 endmodule
