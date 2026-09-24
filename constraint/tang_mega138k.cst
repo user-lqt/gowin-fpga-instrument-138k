@@ -1,107 +1,60 @@
 //=============================================================================
 // tang_mega138k.cst —— 物理约束（管脚分配）
 //
-// 归属：成员 C 独占维护。A/B 不得修改。
+// 归属：成员 C 独占维护。
 //
 // 器件信息（已核实）：
-//   DEVICE        : GW5AST-LV138PG484AC1/I0
-//   IDE 封装选择   : PBG484A
-//   DEVICE VER    : B（Sipeed 官方例程 audio.cst 标头为 "Device Version: B"）
-//                   上板前请用实物丝印复核；若为 C 版请改这里并重新综合。
-//   核对日期       : 2026-09-21
-//   依据           : sipeed/TangMega-138K-example → audio_i2s/eda_proj/src/audio.cst
-//                   （官方 I2S 出声例程的约束文件，管脚可直接采信）
+//   DEVICE      : GW5AST-LV138PG484AC1/I0
+//   IDE 封装选择 : PBG484A
+//   DEVICE VER  : B（依据 Sipeed 官方例程 audio.cst 标头；上板前请复核丝印）
+//   核对日期     : 2026-09-21
+//   管脚依据     : sipeed/TangMega-138K-example -> audio_i2s/eda_proj/src/audio.cst
+//                  （官方 I2S 出声例程的实机约束，可信）
 //
-// 本文件已完成部分：I2S 音频输出三线 + 音频功放使能 + 复位键 + LED
-// 本文件未完成部分：键盘 / 编码器 / OLED / UART —— 见文件末尾待办
+// 端口名与本工程顶层（synth_check_top / 后续 synth_top）保持一致。
 //
 // 安全红线：外接 GPIO 只允许 3.3V；HC-SR04 的 ECHO 必须分压后接入。
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// I2S 音频输出  ★ 已核实 —— 来自 Sipeed 官方例程的实机约束
-//
-//   信号命名沿用官方约束，避免与硬件原理图脱节：
-//     HP_BCK  = 位时钟（官方例用 1.536 MHz；本设计用 3.072 MHz 以支持 24bit）
-//     HP_WS   = 声道选择（低电平 = 左声道）
-//     HP_DIN  = DAC 串行数据
-//     PA_EN   = 板载音频功放使能（高电平有效）
-//
-//   ★ 结论：板载 DAC + 功放已完整存在，无需外置 PCM5102A / PAM8403
+// 时钟输入（50 MHz 参考）
+// TODO: 确认板载可用时钟源与管脚后替换
 //-----------------------------------------------------------------------------
-IO_LOC  "HP_BCK"  Y17;
-IO_PORT "HP_BCK"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
-IO_LOC  "HP_WS"   AB17;
-IO_PORT "HP_WS"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
-IO_LOC  "HP_DIN"  AA16;
-IO_PORT "HP_DIN"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
-IO_LOC  "PA_EN"   AB16;
-IO_PORT "PA_EN"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+// IO_LOC  "i_clk_in"  TODO_PIN;
+// IO_PORT "i_clk_in"  IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
 //-----------------------------------------------------------------------------
-// 复位与指示灯  ★ 已核实
+// I2S 音频输出  ★ 来自官方例程，可直接采信
+//   o_hp_bck = 位时钟（官方例 1.536 MHz；本设计 3.072 MHz）
+//   o_hp_ws  = 声道选择（低电平 = 左声道）
+//   o_hp_din = DAC 串行数据
+//   o_pa_en  = 板载音频功放使能（高电平有效）
 //-----------------------------------------------------------------------------
-// S2 按键作复位。注意：此管脚的 BANK_VCCIO 为 1.5V，官方用 LVCMOS15
-IO_LOC  "rst_ext" F4;
-IO_PORT "rst_ext" IO_TYPE=LVCMOS15 PULL_MODE=NONE BANK_VCCIO=1.5;
-
-IO_LOC  "led" W21;
-IO_PORT "led" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
-
-//=============================================================================
-// 以下为尚未核实的管脚 —— 阶段 0 内必须由 C 查原理图/手册后补齐
-// 补齐前不要把对应信号接进 synth_top，否则综合会报无约束管脚
-//=============================================================================
-
-//-----------------------------------------------------------------------------
-// 时钟输入（TODO：确认板载晶振频率与管脚）
-//   官方例程使用 Gowin_OSC 内部振荡器，未用外部晶振；若要精确 12.288 MHz，
-//   建议改用外部晶振 + PLL，需先确认晶振频率与管脚。
-//-----------------------------------------------------------------------------
-// IO_LOC  "clk_in" TODO_PIN;
-// IO_PORT "clk_in" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "o_hp_bck"  Y17;
+IO_PORT "o_hp_bck"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_hp_ws"   AB17;
+IO_PORT "o_hp_ws"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_hp_din"  AA16;
+IO_PORT "o_hp_din"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_pa_en"   AB16;
+IO_PORT "o_pa_en"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 
 //-----------------------------------------------------------------------------
-// 矩阵键盘（4x4 × 2）—— 成员 B 使用
-//   行输出：FPGA 驱动；列输入：内部上拉 + 10k 外部上拉至 3.3V
+// 复位 S2 与指示灯  ★ 来自官方例程
+//   S2 按键所在 BANK_VCCIO 为 1.5V，必须用 LVCMOS15
 //-----------------------------------------------------------------------------
-// IO_LOC  "kb_row[3:0]" TODO_PIN_BASE;
-// IO_PORT "kb_row[3:0]" IO_TYPE=LVCMOS33 DRIVE=4;
-// IO_LOC  "kb_col[7:0]" TODO_PIN_BASE;
-// IO_PORT "kb_col[7:0]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "i_rst_n"  F4;
+IO_PORT "i_rst_n"  IO_TYPE=LVCMOS15 PULL_MODE=NONE BANK_VCCIO=1.5;
 
-//-----------------------------------------------------------------------------
-// EC11 旋转编码器 —— 成员 B 使用
-//-----------------------------------------------------------------------------
-// IO_LOC  "enc_a"   TODO_PIN;
-// IO_LOC  "enc_b"   TODO_PIN;
-// IO_LOC  "enc_btn" TODO_PIN;
-// IO_PORT "enc_a"   IO_TYPE=LVCMOS33 PULL_MODE=UP;
-// IO_PORT "enc_b"   IO_TYPE=LVCMOS33 PULL_MODE=UP;
-// IO_PORT "enc_btn" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "o_led"    W21;
+IO_PORT "o_led"    IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 
-//-----------------------------------------------------------------------------
-// OLED SSD1306 (I2C, 3.3V, 四针版) —— 低级 I2C 时序由 C 维护
-//-----------------------------------------------------------------------------
-// IO_LOC  "oled_scl" TODO_PIN;
-// IO_LOC  "oled_sda" TODO_PIN;
-// IO_PORT "oled_scl" IO_TYPE=LVCMOS33 DRIVE=8 OPENDRAIN=ON;
-// IO_PORT "oled_sda" IO_TYPE=LVCMOS33 DRIVE=8 OPENDRAIN=ON;
-
-//-----------------------------------------------------------------------------
-// 调试串口（可走板载 USB JTAG&UART）
-//-----------------------------------------------------------------------------
-// IO_LOC  "uart_tx" TODO_PIN;
-// IO_LOC  "uart_rx" TODO_PIN;
-// IO_PORT "uart_tx" IO_TYPE=LVCMOS33 DRIVE=8;
-// IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "o_locked" W22;
+IO_PORT "o_locked" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 
 //=============================================================================
-// 待办清单（阶段 0 内必须全部完成）
-//   [x] I2S 三线 + PA_EN + 复位 + LED 管脚
-//   [ ] 板载晶振频率与管脚
-//   [ ] 键盘 / 编码器 / OLED / UART 管脚
-//   [ ] 实物器件版本丝印复核（B 或 C）
-//   [ ] 上述信号与 synth_top.v 端口名逐一对齐
-//   [ ] 全部 IO_TYPE 与板上实际电平一致（只允许 3.3V）
+// 待办（阶段 0/1 内补齐）
+//   [ ] i_clk_in 的板载时钟源与管脚
+//   [ ] o_locked 的管脚（若板载 LED 不够用可去掉）
+//   [ ] 键盘 / 编码器 / OLED / UART 管脚（阶段 2）
 //=============================================================================

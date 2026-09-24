@@ -3,55 +3,38 @@
 //
 // 归属：成员 C 独占维护。
 //
-// 阶段 0 先用最小约束保证综合跑通；阶段 1 之后按需补 I/O 约束。
-// 音频域（clk_fs = 12.288 MHz）与系统域（clk_fsys = 100 MHz）同源，
-// 但频率比很大，建议在 PLL 输出端分别声明周期约束。
+// 时钟结构（见 rtl/system/clock_gen.v）：
+//   i_clk_in  50 MHz 输入参考
+//   clk_audio 12.29167 MHz 音频域（PLL CLKOUT0）
+//   clk_sys   98.333 MHz 系统域（PLL CLKOUT1）
+//
+// 注意：PLL 的输出由综合/布局布线工具自动推导，一般不需要手工
+//       create_clock；这里只约束输入参考时钟和异步输入。
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// 1. 输入时钟（按实物晶振频率修改）
-//    来源：TODO —— Sipeed 原理图确认板载晶振频率
+// 1. 输入参考时钟
+//    周期 20 ns = 50 MHz。若最终换成别的频率，这里必须同步修改。
 //-----------------------------------------------------------------------------
-create_clock -name clk_in -period 20.000 [get_ports {clk_50m}]
+create_clock -name clk_in -period 20.000 [get_ports {i_clk_in}]
 
 //-----------------------------------------------------------------------------
-// 2. PLL 输出时钟（频率按实际 PLL 配置修改）
-//    clk_fsys : 100 MHz  系统 / 控制 / UART / 键盘扫描
-//    clk_fs   : 12.288 MHz 音频采样域（48 kHz x 256）
+// 2. 异步输入：已做双触发器同步，声明为 false path
+//    S2 复位键相对时钟是异步的
 //-----------------------------------------------------------------------------
-create_clock -name clk_fsys -period 10.000 [get_pins {u_clock_gen/u_pll/CLKOUT0}]
-create_clock -name clk_fs   -period 81.380 [get_pins {u_clock_gen/u_pll/CLKOUT1}]
+set_false_path -from [get_ports {i_rst_n}]
 
 //-----------------------------------------------------------------------------
-// 3. 派生时钟：I2S 位时钟由 clk_fs 分频产生，不是独立时钟源
-//    （BCK = clk_fs / 4 = 3.072 MHz，用时钟使能而非门控时钟实现）
+// 3. 输出：I2S 三线为低频数字输出，给宽松的输出延迟约束
+//    音频域周期 81.38 ns（12.29167 MHz），bck 是它的 1/4
 //-----------------------------------------------------------------------------
-// 不使用 create_generated_clock；请在 RTL 中用 clk_fs + clock_enable 实现。
+set_output_delay -clock clk_in -max 20.000 [get_ports {o_hp_bck o_hp_ws o_hp_din o_pa_en}]
+
+// 指示灯是低速信号，不需要时序约束
+set_false_path -to [get_ports {o_led o_locked}]
 
 //-----------------------------------------------------------------------------
-// 4. 异步输入：已做双触发器同步，声明为 false path
-//    编码器、按键、外部传感器均属此类
-//-----------------------------------------------------------------------------
-set_false_path -from [get_ports {key[*]}]
-set_false_path -from [get_ports {enc_a enc_b enc_btn}]
-set_false_path -from [get_ports {kb_col[*]}]
-set_false_path -from [get_ports {uart_rx}]
-
-//-----------------------------------------------------------------------------
-// 5. 输出延迟（阶段 1 之后按需细化，先用宽松值）
-//-----------------------------------------------------------------------------
-set_output_delay -clock clk_fs -max 20.000 [get_ports {i2s_bck i2s_lrck i2s_data}]
-set_output_delay -clock clk_fs -min -1.000 [get_ports {i2s_bck i2s_lrck i2s_data}]
-
-// 低速输出不需要严格约束
-set_false_path -to [get_ports {led[*]}]
-set_false_path -to [get_ports {oled_scl oled_sda}]
-set_false_path -to [get_ports {uart_tx}]
-
-//-----------------------------------------------------------------------------
-// 6. 待办清单
-//   [ ] 板载晶振实际频率确认
-//   [ ] PLL 实例名与端口名与 rtl/system/clock_gen.v 对齐
-//   [ ] 综合后检查 WNS >= 0；不满足时优先拆流水线，而不是降频
-//   [ ] 阶段 1 完成后补充 I2S 精确输出延迟约束
+// 待办
+//   [ ] 阶段 1 起按实际 PLL 输出补 create_clock（若工具未自动推导）
+//   [ ] 综合/布线后检查 WNS >= 0，不满足时先拆流水线而不是降频
 //-----------------------------------------------------------------------------
