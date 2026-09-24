@@ -20,24 +20,32 @@
 //   （rPLL 是 GW1N/GW2A 系列的原语。）
 //   已实测：实例化 rPLL 会报 "Instantiating unknown module 'rPLL'"。
 //
-//     PLL 分频模型：
-//       f_VCO   = FCLKIN / (IDIV_SEL+1) * (FBDIV_SEL+1) * (MDIV_SEL+1)
-//       f_CLKOUTn = f_VCO / ODIVn_SEL          (ODIVn_SEL 取值 1..128)
+//     PLL 分频模型（UG306 Arora V 时钟资源指南，表 5-4/5-8 核实）：
+//       Fpfd      = FCLKIN / IDIV
+//       f_VCO     = Fpfd * FBDIV * MDIV      （CLKFBOUT 外部反馈）
+//       f_CLKOUTn = f_VCO / ODIVn
+//       ★ 分频参数静态值 = 实际分频值（无 +1 语义）
+//       ★ GW5AST-138K 约束：VCO 650~1300 MHz（UG306 §2.3）；
+//         PFD = FCLKIN/IDIV 必须 19~81.25 MHz（PA2078 报错实测）
 //
 // ---------------------------------------------------------------------------
-// !! 已知频率偏差（阶段 1 上板实测确认）!!
+// 当前参数（2026-09-24 修正，经时序报告 Generated Clock 推导验证）：
 //
-//   50 MHz, IDIV=1(硬件1), FBDIV=1(硬件1), MDIV=59(硬件59), ODIV0=80
-//     -> 12.29167 MHz
-//   实际 LRCK = 12,291,667 / 256 = 48,014.9 Hz（偏离 +0.031%，约 +0.5 音分）
+//   IDIV=2, FBDIV=1, MDIV=29 -> VCO = 50/2*29 = 725 MHz（650~1300 内 ✓）
+//   ODIV0=59 -> CLKOUT0 = 12.28814 MHz（音频域）
+//   ODIV1=7  -> CLKOUT1 = 103.571  MHz（系统域，阶段 2 用）
+//   实际 LRCK = 12,288,136 / 256 = 48,000.5 Hz（偏离 +0.0011%，约 +0.02 音分，
+//   远优于人耳可辨阈值 5~10 音分 —— 基本等于精确 48 kHz）
 //
-// 12.288 MHz 需要 12.288/50 的比值，而整数分频永远凑不出这个比值。
-// 好消息：+0.031% 对音准的影响远小于人耳可辨阈值（5~10 音分），可用。
+// 【踩坑记录 1】曾写成 IDIV_SEL=0 且 defparam 漏传 IDIV_SEL/FBDIV_SEL：
+//   IDIV 按默认 ÷1，VCO = 50*59 = 2950 MHz 远超范围（硬件上不锁定），
+//   工具推导输出 36.875 MHz，LRCK 会快 3 倍。
+// 【踩坑记录 2】改 IDIV=3 后 PFD = 16.67 MHz < 19 MHz，报 PA2078。
+//   教训：PLL 频率必须看时序报告 Clock Summary 的 Generated Clock
+//   推导值，不能只看注释；参数空间要同时满足 VCO 与 PFD 两个范围。
 //
-// 要完全精确，三条路（阶段 2 处理）：
-//   A) 焊 12.288 MHz 有源晶振 -> IDIV=1,FBDIV=1,MDIV=1,ODIV0=2
-//   B) 用板载 MS5351 可编程时钟发生器输出 12.288 MHz（需 UART 配置，最优雅）
-//   C) 换 24.576 MHz 晶振 -> MDIV=1, ODIV0=2
+// 备注：精确 12.288 MHz 在 PFD≥19MHz 约束下凑不出整数比，12.288136 MHz
+// 已是全参数空间最优解（脚本穷举 IDIV/FBDIV/MDIV/ODIV0 验证）。
 //=============================================================================
 module clock_gen #(
     // 参考时钟频率（仅用于 PLL 工具计算与告警，不改变分频）
@@ -46,12 +54,12 @@ module clock_gen #(
     parameter USE_INTERNAL_OSC = 0,
     // 内部 OSC 分频：2..128 的偶数
     parameter OSC_FREQ_DIV = 4,
-    // PLL 分频参数（写入硬件时 = 参数值 + 1，除非另有说明）
-    parameter IDIV_SEL  = 6'd0,     // 0 = 不分频
-    parameter FBDIV_SEL = 6'd1,     // 1 = 硬件 1
-    parameter MDIV_SEL  = 7'd59,    // 直接填硬件值
-    parameter ODIV0_SEL = 7'd80,    // 12.29167 MHz
-    parameter ODIV1_SEL = 7'd10     // 98.333 MHz（系统域）
+    // PLL 分频参数（静态值 = 实际分频值，UG306 表 5-4/5-8）
+    parameter IDIV_SEL  = 6'd2,     // ÷2：Fpfd = 25 MHz（19~81.25 内 ✓）
+    parameter FBDIV_SEL = 6'd1,     // ×1
+    parameter MDIV_SEL  = 7'd29,    // ×29：VCO = 725 MHz
+    parameter ODIV0_SEL = 7'd59,    // ÷59：12.28814 MHz 音频域
+    parameter ODIV1_SEL = 7'd7      // ÷7：103.571 MHz 系统域
 ) (
     input  wire i_clk_in,
     input  wire i_rst_n,
@@ -135,7 +143,9 @@ module clock_gen #(
 
     defparam pll_inst.FCLKIN         = FCLKIN;
     defparam pll_inst.DYN_IDIV_SEL   = "FALSE";
+    defparam pll_inst.IDIV_SEL       = IDIV_SEL;   // ← 曾整行缺失，IDIV 一直按默认 ÷1
     defparam pll_inst.DYN_FBDIV_SEL  = "FALSE";
+    defparam pll_inst.FBDIV_SEL      = FBDIV_SEL;  // ← 同上，补上
     defparam pll_inst.DYN_MDIV_SEL   = "FALSE";
     defparam pll_inst.MDIV_SEL       = MDIV_SEL;
     defparam pll_inst.MDIV_FRAC_SEL  = 3'd0;

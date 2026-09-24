@@ -23,9 +23,9 @@
 //   要得到 BCK = 64 x LRCK（每声道 32bit slot，支持 24bit 音频）：
 //       CLK_DIV_SAMPLE / CLK_DIV_BCK = 64
 //       硬件：CLK_DIV_SAMPLE = 256 -> CLK_DIV_BCK = 2
-//         clk_audio = 12.29167 MHz
-//         bck       = 12.29167 / 4 = 3.0729 MHz   （= 64 x LRCK，目标 3.072 MHz）
-//         LRCK      = 12.29167 / 256 = 48.015 kHz
+//         clk_audio = 12.28814 MHz
+//         bck       = 12.28814 / 4 = 3.07203 MHz  （= 64 x LRCK，目标 3.072 MHz）
+//         LRCK      = 12.28814 / 256 = 48.0005 kHz
 //
 // 【修订记录】
 //   v1  CLK_DIV_BCK 默认写成 4，导致 bck = clk_audio/8、每 sample 只有 32 个

@@ -4,7 +4,7 @@
 // 归属：成员 C 独占维护。
 //
 // 当前阶段（1）的信号链：
-//   50MHz 晶振 ─► PLL ─► clk_audio 12.29167MHz
+//   50MHz 晶振 ─► PLL ─► clk_audio 12.28814MHz
 //                            │
 //                            ├─ sample_scheduler ─► sample_tick(48kHz) / bck_en
 //                            │        │
@@ -44,9 +44,10 @@ module synth_top (
     clock_gen #(
         .FCLKIN           ("50.0"),
         .USE_INTERNAL_OSC (0),
-        .MDIV_SEL         (7'd59),      // 详见 clock_gen.v 头的分频推导
-        .ODIV0_SEL        (7'd80),      // -> 12.29167 MHz 音频域
-        .ODIV1_SEL        (7'd10)       // -> 98.333 MHz 系统域
+        .IDIV_SEL         (6'd2),       // ÷2：Fpfd = 25 MHz（19~81.25 合法）
+        .MDIV_SEL         (7'd29),      // VCO = 50/2*29 = 725 MHz（650~1300 合法）
+        .ODIV0_SEL        (7'd59),      // -> 12.28814 MHz 音频域（LRCK=48.0005k）
+        .ODIV1_SEL        (7'd7)        // -> 103.571 MHz 系统域
     ) u_clock_gen (
         .i_clk_in     (i_clk_in),
         .i_rst_n      (i_rst_n),
@@ -68,7 +69,7 @@ module synth_top (
 
     sample_scheduler #(
         .CLK_DIV_BCK    (2),            // BCK = clk_audio/4 = 3.072 MHz
-        .CLK_DIV_SAMPLE (256)           // LRCK = clk_audio/256 = 48.015 kHz
+        .CLK_DIV_SAMPLE (256)           // LRCK = clk_audio/256 = 48.0005 kHz
     ) u_scheduler (
         .clk_audio   (clk_audio),
         .rst_n       (rst_n),

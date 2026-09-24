@@ -23,11 +23,11 @@ module synth_check_top (
     clock_gen #(
         .FCLKIN           ("50.0"),
         .USE_INTERNAL_OSC (0),
-        .IDIV_SEL         (6'd0),       // 硬件 1
-        .FBDIV_SEL        (6'd0),       // 硬件 1
-        .MDIV_SEL         (7'd58),      // 硬件 59  -> VCO 983.333 MHz
-        .ODIV0_SEL        (7'd80),      // 硬件 80  -> 12.29167 MHz
-        .ODIV1_SEL        (7'd10)       // 硬件 10  -> 98.333 MHz
+        .IDIV_SEL         (6'd2),       // ÷2：Fpfd = 25 MHz
+        .FBDIV_SEL        (6'd1),       // ×1
+        .MDIV_SEL         (7'd29),      // VCO = 725 MHz -> 12.28814 MHz
+        .ODIV0_SEL        (7'd59),      // 12.28814 MHz 音频域
+        .ODIV1_SEL        (7'd7)        // 103.571 MHz 系统域
     ) u_clock_gen (
         .i_clk_in     (i_clk_in),
         .i_rst_n      (i_rst_n),

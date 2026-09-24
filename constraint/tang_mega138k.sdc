@@ -5,8 +5,8 @@
 //
 // 时钟结构（见 rtl/system/clock_gen.v）：
 //   i_clk_in  50 MHz 输入参考   （板载晶振，管脚 V22）
-//   clk_audio 12.29167 MHz 音频域（PLL CLKOUT0）
-//   clk_sys   98.333 MHz 系统域 （PLL CLKOUT1）
+//   clk_audio 12.28814 MHz 音频域（PLL CLKOUT0）
+//   clk_sys   103.571 MHz 系统域（PLL CLKOUT1）
 //
 // PLL 输出时钟由工具从原语自动推导，一般不需要手工 create_clock。
 // 这里约束输入参考时钟与异步输入。

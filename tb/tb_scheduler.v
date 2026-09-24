@@ -174,9 +174,9 @@ module tb_scheduler;
         //============ 频率换算 =============
         $display("");
         $display("-- frequency figures (design calculation) --");
-        $display("  [INFO] clk_audio = 12.29167 MHz");
-        $display("  [INFO] LRCK = clk_audio / %0d = 48.0149 kHz", HW_SAMPLE);
-        $display("  [INFO] BCK  = clk_audio / %0d =  3.0729 MHz", 2 * HW_BCK);
+        $display("  [INFO] clk_audio = 12.28814 MHz");
+        $display("  [INFO] LRCK = clk_audio / %0d = 48.0005 kHz", HW_SAMPLE);
+        $display("  [INFO] BCK  = clk_audio / %0d =  3.07203 MHz", 2 * HW_BCK);
         $display("  [INFO] these are DESIGN values; measure on board to confirm");
 
         $display("");

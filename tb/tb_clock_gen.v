@@ -24,19 +24,22 @@ module tb_clock_gen;
 
     //------------------------------------------------------------
     // 行为模型参数（硬件值；仿真把周期放大 SCALE 倍，比值不变）
+    //   公式与 UG306 一致：f_out = FCLKIN/IDIV * FBDIV * MDIV / ODIV
     //------------------------------------------------------------
     localparam integer SCALE = 40;
-    localparam integer MDIV  = 59;
-    localparam integer ODIV0 = 80;
-    localparam integer ODIV1 = 10;
+    localparam integer IDIV  = 2;
+    localparam integer FBDIV = 1;
+    localparam integer MDIV  = 29;
+    localparam integer ODIV0 = 59;
+    localparam integer ODIV1 = 7;
 
     localparam integer CLK_DIV_BCK    = 2;
     localparam integer CLK_DIV_SAMPLE = 256;
 
     // 用 real 常量，避免整数截断
-    localparam real T_REF      = 40.0 * SCALE;                 // 1600.0 ns
-    localparam real T_CLKOUT0  = T_REF * ODIV0 / MDIV;         // 2169.4915 ns
-    localparam real T_CLKOUT1  = T_REF * ODIV1 / MDIV;         // 271.1864 ns
+    localparam real T_REF      = 40.0 * SCALE;                          // 1600.0 ns
+    localparam real T_CLKOUT0  = T_REF * IDIV * ODIV0 / (FBDIV * MDIV); // 6517.2414 ns
+    localparam real T_CLKOUT1  = T_REF * IDIV * ODIV1 / (FBDIV * MDIV); //  772.4138 ns
 
     // 测量窗口：必须明显大于一个 LRCK 周期（此处约 5 个 LRCK）
     localparam integer WIN = 10_000_000;    // 10 ms 模型时间
@@ -203,11 +206,11 @@ module tb_clock_gen;
 
         $display("");
         $display("-- hardware figures (design calculation) --");
-        $display("  [INFO] clk_audio = 50MHz * 59 / 80       = 12.29167 MHz");
-        $display("  [INFO] LRCK      = clk_audio / 256       = 48.0149 kHz -> 20826.9 ns");
-        $display("  [INFO] BCK       = clk_audio / 4         =  3.0729 MHz ->  325.42 ns");
+        $display("  [INFO] clk_audio = 50MHz/2 * 1 * 29 / 59 = 12.28814 MHz");
+        $display("  [INFO] LRCK      = clk_audio / 256       = 48.0005 kHz -> 20833.1 ns");
+        $display("  [INFO] BCK       = clk_audio / 4         =  3.07203 MHz -> 325.52 ns");
         $display("  [INFO] BCK / LRCK = 64   (32bit slot x 2ch, supports 24bit audio)");
-        $display("  [INFO] +0.031%% off the ideal 48.000 kHz  (= +0.5 cent)");
+        $display("  [INFO] +0.0011%% off the ideal 48.000 kHz  (= +0.02 cent)");
         $display("  [INFO] design values only; real frequency MUST be measured");
         $display("  [INFO] on board with a scope / logic analyser.");
 
