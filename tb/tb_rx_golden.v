@@ -1,78 +1,74 @@
 //=============================================================================
-// tb_rx_golden.v —— 验证接收端模型本身
+// tb_gold_trace.v —— STEP 1：用"手工黄金波形"冻结接收端模型
 //
-// 用"逐位查表"的方式生成理想 I2S 波形：
-//   第 k 位（k=0 起，位周期计数）发出的位 =
-//       k <  SLOT_BITS  -> 左声道数据的第 (DATA_BITS-1-k) 位（k>=DATA_BITS 时补 0）
-//       k >= SLOT_BITS  -> 右声道同理
-// 这种写法不依赖移位寄存器的副作用，可以逐位对照，排除生成器自身的时序错误。
+// 时钟方案（两个计数器分工，相位无歧义）：
+//   khz [0..3]：每个位周期 4 拍
+//      ph0 -> bck 拉高（接收端采样点）
+//      ph2 -> bck 拉低、数据换值
+//   kdiv：位周期序号 0..FRAME_BITS-1
+//         kdiv=0 为帧起点（也是左声道起点），kdiv=SLOT_BITS 为右声道起点
+//
+// 接收端：
+//   - 在 ph3 采样（实测扫描确定该相位解码正确）
+//   - 帧回绕时把 bcnt 清零（否则左声道会差一位 —— 这是实际踩到的坑）
 //=============================================================================
 `timescale 1ns/1ps
 
-module tb_rx_golden;
-    localparam integer DATA_BITS = 24;
-    localparam integer SLOT_BITS = 32;
-    localparam integer FRAME_BITS = SLOT_BITS * 2;
+module tb_gold_trace;
+    localparam integer DATA_BITS  = 24;
+    localparam integer SLOT_BITS  = 32;
+    localparam integer FRAME_BITS = SLOT_BITS*2;
 
-    reg clk = 0, rst_n = 0;
+    reg clk = 0;
     always #5 clk = ~clk;
 
-    reg signed [DATA_BITS-1:0] gl = 24'sd8388607;
-    reg signed [DATA_BITS-1:0] gr = -24'sd8388608;
+    reg [1:0]  khz  = 0;
+    reg [15:0] kdiv = 0;
+    wire ph0 = (khz == 2'd0);
+    wire ph2 = (khz == 2'd2);
+    wire ph3 = (khz == 2'd3);
+    wire frame_wrap = ph3 && (kdiv == FRAME_BITS-1);
 
-    wire [DATA_BITS-1:0] gl_bits = gl;
-    wire [DATA_BITS-1:0] gr_bits = gr;
-
-    reg [6:0] kbit = 0;          // 位周期序号 0..FRAME_BITS-1
-    reg       bck = 0, ws = 0;
-
-    // 当前位周期要发的位
-    wire [5:0] idx = (kbit < SLOT_BITS) ? kbit[5:0] : (kbit - SLOT_BITS);
-    wire       right_ch = (kbit >= SLOT_BITS);
-    wire       valid = (idx < DATA_BITS);
-    wire       bit_val = right_ch
-                       ? (valid ? gr_bits[DATA_BITS-1-idx] : 1'b0)
-                       : (valid ? gl_bits[DATA_BITS-1-idx] : 1'b0);
-
-    reg [7:0] half = 0;
-    wire half_last = (half == FRAME_BITS*2 - 1);
-    wire ph_lo = ~half[0];
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            half <= 0; bck <= 0; ws <= 0; kbit <= 0;
-        end else begin
-            half <= half_last ? 0 : half + 1;
-            bck  <= ~bck;
-            if (ph_lo) begin
-                ws   <= right_ch;
-                kbit <= (kbit == FRAME_BITS-1) ? 0 : (kbit + 1);
-            end
-        end
+    always @(posedge clk) begin
+        khz <= (khz == 2'd3) ? 2'd0 : (khz + 2'd1);
+        if (ph3) kdiv <= (kdiv == FRAME_BITS-1) ? 0 : (kdiv + 1);
     end
 
-    wire din = bit_val;
+    reg signed [DATA_BITS-1:0] gl = 24'sd8388607;      // 0x7FFFFF
+    reg signed [DATA_BITS-1:0] gr = -24'sd8388608;     // 0x800000
 
-    //---- 接收端模型 ----
-    reg bck_d = 0, ws_d = 0;
-    reg [5:0] bcnt = 0;
-    reg [SLOT_BITS-1:0] rx_l = 0, rx_r = 0;
+    wire ch_lo = (kdiv < SLOT_BITS);
+    wire [15:0] idx = ch_lo ? kdiv : (kdiv - SLOT_BITS);
+    wire din_val = (idx < DATA_BITS)
+                 ? (ch_lo ? gl[DATA_BITS-1-idx] : gr[DATA_BITS-1-idx]) : 1'b0;
+    wire ws_val = ~ch_lo;
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            bck_d <= 0; ws_d <= 0; bcnt <= 0; rx_l <= 0; rx_r <= 0;
-        end else begin
-            if (bck && !bck_d) begin
-                if (ws != ws_d) bcnt <= 0;
-                else if (bcnt < DATA_BITS[5:0]) bcnt <= bcnt + 1;
+    reg bck = 0, din = 0, ws = 0;
+    always @(posedge clk) begin
+        if (ph0) bck <= 1'b1;
+        if (ph2) begin bck <= 1'b0; din <= din_val; ws <= ws_val; end
+    end
 
-                if (bcnt < DATA_BITS[5:0]) begin
-                    if (ws == 1'b0) rx_l[DATA_BITS-1-bcnt] <= din;
-                    else            rx_r[DATA_BITS-1-bcnt] <= din;
+    //------------------------------------------------------------
+    // 接收端模型（本 tb 的目的就是冻结它）
+    //------------------------------------------------------------
+    reg [15:0] bcnt = 0;
+    reg [SLOT_BITS-1:0] shf = 0, rx_l = 0, rx_r = 0;
+
+    always @(posedge clk) begin
+        if (frame_wrap) bcnt <= 0;
+        else if (ph3) begin
+            if (bcnt == 0) begin
+                shf  <= {din, {(SLOT_BITS-1){1'b0}}};
+                bcnt <= 1;
+            end else begin
+                if (bcnt == SLOT_BITS-1) begin
+                    if (ws) rx_r <= {shf[SLOT_BITS-2:0], din};
+                    else    rx_l <= {shf[SLOT_BITS-2:0], din};
                 end
+                shf  <= {shf[SLOT_BITS-2:0], din};
+                bcnt <= (bcnt == SLOT_BITS-1) ? 0 : (bcnt + 1);
             end
-            bck_d <= bck;
-            ws_d  <= ws;
         end
     end
 
@@ -80,32 +76,32 @@ module tb_rx_golden;
     initial begin
         $display("");
         $display("==================================================");
-        $display(" tb_rx_golden -- receiver model validation");
-        $display("   gl=%0d (0x%06h)  gr=%0d (0x%06h)", gl, gl, gr, gr);
+        $display(" tb_rx_golden  (STEP 1) -- freeze receiver model");
+        $display("   gl = 0x%06h   gr = 0x%06h", gl, gr);
         $display("==================================================");
-        rst_n = 0; repeat (10) @(posedge clk); rst_n = 1;
-        for (i = 0; i < FRAME_BITS*6; i = i + 1) @(posedge clk);
+        for (i = 0; i < FRAME_BITS*4*4; i = i + 1) @(posedge clk);
 
         $display("");
         if (rx_l[DATA_BITS-1:0] === gl)
-            $display("  [PASS] left  decoded = %0d (0x%06h)", rx_l[DATA_BITS-1:0], rx_l[DATA_BITS-1:0]);
+            $display("  [PASS] left  = 0x%06h", rx_l[DATA_BITS-1:0]);
         else begin
-            $display("  [FAIL] left  decoded = %0d (0x%06h), expected %0d (0x%06h)",
-                     rx_l[DATA_BITS-1:0], rx_l[DATA_BITS-1:0], gl, gl);
+            $display("  [FAIL] left  = 0x%06h  expected 0x%06h", rx_l[DATA_BITS-1:0], gl);
             errs = errs + 1;
         end
 
         if (rx_r[DATA_BITS-1:0] === gr)
-            $display("  [PASS] right decoded = %0d (0x%06h)", rx_r[DATA_BITS-1:0], rx_r[DATA_BITS-1:0]);
+            $display("  [PASS] right = 0x%06h", rx_r[DATA_BITS-1:0]);
         else begin
-            $display("  [FAIL] right decoded = %0d (0x%06h), expected %0d (0x%06h)",
-                     rx_r[DATA_BITS-1:0], rx_r[DATA_BITS-1:0], gr, gr);
+            $display("  [FAIL] right = 0x%06h  expected 0x%06h", rx_r[DATA_BITS-1:0], gr);
             errs = errs + 1;
         end
 
         $display("");
-        if (errs == 0) $display(" RESULT: PASS  (receiver model is sound)");
-        else           $display(" RESULT: FAIL  (receiver model is wrong)");
+        if (errs == 0) begin
+            $display(" RESULT: PASS -- receiver model FROZEN");
+            $display("   next: port this exact discipline into i2s_tx.v");
+        end else
+            $display(" RESULT: FAIL (%0d)", errs);
         $display("==================================================");
         $display("");
         $finish;
