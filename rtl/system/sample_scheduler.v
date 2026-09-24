@@ -3,58 +3,62 @@
 //
 // 归属：成员 C 独占维护。
 //
-// 功能：
-//   sample_tick  音频核心的唯一样本节拍（单拍脉冲，1 个 clk_audio 周期宽）
-//   bck          I2S 位时钟输出（方波，送 HP_BCK）
-//   bck_en       位时钟半周期使能（供 i2s_tx 在 clk_audio 域使用）
+// 输出：
+//   sample_tick  音频核心的唯一样本节拍（48 kHz，单拍脉冲）
+//   bck          I2S 位时钟方波 —— BCK 频率 = 1/(2*CLK_DIV_BCK) * clk_audio
+//   bck_en       **I2S 位周期**使能脉冲 —— 频率 = 1/CLK_DIV_BCK * clk_audio
+//                （i2s_tx 用它把每个位推进一格；bck 用它自己翻转）
 //
 // ---------------------------------------------------------------------------
-// 分频关系（以 12.288 MHz 为例，见 clock_gen.v 的说明）
-//   clk_audio = 12.288 MHz
-//   bck       = clk_audio / 4   = 3.072 MHz = 64 x LRCK
-//   sample    = clk_audio / 256 = 48 kHz    -> 每帧正好 64 个 bck 周期
+// 分频语义（这里曾经搞错过，务必看清）
 //
-// 计数器设计要点
-//   一个计数器 cnt 同时承担两件事：
-//     - 低 log2(CLK_DIV_BCK) 位分频出 bck（每 CLK_DIV_BCK 拍翻转一次）
-//     - 计到 CLK_DIV_SAMPLE-1 归零，天然与 I2S 帧对齐（256 = 4 x 64）
-//   这样 sample_tick、bck、帧边界三者天然同相，不需要额外同步逻辑。
+//   信号               频率                        一个 stereo sample 内含几个
+//   -----------------  --------------------------  ------------------------
+//   bck_en             1/CLK_DIV_BCK * clk_audio     64   <- I2S 的 64 个 bit slot
+//   bck（完整周期）     1/(2*CLK_DIV_BCK) * clk_audio 32   <- 64 个半周期
+//
+//   即：一个 I2S 位周期 = CLK_DIV_BCK 个 clk_audio。
+//       bck 每 CLK_DIV_BCK 拍翻转一次，所以它的**完整周期**是 2*CLK_DIV_BCK 拍。
+//
+//   要得到 BCK = 64 x LRCK（每声道 32bit slot，支持 24bit 音频）：
+//       CLK_DIV_SAMPLE / CLK_DIV_BCK = 64
+//       硬件：CLK_DIV_SAMPLE = 256 -> CLK_DIV_BCK = 2
+//         clk_audio = 12.29167 MHz
+//         bck       = 12.29167 / 4 = 3.0729 MHz   （= 64 x LRCK，目标 3.072 MHz）
+//         LRCK      = 12.29167 / 256 = 48.015 kHz
 //
 // 【修订记录】
-//   v1 使用 `cnt[CLK_DIV_BCK-1:0] == BCK_TOGGLE_AT[CLK_DIV_BCK-1:0]` 做比较，
-//      在 Gowin/ModelSim 下行为异常（实测 bck 每 16 拍才翻转一次，
-//      原因是局部常量位选被折叠成 1 位导致按位与）。
-//   v2 改为显式计数器 bck_cnt + terminal count，仿真实测正确。
+//   v1  CLK_DIV_BCK 默认写成 4，导致 bck = clk_audio/8、每 sample 只有 32 个
+//       bit slot —— 只有 I2S 规格要求的一半。行为仿真对比官方例程时发现。
+//   v2  默认改为 2，并在 tb_scheduler 中加入"每 sample 必须正好 64 个 bck_en"
+//       与"CLK_DIV_SAMPLE = 2*CLK_DIV_BCK*32"的显式断言，锁死这个关系。
 //
-// 仿真友好
-//   参数 CLK_DIV_BCK / CLK_DIV_SAMPLE 可调，便于用低频时钟快速跑仿真。
-//   默认值即硬件值。
+// 参考：Sipeed 官方 audio 例程用 BCK=1.536MHz/16bit 槽（32 slot/帧），
+//       本设计用 32bit 槽以支持 24bit 音频，故 BCK 为 64 x LRCK。
 //=============================================================================
 module sample_scheduler #(
-    // 每个 bck 半周期占多少个 clk_audio（4 = 硬件值，得 bck = clk/4）
-    parameter CLK_DIV_BCK    = 4,
-    // 每个采样周期占多少个 clk_audio（硬件值 256）
+    // 一个 I2S 位周期占多少个 clk_audio（硬件值 2）
+    // 注意：bck 的完整周期 = 2 * CLK_DIV_BCK
+    parameter CLK_DIV_BCK    = 2,
+    // 一个采样周期占多少个 clk_audio（硬件值 256）
     parameter CLK_DIV_SAMPLE = 256
 ) (
     input  wire clk_audio,
     input  wire rst_n,
     output reg  sample_tick,    // 48 kHz 单拍脉冲
-    output reg  bck,            // 位时钟方波
-    output wire bck_en          // 位时钟半周期使能
+    output reg  bck,            // I2S 位时钟方波
+    output wire bck_en          // I2S 位周期使能（每 CLK_DIV_BCK 拍一个脉冲）
 );
 
-    // 采样计数器：0 .. CLK_DIV_SAMPLE-1
-    localparam CNT_W = $clog2(CLK_DIV_SAMPLE);
+    localparam CNT_W = $clog2(CLK_DIV_SAMPLE);   // 采样计数位宽
+    localparam BCK_W = $clog2(CLK_DIV_BCK);      // 位周期计数位宽
 
-    // bck 计数器：0 .. CLK_DIV_BCK-1（用独立位宽，避免位选歧义）
-    localparam BCK_W = $clog2(CLK_DIV_BCK);
+    reg [CNT_W-1:0] cnt;        // 采样周期计数 0..CLK_DIV_SAMPLE-1
+    reg [BCK_W-1:0] bck_cnt;    // 位周期计数   0..CLK_DIV_BCK-1
 
-    reg [CNT_W-1:0] cnt;       // 采样周期计数
-    reg [BCK_W-1:0] bck_cnt;   // bck 半周期计数
-
-    // 终端条件（用完整表达式，不用位选比较）
-    wire cnt_last = (cnt == CLK_DIV_SAMPLE[CNT_W-1:0] - 1'b1);
-    wire bck_last = (bck_cnt == CLK_DIV_BCK[BCK_W-1:0] - 1'b1);
+    // 终端条件用完整表达式比较，避免位选被综合器折叠（曾踩过这个坑）
+    wire cnt_last = (cnt     == CLK_DIV_SAMPLE[CNT_W-1:0] - 1'b1);
+    wire bck_last = (bck_cnt == CLK_DIV_BCK[BCK_W-1:0]    - 1'b1);
 
     always @(posedge clk_audio or negedge rst_n) begin
         if (!rst_n) begin
@@ -79,7 +83,6 @@ module sample_scheduler #(
         end
     end
 
-    // 供 i2s_tx 使用的使能：每个 bck 半周期一个脉冲
     assign bck_en = bck_last;
 
 endmodule

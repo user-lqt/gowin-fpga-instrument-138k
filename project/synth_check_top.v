@@ -45,7 +45,7 @@ module synth_check_top (
     wire sample_tick, bck, bck_en;
 
     sample_scheduler #(
-        .CLK_DIV_BCK    (4),
+        .CLK_DIV_BCK    (2),
         .CLK_DIV_SAMPLE (256)
     ) u_scheduler (
         .clk_audio   (clk_audio),
