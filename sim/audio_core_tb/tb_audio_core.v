@@ -128,12 +128,58 @@ module tb_audio_core;
         end
     endtask
 
-    //-------------------------------------------------------------------------
-    // 频率计:统计 nper 个周期跨越多少个采样拍
-    //   起止都取"负->正"过零点,故跨越 nper 个完整周期。
-    //-------------------------------------------------------------------------
+    task send_event;
+        input [1:0] kind;
+        input [6:0] n;
+        input [7:0] v;
+        begin
+            @(negedge clk);
+            event_type = kind;
+            note_id = n;
+            velocity = v;
+            event_valid = 1'b1;
+            @(negedge clk);
+            event_valid = 1'b0;
+        end
+    endtask
+
+    task send_param;
+        input [3:0] id;
+        input [15:0] value;
+        begin
+            @(negedge clk);
+            param_id = id;
+            param_value = value;
+            param_valid = 1'b1;
+            @(negedge clk);
+            param_valid = 1'b0;
+        end
+    endtask
+
+    task pulse_tick;
+        begin
+            @(negedge clk);
+            force sample_tick = 1'b0;
+            @(negedge clk);
+            force sample_tick = 1'b1;
+            @(negedge clk);
+            force sample_tick = 1'b0;
+            @(negedge clk);
+            release sample_tick;
+        end
+    endtask
+
+    task wait_ticks;
+        input integer count;
+        integer t;
+        begin
+            for (t = 0; t < count; t = t + 1)
+                pulse_tick();
+        end
+    endtask
+
     task measure_freq;
-        input  integer nper;        // 要测的周期数
+        input integer nper;        // 要测的周期数
         output real    freq;
         integer cnt, crossings, first_idx, last_idx;
         reg signed [23:0] prev;
@@ -194,6 +240,7 @@ module tb_audio_core;
     real cents;
     integer i;
     reg all_zero;
+    integer j;
 
     // 频率判据的理想值(MIDI 标准音高)
     localparam real F_A4 = 440.000;
@@ -313,7 +360,113 @@ module tb_audio_core;
         //---------------------------------------------------------------------
         `CHECK(overload_flag === 1'b0, "单声部不产生饱和标志");
 
-        //---------------------------------------------------------------------
+        $display("[8] Ordered event bursts and sample-tick collisions");
+        @(negedge sample_tick);
+        send_event(`EVENT_NOTE_ON, 7'd69, 8'd100);
+        send_event(`EVENT_NOTE_OFF, 7'd69, 8'd0);
+        wait_ticks(2);
+        `CHECK(dut.ev_count == 0 && active_voice_count == 0,
+               "back-to-back note on/off consumed in order");
+
+        // Drive a 16-key burst faster than sample_tick, without overflowing the FIFO.
+        @(negedge sample_tick);
+        for (j = 0; j < 16; j = j + 1)
+            send_event(`EVENT_NOTE_ON, 7'd48 + j, 8'd80);
+        `CHECK(dut.ev_count == 16 && !dut.ev_overflow,
+               "16 consecutive keys queued without overwrite");
+        for (j = 0; j < 16; j = j + 1) begin
+            wait_ticks(1);
+            `CHECK(dut.cur_note == 7'd48 + j && dut.ev_count == 15 - j,
+                   "burst order and occupancy preserved");
+        end
+
+        // Full queue may accept a new event if an older one is popped on the same edge.
+        @(negedge sample_tick);
+        for (j = 0; j < 16; j = j + 1)
+            send_event(`EVENT_NOTE_ON, 7'd60 + j, 8'd70);
+        @(negedge clk);
+        force sample_tick = 1'b1;
+        event_type = `EVENT_NOTE_OFF;
+        note_id = 7'd75;
+        velocity = 8'd0;
+        event_valid = 1'b1;
+        @(negedge clk);
+        event_valid = 1'b0;
+        release sample_tick;
+        `CHECK(dut.cur_note == 7'd60 && dut.ev_count == 16 && !dut.ev_overflow,
+               "full FIFO pops old event and keeps simultaneous new event");
+        for (j = 1; j < 16; j = j + 1)
+            wait_ticks(1);
+        `CHECK(dut.cur_note == 7'd75 && active_voice_count == 0 && dut.ev_count == 0,
+               "queued NOTE_OFF follows last note without being lost");
+        wait_ticks(1);
+        `CHECK(active_voice_count == 0 && dut.ev_count == 0,
+               "NOTE_OFF collision eventually releases matching note");
+
+        @(negedge clk);
+        force sample_tick = 1'b1;
+        event_type = `EVENT_NOTE_ON;
+        note_id = 7'd69;
+        velocity = 8'd70;
+        event_valid = 1'b1;
+        @(negedge clk);
+        event_valid = 1'b0;
+        release sample_tick;
+        `CHECK(active_voice_count == 1 && dut.cur_note == 7'd69 && dut.ev_count == 0,
+               "empty FIFO consumes on sample tick without duplicate");
+
+        $display("[9] Ordered volume updates and parameter collisions");
+        @(negedge sample_tick);
+        send_param(`PARAM_VOLUME, 16'd0);
+        send_param(`PARAM_VOLUME, 16'h8000);
+        wait_ticks(1);
+        `CHECK(dut.volume == 16'd0 && dut.p_count == 1,
+               "first parameter applied while second stays queued");
+        wait_ticks(1);
+        `CHECK(dut.volume == 16'h8000 && dut.p_count == 0,
+               "second parameter applied in order");
+
+        @(negedge sample_tick);
+        for (j = 0; j < 4; j = j + 1)
+            send_param(`PARAM_VOLUME, 16'd1000 + j);
+        @(negedge clk);
+        force sample_tick = 1'b1;
+        param_id = `PARAM_VOLUME;
+        param_value = 16'hffff;
+        param_valid = 1'b1;
+        @(negedge clk);
+        param_valid = 1'b0;
+        release sample_tick;
+        `CHECK(dut.volume == 16'd1000 && dut.p_count == 4 && !dut.p_overflow,
+               "full parameter FIFO retains simultaneous update");
+        for (j = 1; j < 4; j = j + 1)
+            wait_ticks(1);
+        wait_ticks(1);
+        `CHECK(dut.volume == 16'hffff && dut.p_count == 0,
+               "final parameter update applied after queued values");
+
+        @(negedge clk);
+        force sample_tick = 1'b1;
+        param_id = `PARAM_VOLUME;
+        param_value = 16'h4000;
+        param_valid = 1'b1;
+        @(negedge clk);
+        param_valid = 1'b0;
+        release sample_tick;
+        `CHECK(dut.volume == 16'h4000 && dut.p_count == 0,
+               "empty parameter FIFO consumes same-tick update");
+
+        $display("[10] Bounded FIFO overflow behavior");
+        @(negedge sample_tick);
+        for (j = 0; j < 17; j = j + 1)
+            send_event(`EVENT_NOTE_ON, 7'd48 + j, 8'd80);
+        `CHECK(dut.ev_count == 16 && dut.ev_overflow,
+               "17th event rejected with sticky internal overflow");
+        for (j = 0; j < 16; j = j + 1)
+            wait_ticks(1);
+        `CHECK(dut.cur_note == 7'd63 && dut.ev_count == 0,
+               "overflow did not corrupt queued order");
+
         $display("================================================================");
         if (errors == 0)
             $display(" 结果: PASS  (%0d/%0d 项通过)", checks, checks);

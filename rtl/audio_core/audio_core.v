@@ -59,19 +59,39 @@ module audio_core (
 
     assign engine_ready = ready_r;
 
-    //-------------------------------------------------------------------------
-    // 事件捕获:先用 pending 锁存,再在下一个 sample_tick 消费
-    //   —— 这样不要求 B 的事件脉冲与 sample_tick 对齐,也不会丢事件。
-    //      (冻结卡:B 内部排队;A 每个 sample_tick 至少吸收 1 个事件)
-    //-------------------------------------------------------------------------
-    reg        ev_pending;
-    reg [1:0]  ev_type_q;
-    reg [6:0]  ev_note_q;
-    reg [7:0]  ev_vel_q;
+    // B/C must pace bursts to fit the finite input queues; no ready signal exists.
+    localparam integer EVENT_DEPTH = 16;
+    localparam integer PARAM_DEPTH = 4;
 
-    reg        p_pending;
-    reg [3:0]  p_id_q;
-    reg [15:0] p_val_q;
+    reg [1:0]  ev_type_q [0:EVENT_DEPTH-1];
+    reg [6:0]  ev_note_q [0:EVENT_DEPTH-1];
+    reg [7:0]  ev_vel_q  [0:EVENT_DEPTH-1];
+    reg [3:0]  ev_rd;
+    reg [3:0]  ev_wr;
+    reg [4:0]  ev_count;
+    reg        ev_overflow;
+
+    reg [3:0]  p_id_q  [0:PARAM_DEPTH-1];
+    reg [15:0] p_val_q [0:PARAM_DEPTH-1];
+    reg [1:0]  p_rd;
+    reg [1:0]  p_wr;
+    reg [2:0]  p_count;
+    reg        p_overflow;
+
+    wire ev_pop = sample_tick && (ev_count != 0);
+    wire ev_bypass = sample_tick && (ev_count == 0) && event_valid;
+    wire ev_push = event_valid && !ev_bypass &&
+                   (ev_count < EVENT_DEPTH || ev_pop);
+    wire p_pop = sample_tick && (p_count != 0);
+    wire p_bypass = sample_tick && (p_count == 0) && param_valid;
+    wire p_push = param_valid && !p_bypass &&
+                  (p_count < PARAM_DEPTH || p_pop);
+
+    wire [1:0]  selected_type = ev_bypass ? event_type : ev_type_q[ev_rd];
+    wire [6:0]  selected_note = ev_bypass ? note_id : ev_note_q[ev_rd];
+    wire [7:0]  selected_vel  = ev_bypass ? velocity : ev_vel_q[ev_rd];
+    wire [3:0]  selected_param_id  = p_bypass ? param_id : p_id_q[p_rd];
+    wire [15:0] selected_param_val = p_bypass ? param_value : p_val_q[p_rd];
 
     reg [6:0]  cur_note;
     reg [7:0]  cur_vel;
@@ -82,13 +102,14 @@ module audio_core (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            ev_pending   <= 1'b0;
-            ev_type_q    <= 2'd0;
-            ev_note_q    <= 7'd0;
-            ev_vel_q     <= 8'd0;
-            p_pending    <= 1'b0;
-            p_id_q       <= 4'd0;
-            p_val_q      <= 16'd0;
+            ev_rd        <= 4'd0;
+            ev_wr        <= 4'd0;
+            ev_count     <= 5'd0;
+            ev_overflow  <= 1'b0;
+            p_rd         <= 2'd0;
+            p_wr         <= 2'd0;
+            p_count      <= 3'd0;
+            p_overflow   <= 1'b0;
             cur_note     <= 7'd0;
             cur_vel      <= 8'd0;
             note_active  <= 1'b0;
@@ -97,45 +118,58 @@ module audio_core (
         end else begin
             phase_load_r <= 1'b0;
 
-            // (1) 捕获脉冲(与 sample_tick 对齐与否都锁住)
-            if (event_valid) begin
-                ev_pending <= 1'b1;
-                ev_type_q  <= event_type;
-                ev_note_q  <= note_id;
-                ev_vel_q   <= velocity;
+            if (ev_push) begin
+                ev_type_q[ev_wr] <= event_type;
+                ev_note_q[ev_wr] <= note_id;
+                ev_vel_q[ev_wr]  <= velocity;
+                ev_wr <= ev_wr + 4'd1;
+            end else if (event_valid && !ev_bypass) begin
+                ev_overflow <= 1'b1;
             end
-            if (param_valid) begin
-                p_pending <= 1'b1;
-                p_id_q    <= param_id;
-                p_val_q   <= param_value;
-            end
+            if (ev_pop)
+                ev_rd <= ev_rd + 4'd1;
+            case ({ev_push, ev_pop})
+                2'b10: ev_count <= ev_count + 5'd1;
+                2'b01: ev_count <= ev_count - 5'd1;
+                default: ;
+            endcase
 
-            // (2) 在 sample_tick 消费
+            if (p_push) begin
+                p_id_q[p_wr]  <= param_id;
+                p_val_q[p_wr] <= param_value;
+                p_wr <= p_wr + 2'd1;
+            end else if (param_valid && !p_bypass) begin
+                p_overflow <= 1'b1;
+            end
+            if (p_pop)
+                p_rd <= p_rd + 2'd1;
+            case ({p_push, p_pop})
+                2'b10: p_count <= p_count + 3'd1;
+                2'b01: p_count <= p_count - 3'd1;
+                default: ;
+            endcase
+
             if (sample_tick) begin
-                if (ev_pending) begin
-                    ev_pending <= 1'b0;
-                    case (ev_type_q)
+                if (ev_pop || ev_bypass) begin
+                    case (selected_type)
                         `EVENT_NOTE_ON: begin
-                            if (ev_vel_q != 8'd0) begin      // 力度 0 视为无效
-                                cur_note     <= ev_note_q;
-                                cur_vel      <= ev_vel_q;
+                            if (selected_vel != 8'd0) begin
+                                cur_note     <= selected_note;
+                                cur_vel      <= selected_vel;
                                 note_active  <= 1'b1;
-                                phase_load_r <= 1'b1;        // 固定起音相位
+                                phase_load_r <= 1'b1;
                             end
                         end
                         `EVENT_NOTE_OFF: begin
-                            if (ev_note_q == cur_note)
+                            if (selected_note == cur_note)
                                 note_active <= 1'b0;
                         end
-                        default: ;                        // 参数另走 param 通路
+                        default: ;
                     endcase
                 end
 
-                if (p_pending) begin
-                    p_pending <= 1'b0;
-                    if (p_id_q == `PARAM_VOLUME)
-                        volume <= p_val_q;
-                end
+                if ((p_pop || p_bypass) && selected_param_id == `PARAM_VOLUME)
+                    volume <= selected_param_val;
             end
         end
     end
