@@ -29,8 +29,8 @@ module tb_audio_core;
 
     reg manual_tick = 1'b0;
     reg manual_tick_value = 1'b0;
-    wire sample_tick = manual_tick ? manual_tick_value : (tick_cnt == CLK_PER_TICK - 1);
     integer tick_cnt;
+    wire sample_tick = manual_tick ? manual_tick_value : (tick_cnt == CLK_PER_TICK - 1);
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             tick_cnt <= 0;
