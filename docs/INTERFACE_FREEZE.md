@@ -12,7 +12,7 @@
 - 新增字段 = 向后兼容扩展 → 版本号 +1，通知 A/B，双方 testbench 同步更新
 - 修改/删除字段 = **破坏性变更** → 必须全员会议确认，且要说明为什么不能在现有字段上做
 
-当前版本：`EVENTS_DEFS_VERSION = 8'd1`、`STATUS_DEFS_VERSION = 8'd1`
+当前版本：`EVENTS_DEFS_VERSION = 8'd2`、`STATUS_DEFS_VERSION = 8'd1`
 
 ---
 
@@ -70,6 +70,8 @@
 | `active_voice_count[5:0]` | A→C | 6 | 未完全静音的声部数，饱和值 48 | 0 |
 | `engine_ready` | A→C | 1 | 音频核心就绪（波表/参数初始化完成） | 0 |
 | `overload_flag` | A→C | 1 | 混音发生饱和/削波 | 0 |
+| `event_overflow` | A→C | 1 | 事件 FIFO 溢出粘滞状态；置位后 A 静音，复位清除 | 0 |
+| `param_overflow` | A→C | 1 | 参数 FIFO 溢出粘滞状态；不改变音频，复位清除 | 0 |
 
 **约定**
 

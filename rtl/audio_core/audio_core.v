@@ -35,7 +35,9 @@ module audio_core (
 
     output wire [5:0]         active_voice_count,
     output wire               engine_ready,
-    output reg                overload_flag
+    output reg                overload_flag,
+    output wire               event_overflow,
+    output wire               param_overflow
 );
 
     //-------------------------------------------------------------------------
@@ -78,10 +80,11 @@ module audio_core (
     reg [2:0]  p_count;
     reg        p_overflow;
 
-    wire ev_pop = sample_tick && (ev_count != 0);
-    wire ev_bypass = sample_tick && (ev_count == 0) && event_valid;
-    wire ev_push = event_valid && !ev_bypass &&
-                   (ev_count < EVENT_DEPTH || ev_pop);
+    wire ev_pop = sample_tick && (ev_count != 0) && !ev_overflow;
+    wire ev_bypass = sample_tick && (ev_count == 0) && event_valid && !ev_overflow;
+    wire ev_fault = event_valid && !ev_overflow && !ev_pop &&
+                    (ev_count == EVENT_DEPTH);
+    wire ev_push = event_valid && !ev_overflow && !ev_bypass && !ev_fault;
     wire p_pop = sample_tick && (p_count != 0);
     wire p_bypass = sample_tick && (p_count == 0) && param_valid;
     wire p_push = param_valid && !p_bypass &&
@@ -118,39 +121,30 @@ module audio_core (
         end else begin
             phase_load_r <= 1'b0;
 
-            if (ev_push) begin
-                ev_type_q[ev_wr] <= event_type;
-                ev_note_q[ev_wr] <= note_id;
-                ev_vel_q[ev_wr]  <= velocity;
-                ev_wr <= ev_wr + 4'd1;
-            end else if (event_valid && !ev_bypass) begin
-                ev_overflow <= 1'b1;
-            end
-            if (ev_pop)
-                ev_rd <= ev_rd + 4'd1;
-            case ({ev_push, ev_pop})
-                2'b10: ev_count <= ev_count + 5'd1;
-                2'b01: ev_count <= ev_count - 5'd1;
-                default: ;
-            endcase
-
-            if (p_push) begin
-                p_id_q[p_wr]  <= param_id;
-                p_val_q[p_wr] <= param_value;
-                p_wr <= p_wr + 2'd1;
-            end else if (param_valid && !p_bypass) begin
-                p_overflow <= 1'b1;
-            end
-            if (p_pop)
-                p_rd <= p_rd + 2'd1;
-            case ({p_push, p_pop})
-                2'b10: p_count <= p_count + 3'd1;
-                2'b01: p_count <= p_count - 3'd1;
-                default: ;
-            endcase
-
-            if (sample_tick) begin
-                if (ev_pop || ev_bypass) begin
+            if (ev_fault) begin
+                ev_overflow  <= 1'b1;
+                ev_rd        <= 4'd0;
+                ev_wr        <= 4'd0;
+                ev_count     <= 5'd0;
+                cur_note     <= 7'd0;
+                cur_vel      <= 8'd0;
+                note_active  <= 1'b0;
+                phase_load_r <= 1'b0;
+            end else if (!ev_overflow) begin
+                if (ev_push) begin
+                    ev_type_q[ev_wr] <= event_type;
+                    ev_note_q[ev_wr] <= note_id;
+                    ev_vel_q[ev_wr]  <= velocity;
+                    ev_wr <= ev_wr + 4'd1;
+                end
+                if (ev_pop)
+                    ev_rd <= ev_rd + 4'd1;
+                case ({ev_push, ev_pop})
+                    2'b10: ev_count <= ev_count + 5'd1;
+                    2'b01: ev_count <= ev_count - 5'd1;
+                    default: ;
+                endcase
+                if (sample_tick && (ev_pop || ev_bypass)) begin
                     case (selected_type)
                         `EVENT_NOTE_ON: begin
                             if (selected_vel != 8'd0) begin
@@ -167,10 +161,26 @@ module audio_core (
                         default: ;
                     endcase
                 end
-
-                if ((p_pop || p_bypass) && selected_param_id == `PARAM_VOLUME)
-                    volume <= selected_param_val;
             end
+
+            if (p_push) begin
+                p_id_q[p_wr]  <= param_id;
+                p_val_q[p_wr] <= param_value;
+                p_wr <= p_wr + 2'd1;
+            end else if (param_valid && !p_bypass) begin
+                p_overflow <= 1'b1;
+            end
+            if (p_pop)
+                p_rd <= p_rd + 2'd1;
+            case ({p_push, p_pop})
+                2'b10: p_count <= p_count + 3'd1;
+                2'b01: p_count <= p_count - 3'd1;
+                default: ;
+            endcase
+
+            if (sample_tick && (p_pop || p_bypass) &&
+                selected_param_id == `PARAM_VOLUME)
+                volume <= selected_param_val;
         end
     end
 
@@ -207,7 +217,10 @@ module audio_core (
     wire signed [39:0] vol_prod   = vel_scaled * $signed({1'b0, volume});
     wire signed [23:0] smp24      = vol_prod[39:16];
 
-    wire gate = ready_r & note_active;
+    assign event_overflow = ev_overflow;
+    assign param_overflow = p_overflow;
+
+    wire gate = ready_r & note_active & !ev_overflow & !ev_fault;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -237,7 +250,7 @@ module audio_core (
     //-------------------------------------------------------------------------
     // 状态输出
     //-------------------------------------------------------------------------
-    assign active_voice_count = note_active ? 6'd1 : 6'd0;
+    assign active_voice_count = (note_active && !ev_overflow && !ev_fault) ? 6'd1 : 6'd0;
 
     // A1 单声部峰值恒小于满量程,不会饱和;饱和检测在 A2 混音级引入。
     always @(posedge clk or negedge rst_n) begin

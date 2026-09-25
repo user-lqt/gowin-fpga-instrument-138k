@@ -27,19 +27,19 @@ module tb_audio_core;
 
     reg rst_n = 1'b0;
 
-    reg sample_tick;
+    reg manual_tick = 1'b0;
+    reg manual_tick_value = 1'b0;
+    wire sample_tick = manual_tick ? manual_tick_value : (tick_cnt == CLK_PER_TICK - 1);
     integer tick_cnt;
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            tick_cnt    <= 0;
-            sample_tick <= 1'b0;
-        end else if (tick_cnt == CLK_PER_TICK - 1) begin
-            tick_cnt    <= 0;
-            sample_tick <= 1'b1;
-        end else begin
-            tick_cnt    <= tick_cnt + 1;
-            sample_tick <= 1'b0;
-        end
+        if (!rst_n)
+            tick_cnt <= 0;
+        else if (manual_tick)
+            tick_cnt <= 0;
+        else if (tick_cnt == CLK_PER_TICK - 1)
+            tick_cnt <= 0;
+        else
+            tick_cnt <= tick_cnt + 1;
     end
 
     //-------------------------------------------------------------------------
@@ -60,6 +60,8 @@ module tb_audio_core;
     wire [5:0]          active_voice_count;
     wire                engine_ready;
     wire                overload_flag;
+    wire                event_overflow;
+    wire                param_overflow;
 
     audio_core dut (
         .clk                (clk),
@@ -77,7 +79,9 @@ module tb_audio_core;
         .audio_right        (audio_right),
         .active_voice_count (active_voice_count),
         .engine_ready       (engine_ready),
-        .overload_flag      (overload_flag)
+        .overload_flag      (overload_flag),
+        .event_overflow     (event_overflow),
+        .param_overflow     (param_overflow)
     );
 
     //-------------------------------------------------------------------------
@@ -156,16 +160,21 @@ module tb_audio_core;
         end
     endtask
 
+    task enter_manual_mode;
+        begin
+            @(negedge clk);
+            manual_tick_value = 1'b0;
+            manual_tick = 1'b1;
+            @(negedge clk);
+        end
+    endtask
+
     task pulse_tick;
         begin
             @(negedge clk);
-            force sample_tick = 1'b0;
+            manual_tick_value = 1'b1;
             @(negedge clk);
-            force sample_tick = 1'b1;
-            @(negedge clk);
-            force sample_tick = 1'b0;
-            @(negedge clk);
-            release sample_tick;
+            manual_tick_value = 1'b0;
         end
     endtask
 
@@ -359,9 +368,11 @@ module tb_audio_core;
         $display("[7] overload_flag 在单声部不误报");
         //---------------------------------------------------------------------
         `CHECK(overload_flag === 1'b0, "单声部不产生饱和标志");
+        `CHECK(event_overflow === 1'b0 && param_overflow === 1'b0,
+               "overflow status starts clear");
 
+        enter_manual_mode();
         $display("[8] Ordered event bursts and sample-tick collisions");
-        @(negedge sample_tick);
         send_event(`EVENT_NOTE_ON, 7'd69, 8'd100);
         send_event(`EVENT_NOTE_OFF, 7'd69, 8'd0);
         wait_ticks(2);
@@ -369,7 +380,6 @@ module tb_audio_core;
                "back-to-back note on/off consumed in order");
 
         // Drive a 16-key burst faster than sample_tick, without overflowing the FIFO.
-        @(negedge sample_tick);
         for (j = 0; j < 16; j = j + 1)
             send_event(`EVENT_NOTE_ON, 7'd48 + j, 8'd80);
         `CHECK(dut.ev_count == 16 && !dut.ev_overflow,
@@ -381,22 +391,22 @@ module tb_audio_core;
         end
 
         // Full queue may accept a new event if an older one is popped on the same edge.
-        @(negedge sample_tick);
         for (j = 0; j < 16; j = j + 1)
             send_event(`EVENT_NOTE_ON, 7'd60 + j, 8'd70);
         @(negedge clk);
-        force sample_tick = 1'b1;
+        manual_tick_value = 1'b1;
         event_type = `EVENT_NOTE_OFF;
         note_id = 7'd75;
         velocity = 8'd0;
         event_valid = 1'b1;
         @(negedge clk);
         event_valid = 1'b0;
-        release sample_tick;
+        manual_tick_value = 1'b0;
         `CHECK(dut.cur_note == 7'd60 && dut.ev_count == 16 && !dut.ev_overflow,
                "full FIFO pops old event and keeps simultaneous new event");
         for (j = 1; j < 16; j = j + 1)
             wait_ticks(1);
+        wait_ticks(1);
         `CHECK(dut.cur_note == 7'd75 && active_voice_count == 0 && dut.ev_count == 0,
                "queued NOTE_OFF follows last note without being lost");
         wait_ticks(1);
@@ -404,19 +414,19 @@ module tb_audio_core;
                "NOTE_OFF collision eventually releases matching note");
 
         @(negedge clk);
-        force sample_tick = 1'b1;
+        manual_tick_value = 1'b1;
         event_type = `EVENT_NOTE_ON;
         note_id = 7'd69;
         velocity = 8'd70;
         event_valid = 1'b1;
         @(negedge clk);
         event_valid = 1'b0;
-        release sample_tick;
+        manual_tick_value = 1'b0;
         `CHECK(active_voice_count == 1 && dut.cur_note == 7'd69 && dut.ev_count == 0,
                "empty FIFO consumes on sample tick without duplicate");
 
+        enter_manual_mode();
         $display("[9] Ordered volume updates and parameter collisions");
-        @(negedge sample_tick);
         send_param(`PARAM_VOLUME, 16'd0);
         send_param(`PARAM_VOLUME, 16'h8000);
         wait_ticks(1);
@@ -426,17 +436,16 @@ module tb_audio_core;
         `CHECK(dut.volume == 16'h8000 && dut.p_count == 0,
                "second parameter applied in order");
 
-        @(negedge sample_tick);
         for (j = 0; j < 4; j = j + 1)
             send_param(`PARAM_VOLUME, 16'd1000 + j);
         @(negedge clk);
-        force sample_tick = 1'b1;
+        manual_tick_value = 1'b1;
         param_id = `PARAM_VOLUME;
         param_value = 16'hffff;
         param_valid = 1'b1;
         @(negedge clk);
         param_valid = 1'b0;
-        release sample_tick;
+        manual_tick_value = 1'b0;
         `CHECK(dut.volume == 16'd1000 && dut.p_count == 4 && !dut.p_overflow,
                "full parameter FIFO retains simultaneous update");
         for (j = 1; j < 4; j = j + 1)
@@ -446,43 +455,53 @@ module tb_audio_core;
                "final parameter update applied after queued values");
 
         @(negedge clk);
-        force sample_tick = 1'b1;
+        manual_tick_value = 1'b1;
         param_id = `PARAM_VOLUME;
         param_value = 16'h4000;
         param_valid = 1'b1;
         @(negedge clk);
         param_valid = 1'b0;
-        release sample_tick;
+        manual_tick_value = 1'b0;
         `CHECK(dut.volume == 16'h4000 && dut.p_count == 0,
                "empty parameter FIFO consumes same-tick update");
 
-        $display("[10] Bounded FIFO overflow behavior");
-        @(negedge sample_tick);
+        @(negedge clk);
+        rst_n = 1'b0;
+        @(negedge clk);
+        rst_n = 1'b1;
+        manual_tick = 1'b1;
+        manual_tick_value = 1'b0;
         for (j = 0; j < 17; j = j + 1)
             send_event(`EVENT_NOTE_ON, 7'd48 + j, 8'd80);
-        `CHECK(dut.ev_count == 16 && dut.ev_overflow,
-               "17th event rejected with sticky internal overflow");
-        for (j = 0; j < 16; j = j + 1)
-            wait_ticks(1);
-        `CHECK(dut.cur_note == 7'd63 && dut.ev_count == 0,
-               "overflow did not corrupt queued order");
+        `CHECK(dut.ev_count == 0 && dut.ev_overflow && active_voice_count == 0,
+               "17th event faults immediately and clears queued notes");
+        wait_ticks(1);
+        `CHECK(dut.ev_count == 0 && dut.ev_overflow && active_voice_count == 0,
+               "overflow remains latched through sample tick");
+        wait_ticks(2);
+        `CHECK(active_voice_count == 0 && audio_left === 24'sd0 &&
+               dut.ev_count == 0, "overflow mute persists until reset");
+        @(negedge clk);
+        rst_n = 1'b0;
+        @(negedge clk);
+        rst_n = 1'b1;
+        manual_tick_value = 1'b0;
+        manual_tick = 1'b0;
+        repeat (100) @(posedge clk);
+        `CHECK(!dut.ev_overflow && active_voice_count == 0,
+               "reset clears overflow latch");
 
         $display("================================================================");
-        if (errors == 0)
-            $display(" 结果: PASS  (%0d/%0d 项通过)", checks, checks);
-        else
-            $display(" 结果: FAIL  (%0d 项失败 / 共 %0d 项)", errors, checks);
-        $display("================================================================");
-        $display("");
-
-        $stop;
+        if (errors != 0)
+            $fatal(1, "A1 regression failed: %0d checks failed", errors);
+        $display(" 结果: PASS  (%0d/%0d 项通过)", checks, checks);
+        $finish;
     end
 
     // 仿真超时保护
     initial begin
         #1_200_000_000;                // 1.2 s 仿真时间上限
-        $display(" 结果: FAIL  (仿真超时)");
-        $stop;
+        $fatal(1, "A1 regression timeout");
     end
 
 endmodule

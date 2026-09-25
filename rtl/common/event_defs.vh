@@ -15,7 +15,7 @@
 `ifndef EVENT_DEFS_VH
 `define EVENT_DEFS_VH
 
-`define EVENTS_DEFS_VERSION     8'd1
+`define EVENTS_DEFS_VERSION     8'd2
 
 //-----------------------------------------------------------------------------
 // 1. 采样与时钟（来自平台冻结卡 docs/PLATFORM_TANG_MEGA_138K.md）
@@ -85,6 +85,11 @@
 // 4'd12 ~ 4'd15 保留
 
 // param_id 不得承载音符事件；音符一律走 EVENT_NOTE_ON / EVENT_NOTE_OFF。
+
+// Queue status extension (EVENTS_DEFS_VERSION = 2):
+// event_overflow / param_overflow are sticky, high-active, reset-cleared.
+`define EVENT_OVERFLOW_BITS     1
+`define PARAM_OVERFLOW_BITS     1
 
 //-----------------------------------------------------------------------------
 // 5. A -> C：音频采样与状态
