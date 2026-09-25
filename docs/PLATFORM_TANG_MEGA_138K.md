@@ -103,7 +103,7 @@ exFlash Erase, Program through GAO-Bridge Arora V   (V1.9.12+)
 | 有效位宽 | 目标 24 bit，**左对齐放在 32 bit 槽的高 24 位**，低 8 位补 0 |
 | 时序 | 发射端在 BCK 下降沿更新数据，接收端在上升沿采样 |
 | 相位 | 官方例程在帧内第 3 个 BCK 翻转 `HP_WS`（**不是标准 1-BCK 延迟**）。**首次实现请照抄官方相位并实测确认**，不要凭理论推断 |
-| 接口 | `HP_BCK` / `HP_WS` / `HP_DIN` 三线直连板载 DAC；`PA_EN` 拉高使能功放 |
+| 接口 | `HP_BCK` / `HP_WS` / `HP_DIN` 三线直连板载 DAC；官方例程将 `PA_EN` 固定低电平常开 |
 | 备选 | 若板载 DAC 不接受 32 bit 槽：退回 16 bit 槽（BCK=1.536 MHz），或用外置 PCM5102A（SCK 接 GND，无需 MCLK） |
 
 ---
@@ -118,7 +118,7 @@ exFlash Erase, Program through GAO-Bridge Arora V   (V1.9.12+)
 > output HP_BCK,   // 位时钟
 > output HP_WS,    // 左右声道（低=左）
 > output HP_DIN,   // DAC 串行数据输入
-> output PA_EN,    // 音频功放使能，高电平有效
+> output PA_EN,    // 音频功放控制；官方 top.v 固定为低电平常开
 > ```
 >
 > 例程自述："Test condition: earphone in the jack or mounted speaker. Phenomenon: A 400 Hz trapezoidal wave is generated and played."
@@ -131,7 +131,7 @@ exFlash Erase, Program through GAO-Bridge Arora V   (V1.9.12+)
 **首选路径（板载，阶段一即可验证）**
 
 ```
-FPGA (HP_BCK / HP_WS / HP_DIN) → 板载 I2S DAC → 板载功放 (PA_EN 拉高) → 耳机口 / 扬声器
+FPGA (HP_BCK / HP_WS / HP_DIN) → 板载 I2S DAC → 板载功放 (PA_EN 固定低电平) → 耳机口 / 扬声器
 ```
 
 **备选路径（仅在板载 DAC 不支持 24 bit 时考虑）**

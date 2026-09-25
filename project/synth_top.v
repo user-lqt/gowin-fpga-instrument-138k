@@ -8,9 +8,9 @@
 //                            │
 //                            ├─ sample_scheduler ─► sample_tick(48kHz) / bck_en
 //                            │        │
-//                            │        └─► tone_src ─► 1kHz 正弦 (24bit L/R)
+//                            │        └─► tone_src ─► 400Hz 正弦 (24bit L/R)
 //                            │                │
-//                            └────────────────┴─► i2s_tx ─► HP_BCK/HP_WS/HP_DIN
+    //                            └──────────────┴─► i2s_tx_official ─► HP_BCK/HP_WS/HP_DIN
 //                                                              │
 //                                                    板载 DAC + 功放(PA_EN)
 //                                                              │
@@ -25,12 +25,12 @@
 //=============================================================================
 module synth_top (
     input  wire        i_clk_in,     // 板载 50 MHz 晶振（管脚 V22）
-    input  wire        i_rst_n,      // S2 按键，低有效（管脚 F4，1.5V 域）
+    input  wire        i_rst_n,      // S2 原始输入（按下为高，松开为低；管脚 F4）
     // I2S 到板载 DAC
     output wire        o_hp_bck,
     output wire        o_hp_ws,
     output wire        o_hp_din,
-    output wire        o_pa_en,      // 板载功放使能，高有效
+    output wire        o_pa_en,      // 板载功放使能；官方例程为低电平常开
     // 状态指示
     output wire        o_led,
     output wire        o_locked
@@ -40,6 +40,11 @@ module synth_top (
     // 时钟与复位
     //------------------------------------------------------------
     wire clk_audio, clk_sys, pll_locked, rst_n;
+    wire board_rst_n;
+
+    // 官方例程为 rst_n = !rst：S2 原始输入高电平时复位，松开后低电平运行。
+    // 顶层端口名保留 i_rst_n 以兼容现有约束，但在这里恢复成运行有效电平。
+    assign board_rst_n = ~i_rst_n;
 
     clock_gen #(
         .FCLKIN           ("50.0"),
@@ -50,7 +55,7 @@ module synth_top (
         .ODIV1_SEL        (7'd7)        // -> 103.571 MHz 系统域
     ) u_clock_gen (
         .i_clk_in     (i_clk_in),
-        .i_rst_n      (i_rst_n),
+        .i_rst_n      (board_rst_n),
         .o_clk_audio  (clk_audio),
         .o_clk_sys    (clk_sys),
         .o_pll_locked (pll_locked)
@@ -58,7 +63,7 @@ module synth_top (
 
     reset_sync #(.SYNC_STAGES(3)) u_reset_sync (
         .clk    (clk_audio),
-        .arst_n (i_rst_n & pll_locked),
+        .arst_n (board_rst_n & pll_locked),
         .rst_n  (rst_n)
     );
 
@@ -68,7 +73,7 @@ module synth_top (
     wire sample_tick, bck, bck_en;
 
     sample_scheduler #(
-        .CLK_DIV_BCK    (2),            // BCK = clk_audio/4 = 3.072 MHz
+        .CLK_DIV_BCK    (4),            // BCK = clk_audio/8 = 1.536 MHz（板载 DAC 为 16bit 槽）
         .CLK_DIV_SAMPLE (256)           // LRCK = clk_audio/256 = 48.0005 kHz
     ) u_scheduler (
         .clk_audio   (clk_audio),
@@ -79,12 +84,12 @@ module synth_top (
     );
 
     //------------------------------------------------------------
-    // 音源（阶段 1 临时：1 kHz 正弦）
+    // 音源（阶段 1 临时：400 Hz 正弦，便于无仪器时听辨）
     //------------------------------------------------------------
     wire signed [23:0] sample_l, sample_r;
 
     tone_src #(
-        .PHASE_INC (89478485)           // 1 kHz @ 48 kHz
+        .PHASE_INC (35791394)           // 400 Hz @ 48 kHz
     ) u_tone_src (
         .clk_audio   (clk_audio),
         .rst_n       (rst_n),
@@ -98,15 +103,17 @@ module synth_top (
     //------------------------------------------------------------
     wire frame_start;
 
-    i2s_tx #(
-        .DATA_BITS (24),
-        .SLOT_BITS (32)
-    ) u_i2s_tx (
+    // 【2026-09-25 上板实测修正】板载 DAC 只认 16bit 槽（官方例程实测格式：
+    // BCK=1.536MHz、每声道 16bit、32 BCK/帧）。此前 32bit 槽装 24bit 数据
+    // 上板表现为"全是杂音、音量最大才勉强可闻"——DAC 截到了槽内低位段。
+    // 现改为 16bit 槽，送 24bit 样本的高 16 位（幅度不变，丢低 8bit 精度）。
+    i2s_tx_official u_i2s_tx (
         .clk_audio   (clk_audio),
         .rst_n       (rst_n),
+        .bck_in      (bck),
         .bck_en      (bck_en),
-        .sample_l    (sample_l),
-        .sample_r    (sample_r),
+        .sample_l    (sample_l[23:8]),
+        .sample_r    (sample_r[23:8]),
         .frame_start (frame_start),
         .o_bck       (o_hp_bck),
         .o_ws        (o_hp_ws),
@@ -116,16 +123,20 @@ module synth_top (
     //------------------------------------------------------------
     // 状态指示
     //------------------------------------------------------------
-    assign o_pa_en  = pll_locked;
+    // 官方可发声例程的 top.v 明确使用 PA_EN=0（注释为“PA常开”）。
+    // 当前板载功放的实际有效电平以该例程为准，不能把 PLL 锁定状态直接送入此脚。
+    assign o_pa_en  = 1'b0;
 
-    // 心跳：clk_audio / 2^23 ≈ 1.47 Hz
+    // 心跳：clk_audio / 2^20 ≈ 11.7 Hz —— 快到人眼看是"半亮常亮"
+    // 【固件标记 v3】16bit 槽 + 本标记：若烧录后 W21 仍是肉眼可分辨的慢闪，
+    // 说明烧录未生效；若变成"微亮常亮"，说明新固件在跑。
     reg [22:0] hb;
     always @(posedge clk_audio or negedge rst_n) begin
         if (!rst_n) hb <= 23'd0;
         else        hb <= hb + 1'b1;
     end
 
-    assign o_led    = hb[22];
+    assign o_led    = hb[19];
     assign o_locked = pll_locked;
 
 endmodule

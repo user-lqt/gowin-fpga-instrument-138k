@@ -23,11 +23,15 @@ add_file $ROOT/rtl/system/sample_scheduler.v
 add_file $ROOT/rtl/system/sine_rom.v
 add_file $ROOT/rtl/system/tone_src.v
 add_file $ROOT/rtl/system/i2s_tx.v
+add_file $ROOT/rtl/system/i2s_tx_official.v
 add_file $ROOT/project/synth_top.v
 
 # ---- 约束 ----
 add_file $ROOT/constraint/tang_mega138k.cst
 add_file $ROOT/constraint/tang_mega138k.sdc
+
+# ---- GAO 片上逻辑分析仪（调试用：抓 I2S 三线，触发 WS=1）----
+add_file $ROOT/gao/i2s_debug.gao
 
 # ---- 顶层 ----
 set_option -top_module synth_top

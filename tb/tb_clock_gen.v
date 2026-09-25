@@ -15,7 +15,7 @@
 //   坑2 整数除法 `localparam T = (T_REF*80)/59` 会向下取整（2169 -> 2169.49 被截断），
 //       导致期望值本身就不准。改用 real 直接算。
 //
-// 能证明：I2S 分频关系 BCK = 64 x LRCK、复位释放时序
+// 能证明：I2S 分频关系与当前 16bit 槽配置、复位释放时序
 // 不能证明（必须上板）：厂商 PLL 是否锁定、实际频率、能否出声
 //=============================================================================
 `timescale 1ns/1ps
@@ -33,7 +33,7 @@ module tb_clock_gen;
     localparam integer ODIV0 = 59;
     localparam integer ODIV1 = 7;
 
-    localparam integer CLK_DIV_BCK    = 2;
+    localparam integer CLK_DIV_BCK    = 4;
     localparam integer CLK_DIV_SAMPLE = 256;
 
     // 用 real 常量，避免整数截断
@@ -194,7 +194,7 @@ module tb_clock_gen;
         check_near("LRCK period", t_lrck_ns, t_lrck_exp, 0.02);
 
         $display("");
-        $display("-- ratio check: one I2S frame carries 64 bit slots --");
+        $display("-- ratio check: current onboard DAC frame carries 32 BCK periods --");
         ratio     = t_lrck_ns / t_bck_ns;
         ratio_exp = CLK_DIV_SAMPLE * 1.0 / (2.0 * CLK_DIV_BCK);
         if (ratio > (ratio_exp*0.98) && ratio < (ratio_exp*1.02))
@@ -208,8 +208,8 @@ module tb_clock_gen;
         $display("-- hardware figures (design calculation) --");
         $display("  [INFO] clk_audio = 50MHz/2 * 1 * 29 / 59 = 12.28814 MHz");
         $display("  [INFO] LRCK      = clk_audio / 256       = 48.0005 kHz -> 20833.1 ns");
-        $display("  [INFO] BCK       = clk_audio / 4         =  3.07203 MHz -> 325.52 ns");
-        $display("  [INFO] BCK / LRCK = 64   (32bit slot x 2ch, supports 24bit audio)");
+        $display("  [INFO] BCK       = clk_audio / 8         =  1.53602 MHz -> 651.04 ns");
+        $display("  [INFO] BCK / LRCK = 32   (16bit slot x 2ch, onboard DAC)");
         $display("  [INFO] +0.0011%% off the ideal 48.000 kHz  (= +0.02 cent)");
         $display("  [INFO] design values only; real frequency MUST be measured");
         $display("  [INFO] on board with a scope / logic analyser.");

@@ -20,11 +20,11 @@
 //   即：一个 I2S 位周期 = CLK_DIV_BCK 个 clk_audio。
 //       bck 每 CLK_DIV_BCK 拍翻转一次，所以它的**完整周期**是 2*CLK_DIV_BCK 拍。
 //
-//   要得到 BCK = 64 x LRCK（每声道 32bit slot，支持 24bit 音频）：
+//   要得到 BCK = 32 x LRCK（每声道 16bit slot，板载 DAC 实测格式）：
 //       CLK_DIV_SAMPLE / CLK_DIV_BCK = 64
-//       硬件：CLK_DIV_SAMPLE = 256 -> CLK_DIV_BCK = 2
+//       硬件：CLK_DIV_SAMPLE = 256 -> CLK_DIV_BCK = 4
 //         clk_audio = 12.28814 MHz
-//         bck       = 12.28814 / 4 = 3.07203 MHz  （= 64 x LRCK，目标 3.072 MHz）
+//         bck       = 12.28814 / 8 = 1.53602 MHz  （= 32 x LRCK，目标 1.536 MHz）
 //         LRCK      = 12.28814 / 256 = 48.0005 kHz
 //
 // 【修订记录】
@@ -32,15 +32,20 @@
 //       bit slot —— 只有 I2S 规格要求的一半。行为仿真对比官方例程时发现。
 //   v2  默认改为 2，并在 tb_scheduler 中加入"每 sample 必须正好 64 个 bck_en"
 //       与"CLK_DIV_SAMPLE = 2*CLK_DIV_BCK*32"的显式断言，锁死这个关系。
+//   v3  2026-09-25 上板实测：板载 DAC 只认 16bit 槽（官方例程即此格式），
+//       32bit 槽送 24bit 数据表现为"全是杂音、音量最大才勉强可闻"。
+//       硬件配置改为 CLK_DIV_BCK=4（BCK=1.536MHz，32 BCK/帧），模块默认值
+//       不动，由 synth_top 实例化时传入；tb_scheduler 断言同步更新。
 //
 // 参考：Sipeed 官方 audio 例程用 BCK=1.536MHz/16bit 槽（32 slot/帧），
-//       本设计用 32bit 槽以支持 24bit 音频，故 BCK 为 64 x LRCK。
+//       2026-09-25 上板验证后本设计与之一致。24bit 音质升级需外置 DAC
+//       （如 PCM5102A），见 docs/C_官方例程与板载音频通路分析.md 第 3 节。
 //=============================================================================
 module sample_scheduler #(
-    // 一个 I2S 位周期占多少个 clk_audio（硬件值 2）
+    // 一个 I2S 位周期占多少个 clk_audio（阶段 1 硬件实例化值 4）
     // 注意：bck 的完整周期 = 2 * CLK_DIV_BCK
     parameter CLK_DIV_BCK    = 2,
-    // 一个采样周期占多少个 clk_audio（硬件值 256）
+    // 一个采样周期占多少个 clk_audio（硬件实例化值 256）
     parameter CLK_DIV_SAMPLE = 256
 ) (
     input  wire clk_audio,

@@ -10,7 +10,9 @@
 //     ● WS 跳变与该声道数据的 MSB 落在**同一个 BCK 周期**（左对齐格式）
 //     ● 数据 MSB 先出，占满槽的高位部分
 //     ● 数据/WS 在 BCK 低半周更新，DAC 在 BCK 上升沿采样
-//   本模块按此三条规定实现，32bit 槽、24bit 有效数据、BCK = 64 x LRCK。
+//   本模块按此三条规定实现，槽宽/数据位宽由参数决定。
+//   硬件配置（2026-09-25 上板实测后）：16bit 槽、16bit 有效数据、BCK = 32 x LRCK
+//   （板载 DAC 只认 16bit 槽；24bit 音质需外置 DAC）。
 //
 // ---------------------------------------------------------------------------
 // 时序模型
@@ -59,9 +61,17 @@ module i2s_tx #(
     wire [HW-2:0] k         = half[HW-1:1];          // 位周期序号
 
     wire load  = ph_lo && (k == {HW-1{1'b0}});       // 帧起点：装载
-    wire shift = ph_lo && !load;                     // 其余 PH_LO：移位
-
     reg [FRAME_BITS-1:0] sh;
+
+    // 避免 PAD=0 时产生零重复拼接警告，同时保留任意槽宽的参数化。
+    wire [FRAME_BITS-1:0] load_word;
+    generate
+        if (PAD == 0) begin : gen_no_pad
+            assign load_word = {sample_l, sample_r};
+        end else begin : gen_with_pad
+            assign load_word = {sample_l, {PAD{1'b0}}, sample_r, {PAD{1'b0}}};
+        end
+    endgenerate
 
     always @(posedge clk_audio or negedge rst_n) begin
         if (!rst_n) begin
@@ -77,7 +87,7 @@ module i2s_tx #(
             if (ph_lo) begin
                 o_ws <= (k >= SLOT_BITS[HW-2:0]);
                 if (load) begin
-                    sh    <= {sample_l, {PAD{1'b0}}, sample_r, {PAD{1'b0}}};
+                    sh    <= load_word;
                     o_din <= sample_l[DATA_BITS-1];  // 本拍即左声道 MSB
                 end else begin
                     sh    <= {sh[FRAME_BITS-2:0], 1'b0};

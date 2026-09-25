@@ -1,5 +1,5 @@
 //=============================================================================
-// tb_gold_trace.v —— STEP 1：用"手工黄金波形"冻结接收端模型
+// tb_rx_golden.v —— STEP 1：用"手工黄金波形"冻结接收端模型
 //
 // 时钟方案（两个计数器分工，相位无歧义）：
 //   khz [0..3]：每个位周期 4 拍
@@ -14,7 +14,7 @@
 //=============================================================================
 `timescale 1ns/1ps
 
-module tb_gold_trace;
+module tb_rx_golden;
     localparam integer DATA_BITS  = 24;
     localparam integer SLOT_BITS  = 32;
     localparam integer FRAME_BITS = SLOT_BITS*2;
@@ -46,7 +46,9 @@ module tb_gold_trace;
     reg bck = 0, din = 0, ws = 0;
     always @(posedge clk) begin
         if (ph0) bck <= 1'b1;
-        if (ph2) begin bck <= 1'b0; din <= din_val; ws <= ws_val; end
+        if (ph2) begin
+            bck <= 1'b0; din <= din_val; ws <= ws_val;
+        end
     end
 
     //------------------------------------------------------------
@@ -56,19 +58,21 @@ module tb_gold_trace;
     reg [SLOT_BITS-1:0] shf = 0, rx_l = 0, rx_r = 0;
 
     always @(posedge clk) begin
-        if (frame_wrap) bcnt <= 0;
-        else if (ph3) begin
+        if (ph3) begin
             if (bcnt == 0) begin
-                shf  <= {din, {(SLOT_BITS-1){1'b0}}};
-                bcnt <= 1;
+                shf  <= {{(SLOT_BITS-1){1'b0}}, din};
             end else begin
                 if (bcnt == SLOT_BITS-1) begin
                     if (ws) rx_r <= {shf[SLOT_BITS-2:0], din};
                     else    rx_l <= {shf[SLOT_BITS-2:0], din};
                 end
                 shf  <= {shf[SLOT_BITS-2:0], din};
-                bcnt <= (bcnt == SLOT_BITS-1) ? 0 : (bcnt + 1);
             end
+
+            // 先处理本拍数据，再清零帧末计数，不能跳过右声道最后一位。
+            if (frame_wrap || bcnt == SLOT_BITS-1) bcnt <= 0;
+            else if (bcnt == 0)                    bcnt <= 1;
+            else                                   bcnt <= bcnt + 1;
         end
     end
 
@@ -80,19 +84,21 @@ module tb_gold_trace;
         $display("   gl = 0x%06h   gr = 0x%06h", gl, gr);
         $display("==================================================");
         for (i = 0; i < FRAME_BITS*4*4; i = i + 1) @(posedge clk);
+        // 等待最后一个采样沿的非阻塞赋值提交后再读取锁存结果。
+        @(posedge clk);
 
         $display("");
-        if (rx_l[DATA_BITS-1:0] === gl)
-            $display("  [PASS] left  = 0x%06h", rx_l[DATA_BITS-1:0]);
+        if (rx_l[SLOT_BITS-1 -: DATA_BITS] === gl)
+            $display("  [PASS] left  = 0x%06h", rx_l[SLOT_BITS-1 -: DATA_BITS]);
         else begin
-            $display("  [FAIL] left  = 0x%06h  expected 0x%06h", rx_l[DATA_BITS-1:0], gl);
+            $display("  [FAIL] left  = 0x%06h  expected 0x%06h", rx_l[SLOT_BITS-1 -: DATA_BITS], gl);
             errs = errs + 1;
         end
 
-        if (rx_r[DATA_BITS-1:0] === gr)
-            $display("  [PASS] right = 0x%06h", rx_r[DATA_BITS-1:0]);
+        if (rx_r[SLOT_BITS-1 -: DATA_BITS] === gr)
+            $display("  [PASS] right = 0x%06h", rx_r[SLOT_BITS-1 -: DATA_BITS]);
         else begin
-            $display("  [FAIL] right = 0x%06h  expected 0x%06h", rx_r[DATA_BITS-1:0], gr);
+            $display("  [FAIL] right = 0x%06h  expected 0x%06h", rx_r[SLOT_BITS-1 -: DATA_BITS], gr);
             errs = errs + 1;
         end
 

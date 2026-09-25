@@ -12,8 +12,9 @@
 //   bck_en_per_smp    = slot_per_sample                   （位周期使能数）
 //
 // 规格断言（把 I2S 关系锁死，防止参数再被改错）：
-//   硬件配置下 slot_per_sample 必须正好 = 64
-//   且必须满足 CLK_DIV_SAMPLE = 2 * CLK_DIV_BCK * 32
+//   硬件配置下 bck_en_per_sample 必须正好 = 64（16bit 槽 × 2 声道 × 2 半周期）
+//   且必须满足 CLK_DIV_SAMPLE = 64 * CLK_DIV_BCK
+//   （2026-09-25 起硬件配置 CLK_DIV_BCK=4：BCK=1.536MHz，板载 DAC 只认 16bit 槽）
 //=============================================================================
 `timescale 1ns/1ps
 
@@ -25,7 +26,7 @@ module tb_scheduler;
     localparam integer FAST_SAMPLE = 32;
     localparam integer FAST_BCK    = 2;
     localparam integer HW_SAMPLE   = 256;
-    localparam integer HW_BCK      = 2;
+    localparam integer HW_BCK      = 4;
 
     localparam integer FAST_N = 64;    // 观察的采样周期数
     localparam integer HW_N   = 64;
@@ -166,17 +167,17 @@ module tb_scheduler;
         //============ I2S 规格断言（关键）============
         $display("");
         $display("-- I2S SPEC checks --");
-        check_eq("HW BCK edges per sample (=BCK/LRCK)", HW_EDGE_PER_SMP, 64);
-        check_eq("HW bck_en pulses per sample", HW_EN_PER_SMP, 128);
-        check_eq("param relation SAMPLE = 128*BCK_DIV", HW_SAMPLE, 128 * HW_BCK);
-        $display("  [INFO] => BCK = 64 x LRCK  (32-bit slot x 2 channels)");
+        check_eq("HW BCK edges per sample (=BCK/LRCK)", HW_EDGE_PER_SMP, 32);
+        check_eq("HW bck_en pulses per sample", HW_EN_PER_SMP, 64);
+        check_eq("param relation SAMPLE = 64*BCK_DIV", HW_SAMPLE, 64 * HW_BCK);
+        $display("  [INFO] => BCK = 32 x LRCK  (16-bit slot x 2 channels, onboard DAC)");
 
         //============ 频率换算 =============
         $display("");
         $display("-- frequency figures (design calculation) --");
         $display("  [INFO] clk_audio = 12.28814 MHz");
         $display("  [INFO] LRCK = clk_audio / %0d = 48.0005 kHz", HW_SAMPLE);
-        $display("  [INFO] BCK  = clk_audio / %0d =  3.07203 MHz", 2 * HW_BCK);
+        $display("  [INFO] BCK  = clk_audio / %0d =  1.53602 MHz", 2 * HW_BCK);
         $display("  [INFO] these are DESIGN values; measure on board to confirm");
 
         $display("");

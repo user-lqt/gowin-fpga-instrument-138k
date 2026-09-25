@@ -17,7 +17,7 @@ $ErrorActionPreference = "Stop"
 
 $MS   = "E:\altera\13.0\modelsim_ase\win32aloem"
 $ROOT = "E:\GowinProjects\synth_top"
-$SIM  = Join-Path $ROOT "sim\delta"
+$SIM  = Join-Path $ROOT ("sim\run_" + $Tb)
 
 if (-not (Test-Path $MS)) {
     Write-Host "ModelSim not found at $MS" -ForegroundColor Red
@@ -25,12 +25,22 @@ if (-not (Test-Path $MS)) {
     exit 1
 }
 
+# Keep simulator scratch files local to the workspace.  A per-testbench
+# library also makes independent runs safe when two checks are started close
+# together.
 New-Item -ItemType Directory -Force -Path $SIM | Out-Null
 Set-Location $SIM
+
+$TMP_LOCAL = Join-Path $ROOT "_tmp"
+New-Item -ItemType Directory -Force -Path $TMP_LOCAL | Out-Null
+$env:TEMP   = $TMP_LOCAL
+$env:TMP    = $TMP_LOCAL
+$env:TMPDIR = $TMP_LOCAL
 
 # 清掉上一次的结果
 if (Test-Path work) { Remove-Item work -Recurse -Force }
 & "$MS\vlib.exe" work | Out-Null
+& "$MS\vmap.exe" work work | Out-Null
 
 # 编译：RTL + testbench
 $rtl = @(
@@ -39,7 +49,8 @@ $rtl = @(
     "$ROOT\rtl\system\sample_scheduler.v",
     "$ROOT\rtl\system\sine_rom.v",
     "$ROOT\rtl\system\tone_src.v",
-    "$ROOT\rtl\system\i2s_tx.v"
+    "$ROOT\rtl\system\i2s_tx.v",
+    "$ROOT\rtl\system\i2s_tx_official.v"
 )
 $tbFile = "$ROOT\tb\$Tb.v"
 
