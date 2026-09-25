@@ -6,7 +6,7 @@
 // ui_page: 0=volume, 1=instrument. Select has priority over simultaneous rotation.
 // Switching pages only sets ui_dirty; it does not send an audio parameter event.
 // Legal configuration: 0 <= DEFAULT_VOLUME <= MAX_VOLUME, VOLUME_STEP >= 1.
-// All three values are unsigned 16-bit numbers. Defaults: 0..127, 64, step 1.
+// UI values default to 0..127, 64, step 1; volume param payload is 0..65535.
 // First active clock publishes the default; step inputs on that clock are ignored.
 // Thereafter each asserted step is an event (no edge detector, no auto-repeat).
 // Simultaneous up/down cancel. Saturated/no-op requests publish no update.
@@ -39,6 +39,19 @@ module parameter_manager #(
     reg [15:0] next_volume;
     reg [15:0] next_instrument;
     wire [16:0] increased = {1'b0, volume_value} + {1'b0, VOLUME_STEP};
+    function [15:0] audio_volume;
+        input [15:0] ui_volume;
+        reg [63:0] scaled;
+        reg [63:0] quotient;
+        begin
+            if (MAX_VOLUME == 0) audio_volume = 0;
+            else begin
+                scaled = {48'd0, ui_volume} * 64'd65535 + (MAX_VOLUME / 2);
+                quotient = scaled / MAX_VOLUME;
+                audio_volume = quotient[15:0];
+            end
+        end
+    endfunction
     assign ui_param_value = (ui_page == 0) ? volume_value : instrument_value;
     always @* begin
         next_instrument = instrument_value;
@@ -63,7 +76,7 @@ module parameter_manager #(
             ui_page <= 0;
             param_id <= `PARAM_VOLUME;
             volume_value <= DEFAULT_VOLUME;
-            param_value <= DEFAULT_VOLUME;
+            param_value <= audio_volume(DEFAULT_VOLUME);
             param_valid <= 0;
             ui_dirty <= 0;
         end else begin
@@ -71,7 +84,7 @@ module parameter_manager #(
             ui_dirty <= 0;
             if (!initialized) begin
                 initialized <= 1;
-                param_value <= volume_value;
+                param_value <= audio_volume(volume_value);
                 param_valid <= 1;
                 ui_dirty <= 1;
             end else if (instrument_pending) begin
@@ -85,7 +98,7 @@ module parameter_manager #(
             end else if ((ui_page == 0) && (next_volume != volume_value)) begin
                 volume_value <= next_volume;
                 param_id <= `PARAM_VOLUME;
-                param_value <= next_volume;
+                param_value <= audio_volume(next_volume);
                 param_valid <= 1;
                 ui_dirty <= 1;
             end else if ((ui_page == 1) && (next_instrument != instrument_value)) begin

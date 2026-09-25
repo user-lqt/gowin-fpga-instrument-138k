@@ -20,10 +20,10 @@ module tb_encoder_control;
             if (dirty) changes=changes+1;
             if (valid) begin
                 events=events+1;
-                if (id==0 && value!==vol) $fatal(1,"Volume payload");
+                if (id==0 && value!==((vol * 32'd65535 + 63) / 127)) $fatal(1,"Volume payload");
                 if (id==1 && value!==inst) $fatal(1,"Instrument payload");
                 if (id>1) $fatal(1,"Unknown parameter");
-                if (events==1 && (id!=0 || value!=64)) $fatal(1,"Initial volume");
+                if (events==1 && (id!=0 || value!=16'd33026)) $fatal(1,"Initial volume");
                 if (events==2 && (id!=1 || value!=0)) $fatal(1,"Initial instrument");
             end
             if (ui !== ((page==0)?vol:inst)) $fatal(1,"UI mismatch");

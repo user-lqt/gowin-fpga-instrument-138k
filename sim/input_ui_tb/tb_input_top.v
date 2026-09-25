@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+`include "../../rtl/common/event_defs.vh"
 module tb_input_top;
     reg clk=0, rst_n=0, system_ready=0, sw=1;
     always #10 clk=~clk;
@@ -15,7 +16,8 @@ module tb_input_top;
     reg [15:0] received=0;
     integer i,j,p,index,notes=0,params=0;
     reg [15:0] last_volume=0,last_instrument=0;
-    input_top #(.ROW_CYCLES(4),.DEBOUNCE_FRAMES(2),.FILTER_CYCLES(3),.BUTTON_CYCLES(8)) dut (
+    input_top #(.ROW_CYCLES(4),.DEBOUNCE_FRAMES(2),.FILTER_CYCLES(3),.BUTTON_CYCLES(8),
+        .INSTRUMENT_COUNT(4)) dut (
         .clk(clk),.rst_n(rst_n),.system_ready(system_ready),.col_in(cols),.row_out(rows),
         .enc_a(ab[1]),.enc_b(ab[0]),.enc_sw_n(sw),.active_voice_count(6'd4),
         .audio_locked(1'b1),.i2s_active(1'b1),.system_error(1'b0),
@@ -45,10 +47,10 @@ module tb_input_top;
             if(ev) begin
                 index=note-60;
                 if(index<0 || index>15) $fatal(1,"Note range");
-                if(kind==0) begin
+                if(kind===`EVENT_NOTE_ON) begin
                     if(received[index] || velocity!=127) $fatal(1,"Duplicate note-on");
                     received[index]=1;
-                end else if(kind==1) begin
+                end else if(kind===`EVENT_NOTE_OFF) begin
                     if(!received[index] || velocity!=0) $fatal(1,"Unexpected note-off");
                     received[index]=0;
                 end else $fatal(1,"Wrong note event type");
@@ -76,7 +78,7 @@ module tb_input_top;
         if(ready || rows!==4'bzzzz || params!=0) $fatal(1,"Startup gating");
         system_ready=1;
         repeat(100) @(negedge clk);
-        if(!ready || params!=2 || last_volume!=64 || last_instrument!=0 || sensor!=0)
+        if(!ready || params!=2 || last_volume!=16'd33026 || last_instrument!=0 || sensor!=0)
             $fatal(1,"Initialization protocol");
         pressed=16'h8421; // Four independent row/column notes, no ghost rectangle.
         cw;

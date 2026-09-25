@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+`include "../../rtl/common/event_defs.vh"
 module tb_key_map;
     reg clk=0, rst_n=0;
     reg [15:0] keys=0;
@@ -8,6 +9,8 @@ module tb_key_map;
     wire [7:0] velocity;
     reg [15:0] received=0;
     integer errors=0, events=0, idx, i, phase;
+    reg burst_mode=0;
+    integer burst_count=0, burst_prev_note=0, burst_prev_time=0;
     key_map dut (.clk(clk),.rst_n(rst_n),.key_state(keys),
         .event_valid(valid),.event_type(kind),.note_id(note_id),.velocity(velocity));
     always #10 clk=~clk;
@@ -16,12 +19,21 @@ module tb_key_map;
         if (!rst_n) received=0;
         else if(valid) begin
             events=events+1;
+            if (burst_mode) begin
+                if (kind !== 2'd1 || velocity !== 8'd127) errors=errors+1;
+                if (burst_count != 0 &&
+                    (note_id != ((burst_prev_note == 75) ? 60 : burst_prev_note + 1) ||
+                     $time - burst_prev_time != 20)) errors=errors+1;
+                burst_prev_note=note_id;
+                burst_prev_time=$time;
+                burst_count=burst_count+1;
+            end
             idx=note_id-60;
             if(idx<0 || idx>15) errors=errors+1;
-            else if(kind==0) begin
+            else if(kind===`EVENT_NOTE_ON) begin
                 if(received[idx] || velocity!==127) errors=errors+1;
                 received[idx]=1;
-            end else if(kind==1) begin
+            end else if(kind===`EVENT_NOTE_OFF) begin
                 if(!received[idx] || velocity!==0) errors=errors+1;
                 received[idx]=0;
             end else errors=errors+1;
@@ -47,13 +59,18 @@ module tb_key_map;
         end
     endtask
     initial begin
+        if (`EVENT_NOTE_ON !== 2'd1 || `EVENT_NOTE_OFF !== 2'd2)
+            $fatal(1,"Shared NOTE encoding changed");
         repeat(3) @(negedge clk); rst_n=1;
         pattern(0,20); check(0,0);
         for(i=0;i<16;i=i+1) begin
             pattern(16'h1<<i,18); check(16'h1<<i,2*i+1);
             pattern(0,18); check(0,2*i+2);
         end
+        burst_mode=1;
         pattern(16'hffff,18); check(16'hffff,48);
+        if (burst_count != 16) $fatal(1,"16-key burst count=%0d",burst_count);
+        burst_mode=0;
         pattern(16'hffff,64); check(16'hffff,48);
         pattern(16'h5555,18); check(16'h5555,56);
         pattern(16'haaaa,18); check(16'haaaa,72);

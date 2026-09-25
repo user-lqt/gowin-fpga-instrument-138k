@@ -13,8 +13,10 @@ module parameter_test_case #(
     parameter_manager #(.MAX_VOLUME(LIMIT), .DEFAULT_VOLUME(DEFAULT_VALUE),
         .VOLUME_STEP(STEP)) dut(clk, rst_n, up, down, volume, valid, id, value, ui, dirty, 1'b0, , );
     task check;
+        reg [63:0] scaled;
         begin
-            if (volume !== expected || value !== expected || ui !== expected ||
+            scaled = ({32'd0, expected} * 64'd65535 + LIMIT / 2) / LIMIT;
+            if (volume !== expected || value !== scaled[15:0] || ui !== expected ||
                 valid !== expected_valid || dirty !== expected_valid || id !== 4'h0)
                 $fatal(1, "Volume mismatch limit=%0d expected=%0d got=%0d valid=%b", LIMIT, expected, volume, valid);
         end

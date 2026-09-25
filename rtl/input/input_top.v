@@ -13,7 +13,7 @@ module input_top #(
     parameter integer FILTER_CYCLES = CLK_HZ / 20000,
     parameter integer BUTTON_CYCLES = CLK_HZ / 50,
     parameter integer BASE_NOTE = 60,
-    parameter integer INSTRUMENT_COUNT = 4,
+    parameter integer INSTRUMENT_COUNT = 1,
     parameter integer REVERSE_DIR = 0
 ) (
     input wire clk, rst_n, system_ready,

@@ -5,6 +5,7 @@
     <Version>5</Version>
     <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
     <FileList>
+        <File path="../../rtl/common/event_defs.vh" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/input_defs.vh" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/key_debounce.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/matrix_scan.v" type="file.verilog" enable="1"/>

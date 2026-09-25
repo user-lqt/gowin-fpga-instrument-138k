@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+`include "../../rtl/common/event_defs.vh"
 module tb_keyboard_input;
     reg clk=0, rst_n=0;
     reg [15:0] pressed=0;
@@ -34,10 +35,10 @@ module tb_keyboard_input;
             events=events+1;
             idx=note_id-60;
             if(idx<0 || idx>15) errors=errors+1;
-            else if(kind==0) begin
+            else if(kind===`EVENT_NOTE_ON) begin
                 if(received[idx] || velocity!==127) errors=errors+1;
                 received[idx]=1;
-            end else if(kind==1) begin
+            end else if(kind===`EVENT_NOTE_OFF) begin
                 if(!received[idx] || velocity!==0) errors=errors+1;
                 received[idx]=0;
             end else errors=errors+1;

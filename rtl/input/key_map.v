@@ -28,7 +28,7 @@ module key_map #(
             reported_state <= 0;
             cursor <= 0;
             event_valid <= 0;
-            event_type <= 0;
+            event_type <= `EVENT_NONE;
             note_id <= 0;
             velocity <= 0;
         end else begin

@@ -5,6 +5,7 @@ set top input_top
 if {[llength $argv] > 0} { set top [lindex $argv 0] }
 if {$top ni {input_top oled_content}} { error "Unsupported synthesis top" }
 set_device -name GW5AST-138C GW5AST-LV138PG484AC1/I0
+add_file [file join $root rtl/common/event_defs.vh]
 foreach source [glob [file join $root rtl/input/*.v] [file join $root rtl/ui/*.v]] {
     if {[file size $source] > 0} { add_file $source }
 }
