@@ -1,5 +1,5 @@
 //=============================================================================
-// audio_core.v —— 音频核心顶层(A1:单音实时合成)
+// audio_core.v —— 音频核心顶层(A2:四声部, A1回归可选)
 //
 //   事件输入(B) -> 音高查表 -> 振荡器 -> 力度/音量 -> 采样输出(C)
 //
@@ -7,12 +7,18 @@
 //   流水线:phase(1 拍) -> ROM(1 拍) -> 输出寄存器(1 拍),共 3 拍固定延迟,
 //           与音高无关,不影响相位连续性。
 //
-//   A1 范围:单一振荡器;ADSR / 复音 / 混音在 A2 引入。
+//   A2 默认接入四声部、独立ADSR和饱和混音;A1路径只用于回归。
 //   合规:全部样本由本模块逐样本实时计算,无任何预录 PCM。
 //=============================================================================
 `include "event_defs.vh"
 
-module audio_core (
+module audio_core #(
+    parameter integer ENABLE_POLYPHONY = 1,
+    parameter integer ATTACK_SAMPLES = 480,
+    parameter integer DECAY_SAMPLES = 2400,
+    parameter [15:0] SUSTAIN_LEVEL = 16'd45875,
+    parameter integer RELEASE_SAMPLES = 4800
+) (
     input  wire               clk,
     input  wire               rst_n,
     input  wire               sample_tick,
@@ -116,7 +122,7 @@ module audio_core (
             cur_note     <= 7'd0;
             cur_vel      <= 8'd0;
             note_active  <= 1'b0;
-            volume       <= 16'hFFFF;
+            volume       <= ENABLE_POLYPHONY ? 16'h3fff : 16'hffff;
             phase_load_r <= 1'b0;
         end else begin
             phase_load_r <= 1'b0;
@@ -187,6 +193,7 @@ module audio_core (
     //-------------------------------------------------------------------------
     // 振荡器链:note -> fc -> 相位累加 -> 波表
     //-------------------------------------------------------------------------
+    generate if (!ENABLE_POLYPHONY) begin : a1
     wire [31:0]       cur_fc;
     wire signed [15:0] wave;
 
@@ -217,9 +224,6 @@ module audio_core (
     wire signed [39:0] vol_prod   = vel_scaled * $signed({1'b0, volume});
     wire signed [23:0] smp24      = vol_prod[39:16];
 
-    assign event_overflow = ev_overflow;
-    assign param_overflow = p_overflow;
-
     wire gate = ready_r & note_active & !ev_overflow & !ev_fault;
 
     always @(posedge clk or negedge rst_n) begin
@@ -235,18 +239,6 @@ module audio_core (
     //-------------------------------------------------------------------------
     // 输出有效标志:与输出寄存器同拍(把 sample_tick 延迟 3 拍)
     //-------------------------------------------------------------------------
-    reg [2:0] tick_sr;
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) tick_sr <= 3'd0;
-        else        tick_sr <= {tick_sr[1:0], sample_tick};
-    end
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) audio_core_valid <= 1'b0;
-        else        audio_core_valid <= tick_sr[2];
-    end
-
     //-------------------------------------------------------------------------
     // 状态输出
     //-------------------------------------------------------------------------
@@ -256,6 +248,95 @@ module audio_core (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) overload_flag <= 1'b0;
         else        overload_flag <= 1'b0;
+    end
+    end else begin : a2
+        wire [3:0] voice_active;
+        wire [3:0] voice_note_on;
+        wire [3:0] voice_note_off;
+        wire [3:0] key_down;
+        wire [27:0] voice_note_id;
+        wire [31:0] voice_velocity;
+        wire [95:0] voice_samples;
+        wire [63:0] envelope_levels;
+        wire [11:0] envelope_stages;
+        wire full_pulse;
+        wire signed [23:0] mixed_audio;
+        wire mixed_overload;
+        wire gate = ready_r && !ev_overflow && !ev_fault;
+        reg [5:0] voice_count;
+        integer i;
+
+        voice_allocator #(.VOICES(4)) u_allocator (
+            .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
+            .event_valid(ev_pop || ev_bypass),
+            .event_type(selected_type), .note_id(selected_note),
+            .velocity(selected_vel), .voice_active(voice_active),
+            .voice_note_on(voice_note_on), .voice_note_off(voice_note_off),
+            .key_down(key_down), .voice_note_id(voice_note_id),
+            .voice_velocity(voice_velocity), .full_pulse(full_pulse)
+        );
+
+        genvar v;
+        for (v = 0; v < 4; v = v + 1) begin : voices
+            voice #(
+                .ATTACK_SAMPLES(ATTACK_SAMPLES),
+                .DECAY_SAMPLES(DECAY_SAMPLES),
+                .SUSTAIN_LEVEL(SUSTAIN_LEVEL),
+                .RELEASE_SAMPLES(RELEASE_SAMPLES)
+            ) u_voice (
+                .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
+                .note_on(voice_note_on[v]), .note_off(voice_note_off[v]),
+                .note_id(voice_note_id[v*7 +: 7]),
+                .velocity(voice_velocity[v*8 +: 8]),
+                .audio(voice_samples[v*24 +: 24]), .active(voice_active[v]),
+                .envelope_level(envelope_levels[v*16 +: 16]),
+                .envelope_stage(envelope_stages[v*3 +: 3])
+            );
+        end
+
+        mixer u_mixer (
+            .voice_samples(voice_samples), .volume(volume),
+            .audio(mixed_audio), .overload_flag(mixed_overload)
+        );
+
+        always @(*) begin
+            voice_count = 6'd0;
+            for (i = 0; i < 4; i = i + 1)
+                voice_count = voice_count + voice_active[i];
+        end
+        assign active_voice_count = (!ev_overflow && !ev_fault) ? voice_count : 6'd0;
+
+        // Hold each sample until the next valid pulse. Fault mute is immediate.
+        always @(posedge clk or negedge rst_n) begin
+            if (!rst_n) begin
+                audio_left <= 24'sd0;
+                audio_right <= 24'sd0;
+                overload_flag <= 1'b0;
+            end else if (!gate) begin
+                audio_left <= 24'sd0;
+                audio_right <= 24'sd0;
+                overload_flag <= 1'b0;
+            end else if (tick_sr[2]) begin
+                audio_left <= mixed_audio;
+                audio_right <= mixed_audio;
+                overload_flag <= mixed_overload;
+            end
+        end
+    end endgenerate
+
+    assign event_overflow = ev_overflow;
+    assign param_overflow = p_overflow;
+
+    // Allocator updates at tick, voices react one clock later, ROM settles next.
+    reg [2:0] tick_sr;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            tick_sr <= 3'd0;
+            audio_core_valid <= 1'b0;
+        end else begin
+            tick_sr <= {tick_sr[1:0], sample_tick};
+            audio_core_valid <= tick_sr[2];
+        end
     end
 
 endmodule

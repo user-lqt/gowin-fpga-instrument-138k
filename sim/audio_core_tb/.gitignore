@@ -4,3 +4,6 @@
 work/
 *.wlf
 *.vcd
+build/
+local_archive/
+*.vvp
