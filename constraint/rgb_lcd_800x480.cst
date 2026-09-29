@@ -1,0 +1,31 @@
+// Sipeed Tang Mega 138K RGB666 LCD header, from the official example.
+// Merge only when rgb_lcd_800x480 is present in the active top level.
+IO_LOC "lcd_sc_de" L14;
+IO_LOC "lcd_sc_vs" L15;
+IO_LOC "lcd_sc_hs" N20;
+IO_LOC "lcd_sc_clk" L19;
+IO_LOC "lcd_b_out[5]" M20;
+IO_LOC "lcd_b_out[4]" L16;
+IO_LOC "lcd_b_out[3]" K16;
+IO_LOC "lcd_b_out[2]" N18;
+IO_LOC "lcd_b_out[1]" N19;
+IO_LOC "lcd_b_out[0]" M18;
+IO_LOC "lcd_g_out[5]" L18;
+IO_LOC "lcd_g_out[4]" N22;
+IO_LOC "lcd_g_out[3]" M22;
+IO_LOC "lcd_g_out[2]" M21;
+IO_LOC "lcd_g_out[1]" L21;
+IO_LOC "lcd_g_out[0]" K18;
+IO_LOC "lcd_r_out[5]" K21;
+IO_LOC "lcd_r_out[4]" K22;
+IO_LOC "lcd_r_out[3]" J22;
+IO_LOC "lcd_r_out[2]" H22;
+IO_LOC "lcd_r_out[1]" G17;
+IO_LOC "lcd_r_out[0]" G18;
+IO_PORT "lcd_sc_de" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_sc_vs" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_sc_hs" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_sc_clk" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[5:0]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[5:0]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[5:0]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
