@@ -15,6 +15,17 @@
 # ---------------------------------------------------------------------------
 project/synth_top/*
 !project/synth_top/synth_top.gprj
+project/instrument_top/*
+!project/instrument_top/instrument_top.gprj
+project/instrument_timbres_top/*
+!project/instrument_timbres_top/instrument_timbres_top.gprj
+project/instrument_24_rgb_top/*
+!project/instrument_24_rgb_top/instrument_24_rgb_top.gprj
+project/audio_a2_probe_top/*
+!project/audio_a2_probe_top/audio_a2_probe_top.gprj
+project/audio_poly_probe_top/*
+!project/audio_poly_probe_top/audio_poly_probe_top.gprj
+project/instrument_a2_review/
 project/impl/
 project/prj/
 impl/
@@ -57,6 +68,8 @@ cmd.do
 # ---------------------------------------------------------------------------
 sim/delta/
 sim/work*/
+sim/instrument_24_rgb_build/
+sim/run_*/
 work/
 *.vcd
 *.wlf

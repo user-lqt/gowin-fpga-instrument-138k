@@ -15,7 +15,7 @@
 `ifndef EVENT_DEFS_VH
 `define EVENT_DEFS_VH
 
-`define EVENTS_DEFS_VERSION     8'd1
+`define EVENTS_DEFS_VERSION     8'd2
 
 //-----------------------------------------------------------------------------
 // 1. 采样与时钟（来自平台冻结卡 docs/PLATFORM_TANG_MEGA_138K.md）
@@ -54,9 +54,16 @@
 `define EVENT_NOTE_OFF          2'd2
 `define EVENT_PARAM_CHANGE      2'd3
 
-// 事件握手：event_valid 与其余字段同拍有效，保持 1 拍后撤销。
-// 消费者 A 不需要 backpressure；A 每个 sample_tick 至少能吸收 1 个事件。
-// 若 B 可能在同一拍产生多个事件，必须自行排队，RTL 中不得丢失事件。
+// event_valid/param_valid 每个 clk 上升沿为 1 都代表一个新条目；
+// 连续多个周期为 1 时，字段可以逐拍变化，不允许仅检测上升沿。
+// B 与 A 在同一 clk 域时直接连接；跨域时由 C 提供完整数据 CDC。
+// A1 每个 sample_tick 最多处理 1 个事件及 1 个参数，输入 FIFO 有限。
+// 无 backpressure；C 须验证最大突发与持续输入速率不会超出容量。
+// A->C 新增 event_overflow、param_overflow：高有效、粘滞、rst_n=0 清零。
+// event_overflow：事件丢失后 A 必须清空事件 FIFO、静音并拒收新事件，
+//                 直到 A/B 同步复位；避免丢 NOTE_OFF 后持续发声。
+// param_overflow：超出容量的参数更新被丢弃，已接受的参数仍按序应用。
+// overload_flag 仅表示音频削波，不承载上述两种输入溢出。
 
 // 音符号编码：标准 MIDI 音符号。A4 = 440 Hz 对应 note_id = 69。
 // 建议键盘映射范围 note_id 36（C2）~ 84（C6）；其余值保留扩展。
@@ -113,7 +120,7 @@
 //-----------------------------------------------------------------------------
 `define CTRL_STATUS_BITS        8
 
-// system_ready / engine_ready / input_ready / audio_locked / i2s_active
-// 均为电平信号、高有效；复位期间必须为 0。
+// system_ready / engine_ready / input_ready / audio_locked / i2s_active /
+// event_overflow / param_overflow 均为电平信号、高有效；复位期间必须为 0。
 
 `endif // EVENT_DEFS_VH

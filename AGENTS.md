@@ -1,0 +1,3 @@
+# Workspace Notes
+
+On this Windows host, Git HTTPS operations with the default `D:\Program_Files_D\Git\cmd\git.exe` can crash because of a conflicting MinGW DLL search path. For `fetch`, `ls-remote`, and `push`, use the verified Codex-bundled Git at `C:\Users\lenovo\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe`. If that path is unavailable, keep the old Git's `mingw64\bin` and `usr\bin` first in `PATH` for the individual command and restore `PATH` afterward. See `docs/GIT_WORKFLOW.md` section 10 for the evidence and PowerShell commands. Check local and remote refs before retrying a failed push.

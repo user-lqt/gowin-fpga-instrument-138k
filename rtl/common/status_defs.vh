@@ -9,7 +9,7 @@
 `ifndef STATUS_DEFS_VH
 `define STATUS_DEFS_VH
 
-`define STATUS_DEFS_VERSION     8'd1
+`define STATUS_DEFS_VERSION     8'd2
 
 //-----------------------------------------------------------------------------
 // 1. 就绪与锁定状态（均为电平、高有效；复位期间必须为 0）
@@ -19,7 +19,8 @@
 // input_ready    B 的输入扫描与传感器校准完成
 // audio_locked   C 的采样节拍与 I2S 已稳定锁定
 // i2s_active     I2S 正在输出（LRCK/BCK 持续翻转）
-// 判定顺序建议：audio_locked -> engine_ready -> input_ready -> system_ready
+// system_ready 需要 audio_locked && engine_ready，二者可先后任意到达。
+// B 在 system_ready=0 时保持复位，因此 system_ready 不得等待 input_ready。
 
 //-----------------------------------------------------------------------------
 // 2. 系统错误码（system_error，多热编码，任意一位为 1 即进入降级）
@@ -33,13 +34,15 @@
 `define ERR_AUDIO_CLIP          8'h10   // 混音削波连续超阈值
 `define ERR_INPUT_TIMEOUT       8'h20   // 输入链路无响应（传感器断线）
 `define ERR_PARAM_RANGE         8'h40   // 参数越界被钳位（可恢复，仅告警）
-`define ERR_RESERVED            8'h80   // 预留
+`define ERR_INPUT_QUEUE_OVERFLOW 8'h80  // A 的事件或参数输入 FIFO 溢出
 
 // 降级策略（阶段 2 起必须实现）：
 //   ERR_CLK_UNLOCKED / ERR_SAMPLE_TICK_LOST -> 静音并点亮错误 LED
 //   ERR_I2S_UNDERRUN                        -> 输出静音样本，保持 I2S 不停
 //   ERR_AUDIO_CLIP                          -> 自动降低总增益
 //   ERR_INPUT_TIMEOUT                       -> 该维度回默认值，其余维度继续
+//   ERR_INPUT_QUEUE_OVERFLOW                 -> event_overflow 时静音并等待整机复位；
+//                                               param_overflow 时报告告警、继续运行
 //   任何错误都不得导致死机；必须能通过复位键恢复。
 
 //-----------------------------------------------------------------------------

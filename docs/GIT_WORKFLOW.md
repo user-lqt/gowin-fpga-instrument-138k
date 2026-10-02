@@ -273,3 +273,33 @@ git checkout dev-system    # C
 ```
 
 任何不确定的地方，**先在群里问，不要猜着改别人的文件**。
+
+---
+
+## 10. 本机 Git HTTPS 崩溃记录（2026-09-25）
+
+在这台 Windows 电脑上，默认 Git 是 `D:\Program_Files_D\Git\cmd\git.exe`（2.50.1.windows.1）。执行 HTTPS 远端操作时，`git-remote-https.exe` 曾多次崩溃，并弹出 Visual Studio 即时调试器。弹窗是系统 `AeDebug` 接管异常后的表现，不是 GitHub 要求调试；没有找到对应的 WER 崩溃报告。
+
+已确认系统 `PATH` 中的 `C:\mingw64\bin` 排在该 Git 自带运行库目录之前，且其中的 `libcurl-4.dll`、`libiconv-2.dll` 等与 Git 自带版本不同。临时把 Git 自带的 `mingw64\bin`、`usr\bin` 提到 `PATH` 最前面后，同一旧版 Git 的 `ls-remote` 成功；Codex 自带 Git 2.53.0.windows.3 在原有仓库、代理和凭据条件下也成功。因此应按运行库搜索顺序冲突处理；目前不能确定具体是哪一个 DLL 导致崩溃。
+
+**后续在本机执行 Git 网络命令，优先显式调用已验证的新版 Git：**
+
+```powershell
+$gitExe = 'C:\Users\lenovo\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe'
+& $gitExe ls-remote origin refs/heads/main   # 只读连通性检查
+# 确认本地分支、提交和目标远端后，再以同一 $gitExe 执行 fetch / push
+```
+
+若必须使用旧版 Git，仅在当前 PowerShell 命令段内临时调整 `PATH`，并在结束时恢复：
+
+```powershell
+$oldPath = $env:PATH
+try {
+    $env:PATH = 'D:\Program_Files_D\Git\mingw64\bin;D:\Program_Files_D\Git\usr\bin;' + $oldPath
+    & 'D:\Program_Files_D\Git\cmd\git.exe' ls-remote origin refs/heads/main
+} finally {
+    $env:PATH = $oldPath
+}
+```
+
+不要永久修改全局 `PATH`，以免影响其他 MinGW 程序；也不要以关闭 TLS 证书校验来处理此类进程崩溃。若出现弹窗，先检查命令退出状态及 `git status`、`git rev-parse HEAD`、`ls-remote` 的结果，再决定是否重试推送，避免重复操作。
