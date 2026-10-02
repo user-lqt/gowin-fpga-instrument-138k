@@ -16,7 +16,7 @@
 
 ## 一、团队成员与任务的唯一入口
 
-**每个人只读自己那一份任务书，不要读别人的。** 任务书是你在本仓库中的权限边界说明书。
+先读总计划，再读自己的目录边界和当前阶段任务。阶段三、四的唯一详细执行源是 [`docs/finished_hardware/阶段三四成员任务书.md`](docs/finished_hardware/阶段三四成员任务书.md)；三份个人任务书保留阶段一、二历史，并指向这份执行源。需要协作时应阅读对方接口约定，不修改对方私有模块。
 
 | 成员 | 任务书 | 负责目录 | 独立工程 | 分支 | Git 账号 |
 |---|---|---|---|---|---|
@@ -31,6 +31,8 @@
 1. [`docs/PLATFORM_TANG_MEGA_138K.md`](docs/PLATFORM_TANG_MEGA_138K.md) —— 板卡与器件、IDE 版本、管脚、安全红线
 2. [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) —— 接口冻结卡、采样率/位宽/定点、延迟预算
 3. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md) —— 分支、提交、合并、评审规则
+
+当前计划与进度入口：[`docs/finished_hardware/README.md`](docs/finished_hardware/README.md)。文档规定的阶段标签是验收后的目标，不代表功能已经完成。C的实际集成基线需确认提交号，不应仅按`dev-system`分支名判断进度。
 
 ---
 
@@ -112,8 +114,8 @@ gh pr create --base main --head dev-audio --title "stage1: 单音 DDS 通路" --
 | **阶段 0** | 三个独立工程可打开、三个 testbench 可运行、接口冻结 | `stage0-freeze` |
 | **阶段 1** | 三条独立最小链路（单音合成 / 键盘输入 / I2S 出声） | `stage1-minimal` |
 | **阶段 2** | 基础可提交版本：≥4 复音、2 维交互、≤10 ms | `stage2-baseline` |
-| **阶段 3** | 冲奖扩展：32 振荡器、3 维表情、音色、音效、≤5 ms | `stage3-award` |
-| **阶段 4** | 成品化与比赛现场冻结 | `stage4-final` |
+| **阶段 3** | 单次完整验收：32复音、三种音色、24键实体演奏、EC11_A音量/音色控制及整机验证 | `stage3-award` |
+| **阶段 4** | EC11_B、MCP3008、摇杆、FSR、滑音/弯音/颤音、LED指引及最终冻结 | `stage4-final` |
 
 **`stage2-baseline` 是保底线。** 冲奖开发一旦破坏它，立即回退到该标签版本，删掉风险最高的功能。
 
@@ -126,9 +128,13 @@ gh pr create --base main --head dev-audio --title "stage1: 单音 DDS 通路" --
 - [x] 硬件采购清单归档
 - [x] 平台与器件信息核实（Tang Mega 138K）
 - [x] 仓库骨架 + 接口文件冻结草案
-- [ ] **阶段 0**：三个 Gowin 工程建立、三个 testbench 跑通、接口正式冻结
-- [ ] **阶段 1**：单音 DAC 出声
-- [ ] **阶段 2**：基础可提交版本
+- [x] **阶段 0、1**：按团队确认已完成，并完成阶段一上板验证
+- [x] **A2音频功能**：HDL逐样本合成、至少4声部、变调、ADSR及混音，已有本地回归
+- [ ] **阶段 2整机验收记录**：延迟、实体输入及冻结物需按C实测补齐，不因A2通过而推定全部通过
+- [ ] **阶段 3**：实体键床正在制作；两个EC11已有，EC11_A用于本阶段，32复音和三音色待实现验收
+- [ ] **阶段 4**：MCP3008、摇杆和FSR未到货；扩展表情统一后移
+
+后续升级目标为64复音，不阻塞本轮32复音交付。最新要求完成情况见 [`requirements_completion_status.md`](docs/finished_hardware/requirements_completion_status.md)。
 
 阶段 0 的验收清单见 [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 最后一节。
 
