@@ -27,9 +27,13 @@ module instrument_24_rgb_top #(
         .i_clk_in(i_clk_in), .i_rst_n(board_rst_n), .o_clk_audio(pixel_clk),
         .o_clk_sys(), .o_pll_locked(pixel_pll_locked)
     );
-    wire reset_ready = board_rst_n && audio_pll_locked && pixel_pll_locked;
-    reset_sync u_audio_reset (.clk(clk_audio), .arst_n(reset_ready), .rst_n(rst_n));
-    reset_sync u_pixel_reset (.clk(pixel_clk), .arst_n(reset_ready), .rst_n(pixel_rst_n));
+    // Audio must not be held in reset by an optional RGB panel clock.  A panel
+    // PLL or LCD cable can fail independently while the onboard DAC remains
+    // usable; keep the two clock domains' reset release independent.
+    wire audio_reset_ready = board_rst_n && audio_pll_locked;
+    wire pixel_reset_ready = board_rst_n && pixel_pll_locked;
+    reset_sync u_audio_reset (.clk(clk_audio), .arst_n(audio_reset_ready), .rst_n(rst_n));
+    reset_sync u_pixel_reset (.clk(pixel_clk), .arst_n(pixel_reset_ready), .rst_n(pixel_rst_n));
 
     wire sample_tick, bck, bck_en, frame_start;
     sample_scheduler #(.CLK_DIV_BCK(4), .CLK_DIV_SAMPLE(256)) u_scheduler (
@@ -100,6 +104,6 @@ module instrument_24_rgb_top #(
         if (!rst_n) heartbeat <= 0;
         else heartbeat <= heartbeat + 1'b1;
     assign o_led = (|system_error) ? 1'b1 : heartbeat[22];
-    assign o_locked = audio_pll_locked && pixel_pll_locked;
+    assign o_locked = audio_pll_locked;
     assign o_pa_en = 1'b0;
 endmodule
