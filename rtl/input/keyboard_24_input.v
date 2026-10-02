@@ -4,6 +4,7 @@
 module keyboard_24_input #(
     parameter integer ROW_CYCLES = 5000,
     parameter integer DEBOUNCE_FRAMES = 2,
+    parameter integer RELEASE_DEBOUNCE_FRAMES = 2,
     parameter integer AB_MAX_FRAMES = 40,
     parameter integer BASE_NOTE = 48,
     parameter integer EVENT_INTERVAL_CYCLES = 256
@@ -29,6 +30,7 @@ module keyboard_24_input #(
         .contact_raw(contact_raw), .scan_valid(scan_valid)
     );
     keyboard_24_dual #(.DEBOUNCE_FRAMES(DEBOUNCE_FRAMES),
+        .RELEASE_DEBOUNCE_FRAMES(RELEASE_DEBOUNCE_FRAMES),
         .AB_MAX_FRAMES(AB_MAX_FRAMES), .EVENT_INTERVAL_CYCLES(EVENT_INTERVAL_CYCLES)) decoder (
         .clk(clk), .rst_n(rst_n), .scan_valid(scan_valid),
         .contact_raw(contact_raw), .event_valid(event_valid),

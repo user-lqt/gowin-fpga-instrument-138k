@@ -1,8 +1,10 @@
 `include "event_defs.vh"
 // 24 dual-contact keys, four audio voices and an independent RGB pixel PLL.
+// The hardware defaults use a 200 us row dwell, five stable press frames and
+// eight stable release frames so switch bounce cannot retrigger a voice.
 module instrument_24_rgb_top #(
-    parameter integer ROW_CYCLES = 1229,
-    parameter integer DEBOUNCE_FRAMES = 2,
+    parameter integer ROW_CYCLES = 2458,
+    parameter integer DEBOUNCE_FRAMES = 5,
     parameter integer DEFAULT_INSTRUMENT = 0
 ) (
     input wire i_clk_in, i_rst_n,
@@ -48,6 +50,7 @@ module instrument_24_rgb_top #(
     wire [7:0] velocity;
     wire [23:0] key_state;
     keyboard_24_input #(.ROW_CYCLES(ROW_CYCLES), .DEBOUNCE_FRAMES(DEBOUNCE_FRAMES),
+        .RELEASE_DEBOUNCE_FRAMES(8),
         .BASE_NOTE(48), .EVENT_INTERVAL_CYCLES(256)) u_keyboard (
         .clk(clk_audio), .rst_n(rst_n && system_ready), .col_in(col_in), .row_out(row_out),
         .key_state(key_state), .input_ready(keyboard_ready), .event_valid(event_valid),

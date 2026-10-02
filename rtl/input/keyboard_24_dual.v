@@ -3,7 +3,10 @@
 // Debounces 48 row-major contacts, measures A-to-B travel in scan frames,
 // and serializes NOTE events at a bounded rate for the audio queue.
 module keyboard_24_dual #(
+    // Keep the generic defaults small for fast unit tests; the hardware top
+    // overrides them with the longer press/release filters below.
     parameter integer DEBOUNCE_FRAMES = 2,
+    parameter integer RELEASE_DEBOUNCE_FRAMES = 2,
     parameter integer AB_MAX_FRAMES = 40,
     parameter integer EVENT_INTERVAL_CYCLES = 256
 ) (
@@ -80,7 +83,7 @@ module keyboard_24_dual #(
                 // Per-contact consecutive-frame debounce.
                 for (i=0;i<48;i=i+1) begin
                     if (contact_raw[i] == stable_contacts[i]) db_count[i] <= 0;
-                    else if (db_count[i] >= DEBOUNCE_FRAMES-1) begin
+                    else if (db_count[i] >= ((contact_raw[i] ? DEBOUNCE_FRAMES : RELEASE_DEBOUNCE_FRAMES)-1)) begin
                         stable_contacts[i] <= contact_raw[i];
                         db_count[i] <= 0;
                     end else db_count[i] <= db_count[i] + 1'b1;
@@ -90,10 +93,10 @@ module keyboard_24_dual #(
                 for (k=0;k<24;k=k+1) begin
                     row_a=(k/6)*2; row_b=row_a+1; col=k%6;
                     a_next = (contact_raw[row_a*6+col] != stable_contacts[row_a*6+col] &&
-                              db_count[row_a*6+col] >= DEBOUNCE_FRAMES-1) ?
+                              db_count[row_a*6+col] >= ((contact_raw[row_a*6+col] ? DEBOUNCE_FRAMES : RELEASE_DEBOUNCE_FRAMES)-1)) ?
                               contact_raw[row_a*6+col] : stable_contacts[row_a*6+col];
                     b_next = (contact_raw[row_b*6+col] != stable_contacts[row_b*6+col] &&
-                              db_count[row_b*6+col] >= DEBOUNCE_FRAMES-1) ?
+                              db_count[row_b*6+col] >= ((contact_raw[row_b*6+col] ? DEBOUNCE_FRAMES : RELEASE_DEBOUNCE_FRAMES)-1)) ?
                               contact_raw[row_b*6+col] : stable_contacts[row_b*6+col];
                     if (a_next && !stable_contacts[row_a*6+col] && !key_state[k])
                         ab_age[k] <= 1;
