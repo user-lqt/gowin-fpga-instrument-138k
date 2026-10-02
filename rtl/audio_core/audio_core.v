@@ -1,5 +1,5 @@
 //=============================================================================
-// audio_core.v —— 音频核心顶层(A2:四声部, A1回归可选)
+// audio_core.v - A3 defaults; A1/A2 remain explicit regression configurations.
 //
 //   事件输入(B) -> 音高查表 -> 振荡器 -> 力度/音量 -> 采样输出(C)
 //
@@ -14,6 +14,10 @@
 
 module audio_core #(
     parameter integer ENABLE_POLYPHONY = 1,
+    parameter integer VOICE_COUNT = 32,
+    parameter integer ENABLE_STEAL = 1,
+    parameter integer ENABLE_TIMBRES = 1,
+    parameter integer EVENT_DEPTH = 64,
     parameter integer ATTACK_SAMPLES = 480,
     parameter integer DECAY_SAMPLES = 2400,
     parameter [15:0] SUSTAIN_LEVEL = 16'd45875,
@@ -68,15 +72,20 @@ module audio_core #(
     assign engine_ready = ready_r;
 
     // B/C must pace bursts to fit the finite input queues; no ready signal exists.
-    localparam integer EVENT_DEPTH = 16;
     localparam integer PARAM_DEPTH = 4;
+    localparam integer EVENT_PTR_BITS = $clog2(EVENT_DEPTH);
+    localparam integer A3_MODE = ENABLE_POLYPHONY && ENABLE_TIMBRES;
+    localparam integer AUDIO_LATENCY = A3_MODE ? VOICE_COUNT + 18 : 3;
+    localparam [15:0] DEFAULT_VOLUME = A3_MODE ? 16'h07ff :
+                                      ENABLE_POLYPHONY ? 16'h3fff : 16'hffff;
+    reg [AUDIO_LATENCY-1:0] tick_sr;
 
     reg [1:0]  ev_type_q [0:EVENT_DEPTH-1];
     reg [6:0]  ev_note_q [0:EVENT_DEPTH-1];
     reg [7:0]  ev_vel_q  [0:EVENT_DEPTH-1];
-    reg [3:0]  ev_rd;
-    reg [3:0]  ev_wr;
-    reg [4:0]  ev_count;
+    reg [EVENT_PTR_BITS-1:0] ev_rd;
+    reg [EVENT_PTR_BITS-1:0] ev_wr;
+    reg [EVENT_PTR_BITS:0] ev_count;
     reg        ev_overflow;
 
     reg [3:0]  p_id_q  [0:PARAM_DEPTH-1];
@@ -106,6 +115,8 @@ module audio_core #(
     reg [7:0]  cur_vel;
     reg        note_active;
     reg [15:0] volume;
+    reg [15:0] volume_target;
+    reg [1:0]  instrument;
 
     reg        phase_load_r;
 
@@ -122,7 +133,9 @@ module audio_core #(
             cur_note     <= 7'd0;
             cur_vel      <= 8'd0;
             note_active  <= 1'b0;
-            volume       <= ENABLE_POLYPHONY ? 16'h3fff : 16'hffff;
+            volume       <= DEFAULT_VOLUME;
+            volume_target <= DEFAULT_VOLUME;
+            instrument   <= 2'd0;
             phase_load_r <= 1'b0;
         end else begin
             phase_load_r <= 1'b0;
@@ -141,10 +154,10 @@ module audio_core #(
                     ev_type_q[ev_wr] <= event_type;
                     ev_note_q[ev_wr] <= note_id;
                     ev_vel_q[ev_wr]  <= velocity;
-                    ev_wr <= ev_wr + 4'd1;
+                    ev_wr <= ev_wr == EVENT_DEPTH-1 ? 0 : ev_wr + 1'b1;
                 end
                 if (ev_pop)
-                    ev_rd <= ev_rd + 4'd1;
+                    ev_rd <= ev_rd == EVENT_DEPTH-1 ? 0 : ev_rd + 1'b1;
                 case ({ev_push, ev_pop})
                     2'b10: ev_count <= ev_count + 5'd1;
                     2'b01: ev_count <= ev_count - 5'd1;
@@ -185,8 +198,22 @@ module audio_core #(
             endcase
 
             if (sample_tick && (p_pop || p_bypass) &&
-                selected_param_id == `PARAM_VOLUME)
-                volume <= selected_param_val;
+                selected_param_id == `PARAM_VOLUME) begin
+                volume_target <= selected_param_val;
+                if (!A3_MODE) volume <= selected_param_val;
+            end
+            if (A3_MODE && sample_tick) begin
+                if (volume < volume_target)
+                    volume <= volume_target - volume > 16'd64 ?
+                              volume + 16'd64 : volume_target;
+                else if (volume > volume_target)
+                    volume <= volume - volume_target > 16'd64 ?
+                              volume - 16'd64 : volume_target;
+            end
+            if (sample_tick && (p_pop || p_bypass) &&
+                selected_param_id == `PARAM_INSTRUMENT)
+                instrument <= selected_param_val > 16'd2 ?
+                              2'd0 : selected_param_val[1:0];
         end
     end
 
@@ -208,6 +235,8 @@ module audio_core #(
         .sample_tick (sample_tick),
         .phase_load  (phase_load_r),
         .fc          (cur_fc),
+        .instrument  (2'd0),
+        .brightness  (8'd0),
         .wave        (wave)
     );
 
@@ -250,15 +279,16 @@ module audio_core #(
         else        overload_flag <= 1'b0;
     end
     end else begin : a2
-        wire [3:0] voice_active;
-        wire [3:0] voice_note_on;
-        wire [3:0] voice_note_off;
-        wire [3:0] key_down;
-        wire [27:0] voice_note_id;
-        wire [31:0] voice_velocity;
-        wire [95:0] voice_samples;
-        wire [63:0] envelope_levels;
-        wire [11:0] envelope_stages;
+        wire [VOICE_COUNT-1:0] voice_active;
+        wire [VOICE_COUNT-1:0] voice_note_on;
+        wire [VOICE_COUNT-1:0] voice_note_off;
+        wire [VOICE_COUNT-1:0] key_down;
+        wire [VOICE_COUNT*7-1:0] voice_note_id;
+        wire [VOICE_COUNT*8-1:0] voice_velocity;
+        wire [VOICE_COUNT*2-1:0] voice_instrument;
+        wire [VOICE_COUNT*24-1:0] voice_samples;
+        wire [VOICE_COUNT*16-1:0] envelope_levels;
+        wire [VOICE_COUNT*3-1:0] envelope_stages;
         wire full_pulse;
         wire signed [23:0] mixed_audio;
         wire mixed_overload;
@@ -266,19 +296,26 @@ module audio_core #(
         reg [5:0] voice_count;
         integer i;
 
-        voice_allocator #(.VOICES(4)) u_allocator (
+        voice_allocator #(
+            .VOICES(VOICE_COUNT),
+            .STEAL_ON_FULL(ENABLE_STEAL)
+        ) u_allocator (
             .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
             .event_valid(ev_pop || ev_bypass),
             .event_type(selected_type), .note_id(selected_note),
             .velocity(selected_vel), .voice_active(voice_active),
+            .instrument(instrument),
+            .envelope_levels(envelope_levels),
             .voice_note_on(voice_note_on), .voice_note_off(voice_note_off),
             .key_down(key_down), .voice_note_id(voice_note_id),
-            .voice_velocity(voice_velocity), .full_pulse(full_pulse)
+            .voice_velocity(voice_velocity), .voice_instrument(voice_instrument),
+            .full_pulse(full_pulse)
         );
 
         genvar v;
-        for (v = 0; v < 4; v = v + 1) begin : voices
+        for (v = 0; v < VOICE_COUNT; v = v + 1) begin : voices
             voice #(
+                .ENABLE_TIMBRES(ENABLE_TIMBRES),
                 .ATTACK_SAMPLES(ATTACK_SAMPLES),
                 .DECAY_SAMPLES(DECAY_SAMPLES),
                 .SUSTAIN_LEVEL(SUSTAIN_LEVEL),
@@ -288,20 +325,29 @@ module audio_core #(
                 .note_on(voice_note_on[v]), .note_off(voice_note_off[v]),
                 .note_id(voice_note_id[v*7 +: 7]),
                 .velocity(voice_velocity[v*8 +: 8]),
+                .instrument(voice_instrument[v*2 +: 2]),
                 .audio(voice_samples[v*24 +: 24]), .active(voice_active[v]),
                 .envelope_level(envelope_levels[v*16 +: 16]),
                 .envelope_stage(envelope_stages[v*3 +: 3])
             );
         end
 
-        mixer u_mixer (
-            .voice_samples(voice_samples), .volume(volume),
-            .audio(mixed_audio), .overload_flag(mixed_overload)
-        );
+        if (A3_MODE) begin : serial_mix
+            mixer_serial #(.VOICES(VOICE_COUNT)) u_mixer (
+                .clk(clk), .rst_n(rst_n), .start(tick_sr[14]),
+                .voice_samples(voice_samples), .volume(volume),
+                .audio(mixed_audio), .overload_flag(mixed_overload)
+            );
+        end else begin : legacy_mix
+            mixer #(.VOICES(VOICE_COUNT)) u_mixer (
+                .voice_samples(voice_samples), .volume(volume),
+                .audio(mixed_audio), .overload_flag(mixed_overload)
+            );
+        end
 
         always @(*) begin
             voice_count = 6'd0;
-            for (i = 0; i < 4; i = i + 1)
+            for (i = 0; i < VOICE_COUNT; i = i + 1)
                 voice_count = voice_count + voice_active[i];
         end
         assign active_voice_count = (!ev_overflow && !ev_fault) ? voice_count : 6'd0;
@@ -316,7 +362,7 @@ module audio_core #(
                 audio_left <= 24'sd0;
                 audio_right <= 24'sd0;
                 overload_flag <= 1'b0;
-            end else if (tick_sr[2]) begin
+            end else if (tick_sr[AUDIO_LATENCY-1]) begin
                 audio_left <= mixed_audio;
                 audio_right <= mixed_audio;
                 overload_flag <= mixed_overload;
@@ -328,14 +374,13 @@ module audio_core #(
     assign param_overflow = p_overflow;
 
     // Allocator updates at tick, voices react one clock later, ROM settles next.
-    reg [2:0] tick_sr;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             tick_sr <= 3'd0;
             audio_core_valid <= 1'b0;
         end else begin
-            tick_sr <= {tick_sr[1:0], sample_tick};
-            audio_core_valid <= tick_sr[2];
+            tick_sr <= {tick_sr[AUDIO_LATENCY-2:0], sample_tick};
+            audio_core_valid <= tick_sr[AUDIO_LATENCY-1];
         end
     end
 

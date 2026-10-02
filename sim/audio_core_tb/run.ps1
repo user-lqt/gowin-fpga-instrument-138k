@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('A1', 'A2', 'All')]
+    [ValidateSet('A1', 'A2', 'A3', 'All')]
     [string]$Stage = 'A2'
 )
 $ErrorActionPreference = 'Stop'
@@ -12,6 +12,7 @@ if ($Stage -in @('A1', 'All')) { $tests += 'tb_audio_core' }
 if ($Stage -in @('A2', 'All')) {
     $tests += @('tb_adsr', 'tb_mixer', 'tb_voice_allocator', 'tb_voice', 'tb_audio_core_a2')
 }
+if ($Stage -in @('A3', 'All')) { $tests += 'tb_audio_core_a3' }
 $rtl = Get-ChildItem (Join-Path $repo 'rtl/audio_core') -Filter *.v |
     ForEach-Object FullName
 Push-Location $build

@@ -25,7 +25,8 @@ module tb_audio_core_a2;
     wire signed [23:0] audio_left, audio_right;
     wire [5:0] active_voice_count;
 
-    audio_core dut (
+    audio_core #(.VOICE_COUNT(4), .ENABLE_STEAL(0),
+                 .ENABLE_TIMBRES(0), .EVENT_DEPTH(16)) dut (
         .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
         .event_valid(event_valid), .event_type(event_type),
         .note_id(note_id), .velocity(velocity),
