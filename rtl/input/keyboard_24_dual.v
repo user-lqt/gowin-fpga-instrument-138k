@@ -103,7 +103,11 @@ module keyboard_24_dual #(
                     else if (a_next && !key_state[k] && ab_age[k] != 0 &&
                              ab_age[k] < AB_MAX_FRAMES)
                         ab_age[k] <= ab_age[k] + 1'b1;
-                    if (b_next && a_next && !key_state[k] &&
+                    // A is the first contact and B is the second contact.
+                    // Do not accept B->A: that sequence is a release/rewire
+                    // artifact and must never create a NOTE_ON.
+                    if (b_next && !stable_contacts[row_b*6+col] &&
+                        a_next && !key_state[k] &&
                         (ab_age[k] != 0 || !stable_contacts[row_a*6+col])) begin
                         pending_on[k] <= 1;
                         key_state[k] <= 1;
