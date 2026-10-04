@@ -5,11 +5,13 @@
 module instrument_24_rgb_top #(
     parameter integer ROW_CYCLES = 307,
     parameter integer DEBOUNCE_FRAMES = 40,
-    parameter integer DEFAULT_INSTRUMENT = 0
+    parameter integer DEFAULT_INSTRUMENT = 0,
+    parameter integer FORMAL_CONTROLS = 1
 ) (
     input wire i_clk_in, i_rst_n,
     input wire [5:0] col_in,
     input wire enc_a, enc_b, enc_sw_n,
+    input wire enc2_a, enc2_b, enc2_sw_n,
     output wire [7:0] row_out,
     output wire o_hp_bck, o_hp_ws, o_hp_din, o_pa_en, o_led, o_locked,
     output wire lcd_sc_clk, lcd_sc_hs, lcd_sc_vs, lcd_sc_de,
@@ -70,8 +72,9 @@ module instrument_24_rgb_top #(
     wire [3:0] ui_page;
     wire ui_dirty;
     wire diagnostic_step_up, diagnostic_step_down;
-    encoder_control #(.FILTER_CYCLES(2500), .BUTTON_CYCLES(1000000),
-        .REVERSE_DIR(0), .INSTRUMENT_COUNT(3)) u_encoder_control (
+    encoder_control #(.FILTER_CYCLES(2500), .BUTTON_CYCLES(245760),
+        .REVERSE_DIR(0), .INSTRUMENT_COUNT(3), .FORMAL_CONTROLS(FORMAL_CONTROLS),
+        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT)) u_encoder_control (
         .clk(clk_audio), .rst_n(rst_n && system_ready),
         .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n),
         .input_ready(encoder_ready), .volume_value(volume_value),
@@ -99,9 +102,27 @@ module instrument_24_rgb_top #(
     end
     wire [31:0] diagnostic_status = {diagnostic_up, diagnostic_down,
         diagnostic_edges, ui_page, encoder_ready, enc_sync};
-    wire param_valid = system_ready && encoder_param_valid;
-    wire [3:0] param_id = encoder_param_id;
-    wire [15:0] param_value = encoder_param_value;
+    wire encoder_b_ready, encoder_b_menu, encoder_b_param_valid;
+    wire [6:0] glide_value,effect_value;
+    wire [3:0] encoder_b_param_id;
+    wire [15:0] encoder_b_param_value;
+    encoder_b_control u_encoder_b (
+        .clk(clk_audio),.rst_n(rst_n && system_ready),
+        .enc_a(enc2_a),.enc_b(enc2_b),.enc_sw_n(enc2_sw_n),
+        .input_ready(encoder_b_ready),.menu(encoder_b_menu),
+        .glide_value(glide_value),.effect_value(effect_value),
+        .param_valid(encoder_b_param_valid),.param_id(encoder_b_param_id),
+        .param_value(encoder_b_param_value)
+    );
+    wire param_valid,control_overflow;
+    wire [3:0] param_id;
+    wire [15:0] param_value;
+    encoder_param_queue u_control_queue (
+        .clk(clk_audio),.rst_n(rst_n && system_ready),.sample_tick(sample_tick),
+        .a_valid(encoder_param_valid),.a_id(encoder_param_id),.a_value(encoder_param_value),
+        .b_valid(encoder_b_param_valid),.b_id(encoder_b_param_id),.b_value(encoder_b_param_value),
+        .valid(param_valid),.id(param_id),.value(param_value),.overflow(control_overflow)
+    );
     wire signed [23:0] audio_left, audio_right;
     wire [5:0] active_voice_count;
     wire audio_core_valid, overload_flag;
@@ -119,17 +140,19 @@ module instrument_24_rgb_top #(
         .o_bck(o_hp_bck), .o_ws(o_hp_ws), .o_din(o_hp_din)
     );
     wire lcd_frame_start;
-    wire [87:0] display_status;
-    lcd_status_bridge #(.WIDTH(88)) u_display_bridge (
+    wire [102:0] display_status;
+    lcd_status_bridge #(.WIDTH(103)) u_display_bridge (
         .source_clk(clk_audio), .source_rst_n(rst_n),
-        .source_status({diagnostic_status, key_state, volume_value, instrument_value}),
+        .source_status({encoder_b_menu,glide_value,effect_value,diagnostic_status, key_state, volume_value, instrument_value}),
         .pixel_clk(pixel_clk), .pixel_rst_n(pixel_rst_n), .frame_start(lcd_frame_start),
         .pixel_status(display_status)
     );
-    rgb_lcd_800x480 #(.ENABLE_DIAGNOSTICS(1)) u_lcd (
+    rgb_lcd_800x480 #(.ENABLE_DIAGNOSTICS(FORMAL_CONTROLS == 0),.ENABLE_B_MENU(1)) u_lcd (
         .pixel_clk(pixel_clk), .rst_n(pixel_rst_n), .key_state(display_status[55:32]),
         .volume_value(display_status[31:16]), .instrument_value(display_status[15:0]),
         .diagnostic_state(display_status[87:56]),
+        .control_menu(display_status[102]),.glide_value(display_status[101:95]),
+        .effect_value(display_status[94:88]),
         .frame_start(lcd_frame_start), .sc_clk(lcd_sc_clk), .sc_hs(lcd_sc_hs),
         .sc_vs(lcd_sc_vs), .sc_de(lcd_sc_de), .r_out(lcd_r_out), .g_out(lcd_g_out), .b_out(lcd_b_out)
     );
@@ -137,7 +160,7 @@ module instrument_24_rgb_top #(
     always @(posedge clk_audio or negedge rst_n)
         if (!rst_n) heartbeat <= 0;
         else heartbeat <= heartbeat + 1'b1;
-    assign o_led = (|system_error) ? 1'b1 : heartbeat[22];
+    assign o_led = ((|system_error) || control_overflow) ? 1'b1 : heartbeat[22];
     assign o_locked = audio_pll_locked;
     assign o_pa_en = 1'b0;
 endmodule

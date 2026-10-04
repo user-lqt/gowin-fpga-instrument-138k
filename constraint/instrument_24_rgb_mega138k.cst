@@ -55,6 +55,13 @@ IO_LOC "enc_b" B21;
 IO_PORT "enc_b" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 IO_LOC "enc_sw_n" B18;
 IO_PORT "enc_sw_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+// EC11_B menu, J13-21/C17, J13-22/D17, J13-23/E19.
+IO_LOC "enc2_a" C17;
+IO_PORT "enc2_a" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc2_b" D17;
+IO_PORT "enc2_b" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc2_sw_n" E19;
+IO_PORT "enc2_sw_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 // Sipeed Tang Mega 138K RGB666 LCD header, from the official example.
 // Merge only when rgb_lcd_800x480 is present in the active top level.
 IO_LOC "lcd_sc_de" L14;

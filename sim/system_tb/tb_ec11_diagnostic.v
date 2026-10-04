@@ -6,12 +6,14 @@ module tb_ec11_diagnostic;
     instrument_24_rgb_top dut (
         .i_clk_in(reference), .i_rst_n(reset_button), .col_in(6'h3f),
         .enc_a(a), .enc_b(b), .enc_sw_n(sw), .row_out(),
+        .enc2_a(1'b1),.enc2_b(1'b1),.enc2_sw_n(1'b1),
         .o_hp_bck(), .o_hp_ws(), .o_hp_din(), .o_pa_en(), .o_led(), .o_locked(),
         .lcd_sc_clk(), .lcd_sc_hs(), .lcd_sc_vs(), .lcd_sc_de(),
         .lcd_r_out(), .lcd_g_out(), .lcd_b_out()
     );
     // Keep the real 2500-clock rotation filter; accelerate only button debounce.
     defparam dut.u_encoder_control.BUTTON_CYCLES=100;
+    defparam dut.FORMAL_CONTROLS=0;
     task phase;
         input [1:0] ab;
         begin {a,b}=ab; repeat(2700) @(negedge dut.clk_audio); end

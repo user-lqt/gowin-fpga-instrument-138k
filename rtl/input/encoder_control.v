@@ -4,11 +4,14 @@
 // 1,000,000 clocks = 20 ms at 50 MHz; set for the actual clock frequency.
 // A held button emits one press, including a button held through reset.
 // Default four instrument IDs are placeholders, not four implemented sounds.
+// FORMAL_CONTROLS=1: rotation step=4, press cycles instrument, no page toggle.
 module encoder_control #(
     parameter integer FILTER_CYCLES = 2500,
     parameter integer BUTTON_CYCLES = 1000000,
     parameter integer REVERSE_DIR = 0,
-    parameter integer INSTRUMENT_COUNT = 4
+    parameter integer INSTRUMENT_COUNT = 4,
+    parameter integer FORMAL_CONTROLS = 0,
+    parameter [15:0] DEFAULT_INSTRUMENT = 0
 ) (
     input wire clk, rst_n,
     input wire enc_a, enc_b, enc_sw_n,
@@ -33,7 +36,10 @@ module encoder_control #(
         .clk(clk), .rst_n(rst_n), .key_raw(~enc_sw_n),
         .key_stable(), .key_press(press), .key_release()
     );
-    parameter_manager #(.ENABLE_INSTRUMENT(1), .INSTRUMENT_COUNT(INSTRUMENT_COUNT)) parameters (
+    parameter_manager #(.ENABLE_INSTRUMENT(1), .INSTRUMENT_COUNT(INSTRUMENT_COUNT),
+        .ROTATE_VOLUME_PRESS_TIMBRE(FORMAL_CONTROLS),
+        .VOLUME_STEP(FORMAL_CONTROLS ? 16'd4 : 16'd1),
+        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT)) parameters (
         .clk(clk), .rst_n(rst_n), .step_up(step_up), .step_down(step_down),
         .select_press(press), .volume_value(volume_value), .instrument_value(instrument_value),
         .param_valid(param_valid), .param_id(param_id), .param_value(param_value),

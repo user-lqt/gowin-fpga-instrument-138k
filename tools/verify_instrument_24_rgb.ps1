@@ -13,6 +13,7 @@ try {
         'rtl/system/system_status.v','rtl/system/i2s_tx_official.v',
         'rtl/input/matrix_scan_8x6.v','rtl/input/keyboard_24_dual.v','rtl/input/keyboard_24_input.v',
         'rtl/input/encoder.v','rtl/input/key_debounce.v','rtl/input/encoder_control.v',
+        'rtl/input/encoder_b_input.v','rtl/input/encoder_b_control.v','rtl/input/encoder_param_queue.v',
         'rtl/ui/parameter_manager.v',
         'rtl/ui/rgb_lcd_800x480.v','rtl/ui/lcd_status_bridge.v',
         'sim/system_tb/clock_gen_24_sim.v','project/instrument_24_rgb_top.v') |

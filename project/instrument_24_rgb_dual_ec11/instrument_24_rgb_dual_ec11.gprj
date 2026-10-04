@@ -18,7 +18,10 @@
         <File path="../../rtl/audio_core/wavetable.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/common/reset_sync.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/encoder.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_b_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_b_input.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/encoder_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_param_queue.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/key_debounce.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/keyboard_24_dual.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/keyboard_24_input.v" type="file.verilog" enable="1"/>

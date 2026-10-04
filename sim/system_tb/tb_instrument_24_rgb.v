@@ -18,6 +18,7 @@ module tb_instrument_24_rgb;
     instrument_24_rgb_top dut (
         .i_clk_in(reference), .i_rst_n(reset_button), .col_in(cols),
         .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n), .row_out(rows),
+        .enc2_a(1'b1),.enc2_b(1'b1),.enc2_sw_n(1'b1),
         .o_hp_bck(bck), .o_hp_ws(ws), .o_hp_din(din), .o_pa_en(), .o_led(), .o_locked(),
         .lcd_sc_clk(lcd_clk), .lcd_sc_hs(lcd_hs), .lcd_sc_vs(lcd_vs), .lcd_sc_de(lcd_de),
         .lcd_r_out(red), .lcd_g_out(green), .lcd_b_out(blue)

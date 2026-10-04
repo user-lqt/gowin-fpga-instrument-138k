@@ -13,12 +13,16 @@
 // Receiver must accept EVERY clk with param_valid=1, including adjacent clocks.
 // No ready/backpressure: receiver must share reset or separately request resync.
 // ui_dirty is a one-clock notification; display logic must latch pending updates.
+// ROTATE_VOLUME_PRESS_TIMBRE=1 keeps page 0, rotates volume and cycles timbre
+// on a press. Its deferred timbre event preserves a coincident volume step.
 module parameter_manager #(
     parameter [15:0] MAX_VOLUME = 16'd127,
     parameter [15:0] DEFAULT_VOLUME = 16'd64,
     parameter [15:0] VOLUME_STEP = 16'd1,
     parameter integer ENABLE_INSTRUMENT = 0,
-    parameter integer INSTRUMENT_COUNT = 4
+    parameter integer INSTRUMENT_COUNT = 4,
+    parameter integer ROTATE_VOLUME_PRESS_TIMBRE = 0,
+    parameter [15:0] DEFAULT_INSTRUMENT = 0
 ) (
     input wire clk,
     input wire rst_n,
@@ -72,7 +76,7 @@ module parameter_manager #(
         if (!rst_n) begin
             initialized <= 0;
             instrument_pending <= (ENABLE_INSTRUMENT != 0);
-            instrument_value <= 0;
+            instrument_value <= DEFAULT_INSTRUMENT;
             ui_page <= 0;
             param_id <= `PARAM_VOLUME;
             volume_value <= DEFAULT_VOLUME;
@@ -92,6 +96,22 @@ module parameter_manager #(
                 param_id <= `PARAM_INSTRUMENT;
                 param_value <= instrument_value;
                 param_valid <= 1;
+            end else if (ROTATE_VOLUME_PRESS_TIMBRE != 0) begin
+                // Queue the timbre event separately so a simultaneous volume
+                // step and press both reach the single parameter output.
+                if ((ENABLE_INSTRUMENT != 0) && select_press) begin
+                    instrument_value <= (instrument_value >= INSTRUMENT_COUNT-1)
+                        ? 16'd0 : instrument_value + 1'b1;
+                    instrument_pending <= 1;
+                    ui_dirty <= 1;
+                end
+                if (next_volume != volume_value) begin
+                    volume_value <= next_volume;
+                    param_id <= `PARAM_VOLUME;
+                    param_value <= audio_volume(next_volume);
+                    param_valid <= 1;
+                    ui_dirty <= 1;
+                end
             end else if ((ENABLE_INSTRUMENT != 0) && select_press) begin
                 ui_page <= (ui_page == 0) ? 4'd1 : 4'd0;
                 ui_dirty <= 1;

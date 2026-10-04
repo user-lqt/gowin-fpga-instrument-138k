@@ -1,13 +1,16 @@
 `timescale 1ns/1ps
 // RGB666 display. pixel_clk is a dedicated ~33.3 MHz PLL output.
 // Synchronize the status inputs to pixel_clk before connecting them here.
-module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0) (
+module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
+    parameter integer ENABLE_B_MENU = 0) (
     input wire pixel_clk,
     input wire rst_n,
     input wire [23:0] key_state,
     input wire [15:0] volume_value,
     input wire [15:0] instrument_value,
     input wire [31:0] diagnostic_state,
+    input wire control_menu,
+    input wire [6:0] glide_value,effect_value,
     output wire sc_clk,
     output reg sc_hs,
     output reg sc_vs,
@@ -30,14 +33,48 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0) (
     reg [23:0] frame_keys;
     reg [15:0] frame_volume, frame_instrument;
     reg [31:0] frame_diagnostic;
+    reg frame_menu;
+    reg [6:0] frame_glide,frame_effect;
+    integer text_cell,text_x,text_y;
+    reg text_hit;
+    reg [34:0] text_glyph;
+    function [34:0] glyph;
+        input integer letter;
+        begin
+            case(letter)
+                0: glyph={5'b01110,5'b10001,5'b10000,5'b10111,5'b10001,5'b10001,5'b01110}; // G
+                1: glyph={5'b10000,5'b10000,5'b10000,5'b10000,5'b10000,5'b10000,5'b11111}; // L
+                2: glyph={5'b11111,5'b00100,5'b00100,5'b00100,5'b00100,5'b00100,5'b11111}; // I
+                3: glyph={5'b11110,5'b10001,5'b10001,5'b10001,5'b10001,5'b10001,5'b11110}; // D
+                4: glyph={5'b11111,5'b10000,5'b10000,5'b11110,5'b10000,5'b10000,5'b11111}; // E
+                5: glyph={5'b11111,5'b10000,5'b10000,5'b11110,5'b10000,5'b10000,5'b10000}; // F
+                default: glyph={5'b10001,5'b10001,5'b01010,5'b00100,5'b01010,5'b10001,5'b10001}; // X
+            endcase
+        end
+    endfunction
     wire [9:0] up_width = {1'b0, frame_diagnostic[31:24], 1'b0};
     wire [9:0] down_width = {1'b0, frame_diagnostic[23:16], 1'b0};
     wire [9:0] edge_width = {1'b0, frame_diagnostic[15:8], 1'b0};
     wire [9:0] volume_width = {frame_volume[6:0], 2'b0};
     reg [5:0] r_pixel, g_pixel, b_pixel;
+    reg [5:0] r_prepared,g_prepared,b_prepared;
+    reg de_prepared,hs_prepared,vs_prepared;
     wire [8:0] marker_left = 9'd48 + frame_instrument[2:0] * 9'd40;
     wire [8:0] marker_right = marker_left + 9'd40;
     assign frame_start = h_count == 0 && v_count == 0;
+    always @* begin
+        text_hit=0;text_x=0;text_y=0;text_glyph=0;
+        for(text_cell=0;text_cell<7;text_cell=text_cell+1) begin
+            if(v_count>=430 && v_count<458 &&
+                ((text_cell<5 && h_count>=48+text_cell*24 && h_count<68+text_cell*24) ||
+                 (text_cell>=5 && h_count>=448+(text_cell-5)*24 && h_count<468+(text_cell-5)*24))) begin
+                text_x=(text_cell<5 ? h_count-48-text_cell*24 : h_count-448-(text_cell-5)*24)>>2;
+                text_y=(v_count-430)>>2;
+                text_glyph=glyph(text_cell);
+                text_hit=text_hit | text_glyph[34-text_y*5-text_x];
+            end
+        end
+    end
 
     // Track the 33-pixel cells without division in the half-cycle pixel path.
     always @(posedge pixel_clk or negedge rst_n) begin
@@ -48,12 +85,14 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0) (
     end
 
     always @(posedge pixel_clk or negedge rst_n) begin
-        if (!rst_n) begin frame_keys <= 0; frame_volume <= 64; frame_instrument <= 0; frame_diagnostic <= 0; end
+        if (!rst_n) begin frame_keys <= 0; frame_volume <= 64; frame_instrument <= 0; frame_diagnostic <= 0;
+            frame_menu<=0;frame_glide<=0;frame_effect<=0;end
         else if (frame_start) begin
             frame_keys <= key_state;
             frame_volume <= volume_value;
             frame_instrument <= instrument_value;
             frame_diagnostic <= diagnostic_state;
+            frame_menu<=control_menu;frame_glide<=glide_value;frame_effect<=effect_value;
         end
     end
 
@@ -67,16 +106,29 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0) (
     end
 
     assign sc_clk = pixel_clk;
+    // Give rendering a full pixel period, rather than half a period. Delay
+    // data and all timing signals together by one pixel to retain alignment.
+    always @(posedge pixel_clk or negedge rst_n) begin
+        if(!rst_n) begin
+            r_prepared<=0;g_prepared<=0;b_prepared<=0;
+            de_prepared<=0;hs_prepared<=1;vs_prepared<=1;
+        end else begin
+            r_prepared<=r_pixel;g_prepared<=g_pixel;b_prepared<=b_pixel;
+            de_prepared<=active;
+            hs_prepared<=!(h_count>=H_ACTIVE+H_FRONT && h_count<H_ACTIVE+H_FRONT+H_SYNC);
+            vs_prepared<=!(v_count>=V_ACTIVE+V_FRONT && v_count<V_ACTIVE+V_FRONT+V_SYNC);
+        end
+    end
     // Prepare all panel signals on the falling edge for rising-edge capture.
     always @(negedge pixel_clk or negedge rst_n) begin
         if (!rst_n) begin
             sc_de <= 0; sc_hs <= 1; sc_vs <= 1;
             r_out <= 0; g_out <= 0; b_out <= 0;
         end else begin
-            sc_de <= active;
-            sc_hs <= !(h_count >= H_ACTIVE+H_FRONT && h_count < H_ACTIVE+H_FRONT+H_SYNC);
-            sc_vs <= !(v_count >= V_ACTIVE+V_FRONT && v_count < V_ACTIVE+V_FRONT+V_SYNC);
-            r_out <= r_pixel; g_out <= g_pixel; b_out <= b_pixel;
+            sc_de <= de_prepared;
+            sc_hs <= hs_prepared;
+            sc_vs <= vs_prepared;
+            r_out <= r_prepared; g_out <= g_prepared; b_out <= b_prepared;
         end
     end
 
@@ -128,6 +180,22 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0) (
                     begin r_pixel=6'd56; g_pixel=6'd12; b_pixel=6'd42; end
                 if (v_count >= 66 && v_count < 88 && h_count >= 608 && h_count < 640)
                     begin r_pixel=6'd8; g_pixel=6'd20; b_pixel=(frame_diagnostic[7:4] == 0) ? 6'd20 : 6'd60; end
+            end
+            if(ENABLE_B_MENU != 0) begin
+                if(v_count>=426 && v_count<462 &&
+                    ((h_count>=40 && h_count<176)||(h_count>=440 && h_count<504))) begin
+                    r_pixel=6'd8;g_pixel=6'd18;b_pixel=6'd24;
+                    if((h_count<176 && !frame_menu)||(h_count>=440 && frame_menu)) begin
+                        r_pixel=6'd8;g_pixel=6'd38;b_pixel=6'd32;
+                    end
+                end
+                if(text_hit) begin r_pixel=63;g_pixel=63;b_pixel=63;end
+                // Separate persistent settings, 0..127 -> 0..254 pixels.
+                if(v_count>=466 && v_count<476 &&
+                    ((h_count>=48 && h_count<48+{frame_glide,1'b0}) ||
+                     (h_count>=448 && h_count<448+{frame_effect,1'b0}))) begin
+                    r_pixel=6'd12;g_pixel=6'd54;b_pixel=6'd42;
+                end
             end
         end
     end
