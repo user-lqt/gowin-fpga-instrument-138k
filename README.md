@@ -11,6 +11,11 @@
 > [EC11 正式交互说明](docs/EC11_FORMAL_CONTROLS.md)，使用独立的新烧录文件。
 > 双旋钮菜单版接线和入口见 [EC11_B 滑音／效果菜单](docs/EC11_B_WIRING.md)。
 > B 端参数发送已实现，滑音和效果声音处理仍待成员 A 接入。
+> MCP3008/摇杆已接入顶层但尚未接入音频算法；见
+> [MCP3008与摇杆 RTL 说明](docs/JOYSTICK_MCP3008_RTL.md)。
+> 当前已根据最新分配接入顶层：J13-24/25/26/27 = ADC_CS/SCLK/MOSI/MISO。
+> ADC/摇杆分支交接（成员 A 完成弯音/调制，成员 C 最后合并）见
+> [JOYSTICK_HANDOFF.md](docs/JOYSTICK_HANDOFF.md)。
 
 > 全国大学生嵌入式芯片与系统设计竞赛 2026 · FPGA 创新设计赛道 · **高云半导体 选题二**
 > 平台：**Sipeed Tang Mega 138K Dock** · 芯片 **GW5AST-LV138PG484AC1/I0**

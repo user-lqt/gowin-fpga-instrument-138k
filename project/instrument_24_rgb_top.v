@@ -12,8 +12,10 @@ module instrument_24_rgb_top #(
     input wire [5:0] col_in,
     input wire enc_a, enc_b, enc_sw_n,
     input wire enc2_a, enc2_b, enc2_sw_n,
+    input wire adc_miso,
     output wire [7:0] row_out,
     output wire o_hp_bck, o_hp_ws, o_hp_din, o_pa_en, o_led, o_locked,
+    output wire adc_cs_n, adc_sclk, adc_mosi,
     output wire lcd_sc_clk, lcd_sc_hs, lcd_sc_vs, lcd_sc_de,
     output wire [5:0] lcd_r_out, lcd_g_out, lcd_b_out
 );
@@ -117,10 +119,32 @@ module instrument_24_rgb_top #(
     wire param_valid,control_overflow;
     wire [3:0] param_id;
     wire [15:0] param_value;
+    wire adc_busy,adc_sample_valid;
+    wire [2:0] adc_sample_channel;
+    wire [9:0] adc_ch0,adc_ch1,adc_ch2;
+    mcp3008_sampler #(.CLK_DIV(12)) u_mcp3008_sampler (
+        .clk(clk_audio),.rst_n(rst_n && system_ready),.adc_miso(adc_miso),
+        .adc_cs_n(adc_cs_n),.adc_sclk(adc_sclk),.adc_mosi(adc_mosi),.busy(adc_busy),
+        .sample_valid(adc_sample_valid),.sample_channel(adc_sample_channel),
+        .ch0_data(adc_ch0),.ch1_data(adc_ch1),.ch2_data(adc_ch2)
+    );
+    wire joystick_param_valid;
+    wire [3:0] joystick_param_id;
+    wire [15:0] joystick_param_value;
+    wire signed [15:0] joystick_pitch_bend;
+    wire [15:0] joystick_modulation;
+    joystick_control u_joystick_control (
+        .clk(clk_audio),.rst_n(rst_n && system_ready),.sample_valid(adc_sample_valid),
+        .sample_channel(adc_sample_channel),.ch1_x(adc_ch1),.ch2_y(adc_ch2),
+        .param_valid(joystick_param_valid),.param_id(joystick_param_id),
+        .param_value(joystick_param_value),.pitch_bend(joystick_pitch_bend),
+        .modulation(joystick_modulation),.filtered_x(),.filtered_y()
+    );
     encoder_param_queue u_control_queue (
         .clk(clk_audio),.rst_n(rst_n && system_ready),.sample_tick(sample_tick),
         .a_valid(encoder_param_valid),.a_id(encoder_param_id),.a_value(encoder_param_value),
         .b_valid(encoder_b_param_valid),.b_id(encoder_b_param_id),.b_value(encoder_b_param_value),
+        .c_valid(joystick_param_valid),.c_id(joystick_param_id),.c_value(joystick_param_value),
         .valid(param_valid),.id(param_id),.value(param_value),.overflow(control_overflow)
     );
     wire signed [23:0] audio_left, audio_right;

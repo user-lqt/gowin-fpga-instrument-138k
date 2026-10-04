@@ -9,7 +9,7 @@ module tb_encoder_param_queue;
     wire [15:0] value;
     integer i;
     encoder_param_queue dut(.clk(clk),.rst_n(rst_n),.sample_tick(tick),
-        .a_valid(av),.b_valid(bv),.a_id(ai),.b_id(bi),.a_value(ad),.b_value(bd),
+        .a_valid(av),.b_valid(bv),.c_valid(1'b0),.a_id(ai),.b_id(bi),.c_id(4'd0),.a_value(ad),.b_value(bd),.c_value(16'd0),
         .valid(valid),.id(id),.value(value),.overflow(overflow));
     task consume;
         input [15:0] expected;
