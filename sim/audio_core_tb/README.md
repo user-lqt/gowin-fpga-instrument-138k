@@ -14,8 +14,8 @@ independent voices; no audition defines are required.
 | >3 | Falls back to piano |
 
 Member B must display piano/guitar/bianzhong and cycle 0/1/2 from EC11_A.
-Member C must include `guitar_body.v`, `plucked_string.v`, and
-`bianzhong_candidate.v` along with the existing audio RTL in the Gowin
+Member C must include `guitar_body.v` and `plucked_string.v`
+along with the existing audio RTL in the Gowin
 project. No system project, pin constraints, or common interface is changed
 by this delivery. The old plan's electric-piano/organ/trumpet names are
 superseded by this table; shared task documents still need team review.
@@ -33,11 +33,11 @@ Guitar uses a fractional-delay feedback string and heuristic body filters.
 MIDI 24..127 uses the string model; lower notes use an additive fallback.
 Each timbre-enabled voice declares a 2048x16-bit string delay memory.
 32 voices declare 1048576 delay-memory bits before optimization.
-Bell uses eight separately decaying inharmonic modes. Its coefficients are
-synthetic, not measurements of a historical bell.
+The former eight-mode bell candidate was audition-only and is removed.
+Production instrument 2 currently uses the additive oscillator's fixed
+coefficient path. It is not the old eight-mode recording; listening approval
+of that candidate must not be claimed as approval of this production path.
 The default outer NOTE_OFF release is 4800 samples for every sound.
-The bell audition deliberately overrides release to 48000 samples; it is
-not evidence that the default board release is one second.
 
 ## Regression Commands
 
@@ -48,7 +48,6 @@ Run from the repository root with Icarus Verilog and Python/numpy installed:
 .\sim\audio_core_tb\run.ps1 -Stage A3Long
 .\sim\audio_core_tb\run.ps1 -Stage Piano
 .\sim\audio_core_tb\run.ps1 -Stage GuitarMelody
-.\sim\audio_core_tb\run.ps1 -Stage BianzhongAudition
 ```
 
 `All` runs A1, the five A2 tests, and the A3 short integration regression.
@@ -82,8 +81,6 @@ Generated data is ignored under `build/iverilog/waveforms/`:
 - `piano_upright_note_60_soft.wav` and corresponding hard/69/78 variants:
   C4/A4/F#5 soft/hard strikes, decay and silent release checks.
 - `guitar_twinkle.wav`: guitar melody.
-- `bianzhong_single.wav`, `bianzhong_ode.wav`: bell single note and melody,
-  with one-second audition release.
 
 `analyze_piano_reference.py <samples-dir> --ffmpeg <ffmpeg-executable>`
 exports only scalar measurements to ignored `piano_reference_analysis.json`.
@@ -113,5 +110,5 @@ member C owns changes to the real system project.
 not production dependencies. Do not treat stale compiled debug units as
 current verification. `a2-audio-local` points to the older A1 base, and the
 old A2 stash must not be applied over repaired sources.
-Untracked rejected flute/erhu prototypes may remain locally; they are not
-part of this production delivery or exposed by `run.ps1`.
+Rejected flute/erhu sources and the unused eight-mode bell prototype have
+been removed. Historical generated audio is not a current build dependency.

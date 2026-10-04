@@ -5,8 +5,6 @@ module tb_audio_core_piano_melody;
     localparam integer NOTE_SAMPLES = 34286;
 `ifdef GUITAR_MELODY
     localparam integer MELODY_INSTRUMENT = 3;
-`elsif FLUTE_MELODY
-    localparam integer MELODY_INSTRUMENT = 2;
 `else
     localparam integer MELODY_INSTRUMENT = 0;
 `endif
@@ -57,11 +55,6 @@ module tb_audio_core_piano_melody;
             if ((^left) === 1'bx || left !== right || overload ||
                 event_overflow || param_overflow)
                 $fatal(1, "melody PCM or queue fault");
-`ifdef FLUTE_MELODY
-            if (active && (dut.a2.voices[0].u_voice.u_oscillator.timbres.result >= 32767 ||
-                           dut.a2.voices[0].u_voice.u_oscillator.timbres.result <= -32768))
-                $fatal(1, "qudi oscillator clipping");
-`endif
 `ifdef PIANO_REFERENCE
             if (dut.a2.voices[0].u_voice.u_oscillator.timbres.result >= 32767 ||
                 dut.a2.voices[0].u_voice.u_oscillator.timbres.result <= -32768)
@@ -112,8 +105,6 @@ module tb_audio_core_piano_melody;
     initial begin
 `ifdef GUITAR_MELODY
         trace = $fopen("waveforms/guitar_twinkle.csv", "w");
-`elsif FLUTE_MELODY
-        trace = $fopen("waveforms/flute_twinkle.csv", "w");
 `elsif PIANO_REFERENCE
         trace = $fopen("waveforms/piano_upright_twinkle.csv", "w");
 `else
@@ -153,44 +144,11 @@ module tb_audio_core_piano_melody;
         $fdisplay(trace, "note_index,audio");
         velocity = 105;
 `endif
-`ifdef FLUTE_MELODY
-        $fclose(trace);
-        trace = $fopen("waveforms/qudi_register.csv", "w");
-        if (!trace) $fatal(1, "cannot open register capture");
-        $fdisplay(trace, "note_index,audio");
-        for (n = 0; n < 7; n = n + 1) begin
-            case (n)
-                0: note_id = 69;
-                1: note_id = 71;
-                2: note_id = 73;
-                3: note_id = 74;
-                4: note_id = 76;
-                5: note_id = 78;
-                6: note_id = 79;
-            endcase
-            send_event(`EVENT_NOTE_ON, note_id);
-            record(18000);
-            send_event(`EVENT_NOTE_OFF, note_id);
-            record(7200);
-            if (active !== 0 || left !== 0) $fatal(1, "register release");
-        end
-        $fclose(trace);
-        trace = $fopen("waveforms/flute_twinkle.csv", "w");
-        if (!trace) $fatal(1, "cannot reopen melody capture");
-        $fdisplay(trace, "note_index,audio");
-        for (n = 0; n < 14; n = n + 1) melody[n] = melody[n] + 9;
-`endif
         for (n = 0; n < 14; n = n + 1) begin
             send_event(`EVENT_NOTE_ON, melody[n]);
-`ifdef FLUTE_MELODY
-            record(NOTE_SAMPLES - 4800);
-            send_event(`EVENT_NOTE_OFF, melody[n]);
-            record(4800);
-`else
             record(NOTE_SAMPLES);
             send_event(`EVENT_NOTE_OFF, melody[n]);
             repeat (20) next_sample;
-`endif
         end
 `ifdef PIANO_REFERENCE
         n = 14;

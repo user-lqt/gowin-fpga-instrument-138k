@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('A1', 'A2', 'A3', 'A3Long', 'Guitar', 'Piano', 'GuitarMelody', 'BianzhongAudition', 'All')]
+    [ValidateSet('A1', 'A2', 'A3', 'A3Long', 'Guitar', 'Piano', 'GuitarMelody', 'All')]
     [string]$Stage = 'A2'
 )
 $ErrorActionPreference = 'Stop'
@@ -19,7 +19,6 @@ if ($Stage -eq 'A3Long') {
 if ($Stage -eq 'Guitar') { $tests += 'tb_audio_core_guitar' }
 if ($Stage -eq 'Piano') { $tests += 'tb_audio_core_piano_melody' }
 if ($Stage -eq 'GuitarMelody') { $tests += 'tb_audio_core_guitar_melody' }
-if ($Stage -eq 'BianzhongAudition') { $tests += 'tb_audio_core_bianzhong' }
 $rtl = Get-ChildItem (Join-Path $repo 'rtl/audio_core') -Filter *.v |
     ForEach-Object FullName
 Push-Location $build
@@ -58,10 +57,6 @@ try {
     if ($Stage -eq 'GuitarMelody') {
         & python (Join-Path $PSScriptRoot 'check_guitar_melody.py')
         if ($LASTEXITCODE -ne 0) { throw 'Guitar melody waveform analysis failed' }
-    }
-    if ($Stage -eq 'BianzhongAudition') {
-        & python (Join-Path $PSScriptRoot 'check_bianzhong.py')
-        if ($LASTEXITCODE -ne 0) { throw 'Bianzhong audition waveform analysis failed' }
     }
 } finally {
     Pop-Location
