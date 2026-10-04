@@ -8,8 +8,8 @@ module pressure_adc #(
     parameter integer FILTER_SHIFT = 3,   // EMA alpha = 1 / 2^FILTER_SHIFT
     // Initial estimate for FSR -> 3.3 V, 5.1 kOhm -> GND divider.
     // Replace these after measuring the real sensor on the target board.
-    parameter integer ZERO_LEVEL = 20,
-    parameter integer FULL_SCALE = 800,
+    parameter integer ZERO_LEVEL = 570,
+    parameter integer FULL_SCALE = 945,
     parameter integer DEADBAND = 8,
     parameter integer ENABLE_FAULT_CHECK = 0,
     parameter integer FAULT_LOW_LEVEL = 0,
