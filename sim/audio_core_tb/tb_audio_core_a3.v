@@ -25,9 +25,9 @@ module tb_audio_core_a3;
     integer clipped = 0;
     integer capture;
     localparam integer TIMBRE_SAMPLES = 128;
-    integer samples [0:3*TIMBRE_SAMPLES-1];
+    integer samples [0:4*TIMBRE_SAMPLES-1];
     integer different01, different02, different12;
-    reg [63:0] energy [0:2];
+    reg [63:0] energy [0:3];
     reg [63:0] measured_energy;
     reg signed [31:0] sample_value;
     reg signed [63:0] square;
@@ -219,7 +219,7 @@ module tb_audio_core_a3;
                "all 32 release tails end in silence");
 
         // Compare the same pitch, velocity, start phase and capture interval.
-        for (j = 0; j < 3; j = j + 1) begin
+        for (j = 0; j < 4; j = j + 1) begin
             reset_core;
             send_param(`PARAM_INSTRUMENT, j);
             wait_samples(2);
@@ -237,7 +237,7 @@ module tb_audio_core_a3;
                 $fdisplay(capture, "timbre%0d,%0d,%0d", j, n, audio_left);
             end
             `CHECK(energy[j] > 0, "instrument produces nonzero PCM");
-            send_param(`PARAM_INSTRUMENT, (j+1)%3);
+            send_param(`PARAM_INSTRUMENT, (j+1)%4);
             wait_samples(2);
             `CHECK(dut.a2.voice_instrument[1:0] == j,
                    "held voice retains its instrument on global switch");
@@ -250,6 +250,11 @@ module tb_audio_core_a3;
         end
         `CHECK(different01 > 90 && different02 > 90 && different12 > 90,
                "all three instrument pairs differ at equal pitch");
+        different01 = 0;
+        for (n = 0; n < TIMBRE_SAMPLES; n = n + 1)
+            if (samples[n] != samples[3*TIMBRE_SAMPLES+n])
+                different01 = different01 + 1;
+        `CHECK(different01 > 90, "guitar differs from piano at equal pitch");
         send_param(`PARAM_INSTRUMENT, 16'h0010);
         wait_samples(2);
         `CHECK(dut.instrument == 0, "out-of-range full-word instrument falls back");
@@ -286,6 +291,32 @@ module tb_audio_core_a3;
         end
         `CHECK(energy[0] > 0 && energy[1] > energy[0] && energy[2] > energy[1],
                "light medium heavy velocities increase attack energy");
+
+        for (j = 0; j < 3; j = j + 1) begin
+            reset_core;
+            send_param(`PARAM_INSTRUMENT, 3);
+            wait_samples(2);
+            send_event(`EVENT_NOTE_ON, 60, 32 + j*40);
+            wait_samples(100);
+            measure(64);
+            energy[j] = measured_energy;
+        end
+        `CHECK(energy[0] > 0 && energy[1] > energy[0] && energy[2] > energy[1],
+               "guitar light medium heavy velocities increase energy");
+        reset_core;
+        send_param(`PARAM_INSTRUMENT, 3);
+        wait_samples(2);
+        for (i = 0; i < 32; i = i + 1)
+            send_event(`EVENT_NOTE_ON, 48+i, 127);
+        wait_samples(300);
+        `CHECK(active_voice_count == 32 && !overload_flag &&
+               dut.a2.voice_instrument == {32{2'd3}},
+               "guitar supports 32 voices at default gain");
+        for (i = 0; i < 32; i = i + 1)
+            send_event(`EVENT_NOTE_OFF, 48+i, 0);
+        wait_samples(100);
+        `CHECK(active_voice_count == 0 && audio_left == 0,
+               "all 32 guitar release tails end in silence");
 
         reset_core;
         send_param(`PARAM_INSTRUMENT, 1);

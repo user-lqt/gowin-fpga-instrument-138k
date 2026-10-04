@@ -84,21 +84,21 @@ module voice_allocator #(
                                 voice_note_on[matching] <= 1'b1;
                                 voice_velocity[matching*8 +: 8] <= velocity;
                                 voice_instrument[matching*2 +: 2] <=
-                                    instrument > 2'd2 ? 2'd0 : instrument;
+                                    instrument;
                                 key_down[matching] <= 1'b1;
                             end else if (available != -1) begin
                                 voice_note_on[available] <= 1'b1;
                                 voice_note_id[available*7 +: 7] <= note_id;
                                 voice_velocity[available*8 +: 8] <= velocity;
                                 voice_instrument[available*2 +: 2] <=
-                                    instrument > 2'd2 ? 2'd0 : instrument;
+                                    instrument;
                                 key_down[available] <= 1'b1;
                             end else if (STEAL_ON_FULL) begin
                                 voice_note_on[steal] <= 1'b1;
                                 voice_note_id[steal*7 +: 7] <= note_id;
                                 voice_velocity[steal*8 +: 8] <= velocity;
                                 voice_instrument[steal*2 +: 2] <=
-                                    instrument > 2'd2 ? 2'd0 : instrument;
+                                    instrument;
                                 key_down[steal] <= 1'b1;
                                 full_pulse <= 1'b1;
                             end else begin

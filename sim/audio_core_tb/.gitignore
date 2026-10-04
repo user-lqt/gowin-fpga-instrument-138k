@@ -7,3 +7,4 @@ work/
 build/
 local_archive/
 *.vvp
+__pycache__/

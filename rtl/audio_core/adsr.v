@@ -25,16 +25,22 @@ module adsr #(
     localparam integer DECAY_STEP =
         (65535 - SUSTAIN_LEVEL + DECAY_SAMPLES - 1) / DECAY_SAMPLES;
     wire [15:0] attack_length = !ENABLE_TIMBRES ? ATTACK_SAMPLES :
-        instrument == 0 ? 96 : instrument == 1 ? 240 : 1200;
+        instrument == 0 ? 120 : 48;
     wire [15:0] decay_length = !ENABLE_TIMBRES ? DECAY_SAMPLES :
-        instrument == 0 ? 32768 : instrument == 1 ? 1 : 3932;
+        instrument == 0 ? 65535 : instrument == 2 ? 1 : 60000;
     wire [15:0] sustain = !ENABLE_TIMBRES ? SUSTAIN_LEVEL :
-        instrument == 0 ? 0 : instrument == 1 ? 65535 : 45875;
+        instrument == 2 ? 65535 : 0;
     wire [16:0] attack_step_value = !ENABLE_TIMBRES ? ATTACK_STEP :
-        instrument == 0 ? 683 : instrument == 1 ? 274 : 55;
+        instrument == 0 ? 546 : 1366;
     wire [16:0] decay_step_value = !ENABLE_TIMBRES ? DECAY_STEP :
-        instrument == 0 ? 2 : instrument == 1 ? 0 : 5;
+        instrument == 2 ? 0 :
+        (instrument == 1 || instrument == 3) ?
+        (({1'b0, level} + 17'd32767) >> 15) : 1;
     reg [15:0] elapsed;
+    reg [31:0] piano_decay_error;
+    wire [31:0] piano_decay_sum = piano_decay_error + {16'd0, level};
+    wire [16:0] piano_decay_step = level > 16'd12000 ?
+        (piano_decay_sum >> 13) : (piano_decay_sum >> 15);
     reg [16:0] release_step;
     reg [31:0] release_remainder;
     reg [31:0] release_error;
@@ -48,12 +54,14 @@ module adsr #(
         if (!rst_n) begin
             level <= 16'd0;
             elapsed <= 16'd0;
+            piano_decay_error <= 0;
             release_step <= 17'd0;
             release_remainder <= 32'd0;
             release_error <= 32'd0;
             stage <= IDLE;
         end else if (note_on) begin
             if (ENABLE_TIMBRES) level <= 0;
+            piano_decay_error <= 0;
             elapsed <= 16'd0;
             stage <= ATTACK;
         end else if (note_off && active) begin
@@ -76,7 +84,19 @@ module adsr #(
                     end
                 end
                 DECAY: begin
-                    if (elapsed == decay_length - 1 ||
+                    if (ENABLE_TIMBRES && instrument == 0) begin
+                        // Measured upright-piano envelope: fast body decay,
+                        // then a quieter, slower soundboard/string tail.
+                        piano_decay_error <= level > 16'd12000 ?
+                            (piano_decay_sum & 32'd8191) :
+                            (piano_decay_sum & 32'd32767);
+                        if (level <= 1) begin
+                            level <= 0;
+                            stage <= SUSTAIN;
+                        end else begin
+                            level <= level - piano_decay_step;
+                        end
+                    end else if (elapsed == decay_length - 1 ||
                         {1'b0, level} <= {1'b0, sustain} + decay_step_value) begin
                         level <= sustain;
                         elapsed <= 16'd0;

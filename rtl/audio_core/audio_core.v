@@ -212,7 +212,7 @@ module audio_core #(
             end
             if (sample_tick && (p_pop || p_bypass) &&
                 selected_param_id == `PARAM_INSTRUMENT)
-                instrument <= selected_param_val > 16'd2 ?
+                instrument <= selected_param_val > 16'd3 ?
                               2'd0 : selected_param_val[1:0];
         end
     end
