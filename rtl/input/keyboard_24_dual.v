@@ -29,13 +29,24 @@ module keyboard_24_dual #(
             if (width_for<1) width_for=1;
         end
     endfunction
-    localparam integer DBW = width_for(DEBOUNCE_FRAMES);
+    localparam integer DBW = width_for(DEBOUNCE_FRAMES > RELEASE_DEBOUNCE_FRAMES ? DEBOUNCE_FRAMES : RELEASE_DEBOUNCE_FRAMES);
     localparam integer ABW = width_for(AB_MAX_FRAMES+1);
     localparam integer EW = width_for(EVENT_INTERVAL_CYCLES);
     reg [EW-1:0] event_wait;
     reg [47:0] stable_contacts;
     reg [DBW-1:0] db_count [0:47];
     reg [ABW-1:0] ab_age [0:23];
+    reg [23:0] travel_started, strike_measured;
+    reg [7:0] strike_velocity [0:23];
+    // Inverse travel curve, with an audible minimum for a slow strike.
+    function [7:0] travel_velocity;
+        input integer frames;
+        begin
+            // AB_MAX_FRAMES includes one saturation frame beyond the boundary.
+            if (frames < AB_MAX_FRAMES) travel_velocity=127;
+            else travel_velocity=16;
+        end
+    endfunction
     reg [23:0] pending_on, pending_off;
     reg [7:0] pending_velocity [0:23];
     reg [5:0] event_cursor;
@@ -54,8 +65,10 @@ module keyboard_24_dual #(
             velocity <= 0;
             event_cursor <= 0;
             event_wait <= 0;
+            travel_started <= 0;
+            strike_measured <= 0;
             for (i=0;i<48;i=i+1) db_count[i] <= 0;
-            for (i=0;i<24;i=i+1) begin ab_age[i] <= 0; pending_velocity[i] <= 0; end
+            for (i=0;i<24;i=i+1) begin ab_age[i] <= 0; pending_velocity[i] <= 0; strike_velocity[i] <= 127; end
         end else begin
             event_valid <= 0;
 
@@ -92,33 +105,52 @@ module keyboard_24_dual #(
                 // Include a contact's debounced transition in this frame.
                 for (k=0;k<24;k=k+1) begin
                     row_a=(k/6)*2; row_b=row_a+1; col=k%6;
+                    // Capture first raw closures. Bounce does not restart timing;
+                    // the stable contacts below still qualify the actual note.
+                    if (!key_state[k] && !strike_measured[k]) begin
+                        if (!travel_started[k] && contact_raw[row_a*6+col]) begin
+                            travel_started[k] <= 1;
+                            ab_age[k] <= 1;
+                            if (contact_raw[row_b*6+col]) begin
+                                strike_measured[k] <= 1;
+                                strike_velocity[k] <= 127;
+                            end
+                        end else if (travel_started[k]) begin
+                            if (contact_raw[row_b*6+col]) begin
+                                strike_measured[k] <= 1;
+                                strike_velocity[k] <= travel_velocity(ab_age[k]);
+                            end else if (ab_age[k] < AB_MAX_FRAMES)
+                                ab_age[k] <= ab_age[k] + 1'b1;
+                        end
+                    end
                     a_next = (contact_raw[row_a*6+col] != stable_contacts[row_a*6+col] &&
                               db_count[row_a*6+col] >= ((contact_raw[row_a*6+col] ? DEBOUNCE_FRAMES : RELEASE_DEBOUNCE_FRAMES)-1)) ?
                               contact_raw[row_a*6+col] : stable_contacts[row_a*6+col];
                     b_next = (contact_raw[row_b*6+col] != stable_contacts[row_b*6+col] &&
                               db_count[row_b*6+col] >= ((contact_raw[row_b*6+col] ? DEBOUNCE_FRAMES : RELEASE_DEBOUNCE_FRAMES)-1)) ?
                               contact_raw[row_b*6+col] : stable_contacts[row_b*6+col];
-                    if (a_next && !stable_contacts[row_a*6+col] && !key_state[k])
-                        ab_age[k] <= 1;
-                    else if (a_next && !key_state[k] && ab_age[k] != 0 &&
-                             ab_age[k] < AB_MAX_FRAMES)
-                        ab_age[k] <= ab_age[k] + 1'b1;
-                    if (b_next && a_next && !key_state[k] &&
-                        (ab_age[k] != 0 || !stable_contacts[row_a*6+col])) begin
+                    if (b_next && a_next && !key_state[k] && strike_measured[k]) begin
                         pending_on[k] <= 1;
                         key_state[k] <= 1;
-                        if (ab_age[k] <= 1) pending_velocity[k] <= 8'd127;
-                        else if (ab_age[k] >= AB_MAX_FRAMES) pending_velocity[k] <= 8'd1;
-                        else pending_velocity[k] <= 8'd127 - ((ab_age[k]-1)*126)/(AB_MAX_FRAMES-1);
+                        pending_velocity[k] <= strike_velocity[k];
                         ab_age[k] <= 0;
                     end
                     if (!a_next && !b_next) begin
                         if (key_state[k]) begin
                             pending_off[k] <= 1;
                             key_state[k] <= 0;
+                            travel_started[k] <= 0;
+                            strike_measured[k] <= 0;
+                            ab_age[k] <= 0;
                         end
-                        ab_age[k] <= 0;
-                    end else if (!a_next && !key_state[k]) ab_age[k] <= 0;
+                        // Wait for a qualified full release before rearming.
+                        if (!contact_raw[row_a*6+col] && !contact_raw[row_b*6+col] &&
+                            db_count[row_a*6+col] == 0 && db_count[row_b*6+col] == 0) begin
+                            travel_started[k] <= 0;
+                            strike_measured[k] <= 0;
+                            ab_age[k] <= 0;
+                        end
+                    end
                 end
             end
         end

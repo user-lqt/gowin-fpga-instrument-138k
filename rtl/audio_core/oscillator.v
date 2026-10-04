@@ -13,7 +13,8 @@ module oscillator (
     input  wire               phase_load,
     input  wire [31:0]        fc,
     input  wire [1:0]         instrument,
-    output wire signed [15:0] wave
+    output wire signed [15:0] wave,
+    output wire signed [15:0] harmonic
 );
 
     wire [`WAVETABLE_ADDR_BITS-1:0] addr;
@@ -38,6 +39,8 @@ module oscillator (
         .addr (addr),
         .dout (sine)
     );
+    // Phase-coherent second harmonic, same ROM latency as the fundamental.
+    wavetable u_harmonic (.clk(clk), .addr({addr[10:0],1'b0}), .dout(harmonic));
 
     // Match the sine ROM's one-clock read latency for every waveform.
     always @(posedge clk) begin

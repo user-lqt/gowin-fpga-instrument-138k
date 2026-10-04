@@ -27,6 +27,10 @@ needs its own 10 kOhm pull-up to a verified **3.3 V** source (external regulated
 3.3 V if the dock does not expose one); all FPGA GPIO must remain at 3.3 V or
 below. Never connect the 5 V header pin to a column.
 
+EC11 diagnostic migration (2026-10-04): unused J13-17/A21, J13-18/B21,
+J13-19/B18 now carry encoder A, B and switch D. See `EC11_DIAGNOSTIC.md`.
+Do not reuse any of the 14 keyboard row/column GPIOs for the encoder.
+
 Each of the 48 switches has its own 1N4148: column -> switch -> diode anode;
 diode cathode (striped end) -> row bus. Each row has six such cathodes. Each
 column joins eight switch contacts, one per row. A closed switch is sensed low

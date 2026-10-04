@@ -47,6 +47,14 @@ IO_PORT "col_in[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 IO_PORT "col_in[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 IO_PORT "col_in[4]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 IO_PORT "col_in[5]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+// EC11_A on 31005 dock J13: 17=A21, 18=B21, 19=B18.
+// Bank2 is shared with the working keyboard. External 4.7k pulls use 3.3 V.
+IO_LOC "enc_a" A21;
+IO_PORT "enc_a" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc_b" B21;
+IO_PORT "enc_b" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc_sw_n" B18;
+IO_PORT "enc_sw_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 // Sipeed Tang Mega 138K RGB666 LCD header, from the official example.
 // Merge only when rgb_lcd_800x480 is present in the active top level.
 IO_LOC "lcd_sc_de" L14;

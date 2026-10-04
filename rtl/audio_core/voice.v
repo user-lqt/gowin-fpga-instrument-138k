@@ -27,7 +27,17 @@ module voice #(
     output wire [2:0]         envelope_stage
 );
     wire [31:0] fc;
+    reg [7:0] held_velocity;
+    // Retain allocator note IDs so NOTE_OFF matches both strike modes.
+    // A slow A-to-B travel is encoded by the low velocity from the decoder.
+    wire slow_strike = held_velocity < 8'd92;
+    wire [6:0] lowered_note = note_id > 7'd12 ? note_id - 7'd12 : 7'd0;
+    wire [6:0] sounding_note = slow_strike ? lowered_note : note_id;
     wire signed [15:0] wave;
+    wire signed [15:0] harmonic;
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) held_velocity <= 0;
+        else if (note_on) held_velocity <= velocity > 127 ? 8'd127 : velocity;
     reg [1:0] held_instrument;
     // A held or releasing note keeps its phase when retriggered.
     wire phase_load = note_on && !active;
@@ -36,7 +46,7 @@ module voice #(
         else if (phase_load) held_instrument <= instrument;
 
     note_to_fc u_note_to_fc (
-        .note_id (note_id),
+        .note_id (sounding_note),
         .fc      (fc)
     );
 
@@ -47,7 +57,8 @@ module voice #(
         .phase_load  (phase_load),
         .fc          (fc),
         .instrument  (held_instrument),
-        .wave        (wave)
+        .wave        (wave),
+        .harmonic    (harmonic)
     );
 
     adsr #(
@@ -66,8 +77,11 @@ module voice #(
         .stage       (envelope_stage)
     );
 
-    wire [7:0] safe_velocity = velocity > 8'd127 ? 8'd127 : velocity;
-    wire signed [8:0]  velocity_ext = $signed({1'b0, safe_velocity});
+    wire [7:0] safe_velocity = held_velocity;
+    // Slow strikes are 40% amplitude; fast strikes use full gain.
+    wire [7:0] strike_gain = safe_velocity == 0 ? 8'd0 :
+                             slow_strike ? 8'd51 : 8'd127;
+    wire signed [8:0]  velocity_ext = $signed({1'b0, strike_gain});
     wire signed [31:0] wave_velocity = wave * velocity_ext;
     wire signed [32:0] velocity_scaled = {wave_velocity, 1'b0};
     wire signed [49:0] envelope_product =

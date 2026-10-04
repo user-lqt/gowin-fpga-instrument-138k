@@ -11,7 +11,7 @@ module tb_keyboard_24_dual;
     integer ons=0, offs=0, cycle=0, last_event=-1000;
     reg [7:0] last_velocity;
     reg [23:0] seen_on=0, seen_off=0;
-    keyboard_24_dual dut (.clk(clk), .rst_n(rst_n), .scan_valid(scan_valid),
+    keyboard_24_dual #(.AB_MAX_FRAMES(5)) dut (.clk(clk), .rst_n(rst_n), .scan_valid(scan_valid),
         .contact_raw(contacts), .event_valid(valid), .event_type(kind),
         .key_id(key), .velocity(velocity), .key_state(state));
     always @(posedge clk) begin

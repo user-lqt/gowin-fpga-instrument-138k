@@ -1,14 +1,15 @@
 `include "event_defs.vh"
 // 24 dual-contact keys, four audio voices and an independent RGB pixel PLL.
-// The hardware defaults use a 200 us row dwell, five stable press frames and
-// eight stable release frames so switch bounce cannot retrigger a voice.
+// 25 us row dwell: 200 us velocity resolution, 8 ms press debounce,
+// 12.8 ms release debounce. Velocity is captured before debounce.
 module instrument_24_rgb_top #(
-    parameter integer ROW_CYCLES = 2458,
-    parameter integer DEBOUNCE_FRAMES = 5,
+    parameter integer ROW_CYCLES = 307,
+    parameter integer DEBOUNCE_FRAMES = 40,
     parameter integer DEFAULT_INSTRUMENT = 0
 ) (
     input wire i_clk_in, i_rst_n,
     input wire [5:0] col_in,
+    input wire enc_a, enc_b, enc_sw_n,
     output wire [7:0] row_out,
     output wire o_hp_bck, o_hp_ws, o_hp_din, o_pa_en, o_led, o_locked,
     output wire lcd_sc_clk, lcd_sc_hs, lcd_sc_vs, lcd_sc_de,
@@ -54,21 +55,53 @@ module instrument_24_rgb_top #(
     wire [7:0] velocity;
     wire [23:0] key_state;
     keyboard_24_input #(.ROW_CYCLES(ROW_CYCLES), .DEBOUNCE_FRAMES(DEBOUNCE_FRAMES),
-        .RELEASE_DEBOUNCE_FRAMES(8),
+        // 5004 includes saturation beyond 5003 scan frames (~1 second).
+        .RELEASE_DEBOUNCE_FRAMES(64), .AB_MAX_FRAMES(5004),
         .BASE_NOTE(48), .EVENT_INTERVAL_CYCLES(256)) u_keyboard (
         .clk(clk_audio), .rst_n(rst_n && system_ready), .col_in(col_in), .row_out(row_out),
         .key_state(key_state), .input_ready(keyboard_ready), .event_valid(event_valid),
         .event_type(event_type), .note_id(note_id), .velocity(velocity)
     );
-    // Encoder integration is pending; initialize the same volume 64/127.
-    reg [1:0] parameter_step;
-    always @(posedge clk_audio or negedge rst_n)
-        if (!rst_n) parameter_step <= 0;
-        else if (system_ready && sample_tick && parameter_step < 2)
-            parameter_step <= parameter_step + 1'b1;
-    wire param_valid = system_ready && sample_tick && parameter_step < 2;
-    wire [3:0] param_id = parameter_step == 0 ? `PARAM_VOLUME : `PARAM_INSTRUMENT;
-    wire [15:0] param_value = parameter_step == 0 ? 16'd33026 : DEFAULT_INSTRUMENT;
+    wire encoder_ready;
+    wire [15:0] volume_value, instrument_value, ui_param_value;
+    wire encoder_param_valid;
+    wire [3:0] encoder_param_id;
+    wire [15:0] encoder_param_value;
+    wire [3:0] ui_page;
+    wire ui_dirty;
+    wire diagnostic_step_up, diagnostic_step_down;
+    encoder_control #(.FILTER_CYCLES(2500), .BUTTON_CYCLES(1000000),
+        .REVERSE_DIR(0), .INSTRUMENT_COUNT(3)) u_encoder_control (
+        .clk(clk_audio), .rst_n(rst_n && system_ready),
+        .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n),
+        .input_ready(encoder_ready), .volume_value(volume_value),
+        .instrument_value(instrument_value), .param_valid(encoder_param_valid),
+        .param_id(encoder_param_id), .param_value(encoder_param_value),
+        .ui_page(ui_page), .ui_param_value(ui_param_value), .ui_dirty(ui_dirty),
+        .diagnostic_step_up(diagnostic_step_up), .diagnostic_step_down(diagnostic_step_down)
+    );
+    reg [2:0] enc_meta, enc_sync, enc_previous;
+    reg [7:0] diagnostic_up, diagnostic_down, diagnostic_edges;
+    // Independent synchronizer exposes the actual pads, even if decoding fails.
+    always @(posedge clk_audio or negedge rst_n) begin
+        if (!rst_n) begin
+            enc_meta <= 3'b111; enc_sync <= 3'b111; enc_previous <= 3'b111;
+            diagnostic_up <= 0; diagnostic_down <= 0; diagnostic_edges <= 0;
+        end else begin
+            enc_meta <= {enc_sw_n, enc_b, enc_a};
+            enc_sync <= enc_meta;
+            enc_previous <= enc_sync;
+            if (system_ready && enc_sync[1:0] != enc_previous[1:0])
+                diagnostic_edges <= diagnostic_edges + 1'b1;
+            if (diagnostic_step_up) diagnostic_up <= diagnostic_up + 1'b1;
+            if (diagnostic_step_down) diagnostic_down <= diagnostic_down + 1'b1;
+        end
+    end
+    wire [31:0] diagnostic_status = {diagnostic_up, diagnostic_down,
+        diagnostic_edges, ui_page, encoder_ready, enc_sync};
+    wire param_valid = system_ready && encoder_param_valid;
+    wire [3:0] param_id = encoder_param_id;
+    wire [15:0] param_value = encoder_param_value;
     wire signed [23:0] audio_left, audio_right;
     wire [5:0] active_voice_count;
     wire audio_core_valid, overload_flag;
@@ -86,16 +119,17 @@ module instrument_24_rgb_top #(
         .o_bck(o_hp_bck), .o_ws(o_hp_ws), .o_din(o_hp_din)
     );
     wire lcd_frame_start;
-    wire [55:0] display_status;
-    lcd_status_bridge u_display_bridge (
+    wire [87:0] display_status;
+    lcd_status_bridge #(.WIDTH(88)) u_display_bridge (
         .source_clk(clk_audio), .source_rst_n(rst_n),
-        .source_status({key_state, 16'd64, INSTRUMENT_VALUE}),
+        .source_status({diagnostic_status, key_state, volume_value, instrument_value}),
         .pixel_clk(pixel_clk), .pixel_rst_n(pixel_rst_n), .frame_start(lcd_frame_start),
         .pixel_status(display_status)
     );
-    rgb_lcd_800x480 u_lcd (
+    rgb_lcd_800x480 #(.ENABLE_DIAGNOSTICS(1)) u_lcd (
         .pixel_clk(pixel_clk), .rst_n(pixel_rst_n), .key_state(display_status[55:32]),
         .volume_value(display_status[31:16]), .instrument_value(display_status[15:0]),
+        .diagnostic_state(display_status[87:56]),
         .frame_start(lcd_frame_start), .sc_clk(lcd_sc_clk), .sc_hs(lcd_sc_hs),
         .sc_vs(lcd_sc_vs), .sc_de(lcd_sc_de), .r_out(lcd_r_out), .g_out(lcd_g_out), .b_out(lcd_b_out)
     );

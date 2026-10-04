@@ -1,0 +1,50 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
+    <FileList>
+        <File path="E:/GowinProjects/synth_top/project/instrument_timbres_top.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/project/instrument_top.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/adsr.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/audio_core.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/fm_operator.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/mixer.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/note_to_fc.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/oscillator.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/phase_acc.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/voice.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/voice_allocator.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/audio_core/wavetable.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/common/reset_sync.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/encoder.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/encoder_control.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/encoder_volume.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/expression_mapper.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/input_filter.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/input_top.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/key_debounce.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/key_map.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/keyboard_input.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/matrix_keyboard.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/matrix_scan.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/mpr121_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/pressure_adc.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/input/ultrasonic_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/system/clock_gen.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/system/i2s_tx_official.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/system/sample_scheduler.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/system/system_status.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/oled_content.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/oled_display.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/oled_font.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/oled_i2c_master.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/oled_page.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/oled_vendor_probe.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/parameter_manager.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/rtl/ui/ui_state.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/constraint/instrument_mega138k.cst" type="file.cst" enable="1"/>
+        <File path="E:/GowinProjects/synth_top/constraint/instrument_timbres_mega138k.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>

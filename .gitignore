@@ -136,3 +136,13 @@ license*.txt
 # ---------------------------------------------------------------------------
 _ref/
 _extract/
+
+# Local diagnostics/simulator caches; source projects remain tracked.
+tmp/
+sim/*_build/
+sim/audio_core_tb/build/
+project/*/impl/
+project/*/temp/
+project/*/prj/
+project/*/*.gprj.user
+*.pb

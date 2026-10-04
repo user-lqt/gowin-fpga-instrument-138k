@@ -27,6 +27,7 @@
 *.bmp    binary
 *.bit    binary
 *.bin    binary
+*.fs     binary
 *.pdf    binary
 
 # GitHub 语言统计：RTL 与脚本为主

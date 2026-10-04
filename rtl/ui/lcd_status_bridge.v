@@ -1,14 +1,14 @@
 // Atomic audio-domain snapshot transferred by a request/acknowledge toggle.
 // The source holds its payload until the next destination request.
-module lcd_status_bridge (
+module lcd_status_bridge #(parameter integer WIDTH = 56) (
     input wire source_clk, source_rst_n,
-    input wire [55:0] source_status,
+    input wire [WIDTH-1:0] source_status,
     input wire pixel_clk, pixel_rst_n, frame_start,
-    output reg [55:0] pixel_status
+    output reg [WIDTH-1:0] pixel_status
 );
     reg request, acknowledge;
     reg request_meta, request_sync, ack_meta, ack_sync;
-    reg [55:0] held_status;
+    reg [WIDTH-1:0] held_status;
     reg busy;
     always @(posedge source_clk or negedge source_rst_n) begin
         if (!source_rst_n) begin

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1" encoding="UTF-8"?>
 <!DOCTYPE gowin-fpga-project>
 <Project>
     <Template>FPGA</Template>
@@ -17,6 +17,9 @@
         <File path="../../rtl/audio_core/voice_allocator.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/audio_core/wavetable.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/common/reset_sync.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/key_debounce.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/keyboard_24_dual.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/keyboard_24_input.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/input/matrix_scan_8x6.v" type="file.verilog" enable="1"/>
@@ -25,6 +28,7 @@
         <File path="../../rtl/system/sample_scheduler.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/system/system_status.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/ui/lcd_status_bridge.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/parameter_manager.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/ui/rgb_lcd_800x480.v" type="file.verilog" enable="1"/>
         <File path="../../constraint/instrument_24_rgb_mega138k.cst" type="file.cst" enable="1"/>
         <File path="../../constraint/instrument_24_rgb_mega138k.sdc" type="file.sdc" enable="1"/>

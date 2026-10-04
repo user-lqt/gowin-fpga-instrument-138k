@@ -3,6 +3,7 @@ module tb_instrument_24_rgb;
     reg reference=0, reset_button=1;
     always #10 reference=~reference;
     reg [47:0] contacts=0;
+    reg enc_a=1, enc_b=1, enc_sw_n=1;
     wire [7:0] rows;
     reg [5:0] cols;
     integer r;
@@ -15,7 +16,8 @@ module tb_instrument_24_rgb;
     wire [5:0] red, green, blue;
     wire bck, ws, din;
     instrument_24_rgb_top dut (
-        .i_clk_in(reference), .i_rst_n(reset_button), .col_in(cols), .row_out(rows),
+        .i_clk_in(reference), .i_rst_n(reset_button), .col_in(cols),
+        .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n), .row_out(rows),
         .o_hp_bck(bck), .o_hp_ws(ws), .o_hp_din(din), .o_pa_en(), .o_led(), .o_locked(),
         .lcd_sc_clk(lcd_clk), .lcd_sc_hs(lcd_hs), .lcd_sc_vs(lcd_vs), .lcd_sc_de(lcd_de),
         .lcd_r_out(red), .lcd_g_out(green), .lcd_b_out(blue)

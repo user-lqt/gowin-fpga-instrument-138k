@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <rect width="1400" height="900" fill="#f5f7fb"/>
+  <text x="55" y="62" font-family="Arial,Microsoft YaHei" font-size="34" font-weight="700" fill="#172033">EC11_A 洞洞板接线图</text>
+  <text x="57" y="100" font-family="Arial,Microsoft YaHei" font-size="21" fill="#43506a">PMOD1：AA21=ENC_A，AB22=ENC_B，Y22=ENC_SW；所有电压使用 3.3V</text>
+  <rect x="55" y="145" width="450" height="650" rx="14" fill="#dce4ee" stroke="#66748c" stroke-width="3"/>
+  <text x="90" y="195" font-family="Arial,Microsoft YaHei" font-size="27" font-weight="700" fill="#172033">EC11（背面端子）</text>
+  <circle cx="250" cy="300" r="18" fill="#b55242"/><text x="295" y="310" font-family="Arial" font-size="25" fill="#172033">A：旋转信号</text>
+  <circle cx="250" cy="390" r="18" fill="#b55242"/><text x="295" y="400" font-family="Arial" font-size="25" fill="#172033">B：旋转信号</text>
+  <circle cx="250" cy="480" r="18" fill="#2d8858"/><text x="295" y="490" font-family="Arial" font-size="25" fill="#172033">C：旋转公共端</text>
+  <circle cx="250" cy="570" r="18" fill="#356db5"/><text x="295" y="580" font-family="Arial" font-size="25" fill="#172033">D：按压开关</text>
+  <circle cx="250" cy="660" r="18" fill="#356db5"/><text x="295" y="670" font-family="Arial" font-size="25" fill="#172033">E：按压公共端</text>
+  <rect x="680" y="145" width="280" height="650" rx="14" fill="#fff" stroke="#66748c" stroke-width="3"/>
+  <text x="735" y="195" font-family="Arial,Microsoft YaHei" font-size="27" font-weight="700" fill="#172033">三个上拉</text>
+  <rect x="760" y="270" width="120" height="48" fill="#f4d35e" stroke="#8c6f15" stroke-width="3"/><text x="794" y="303" font-family="Arial" font-size="24">4.7k</text>
+  <rect x="760" y="380" width="120" height="48" fill="#f4d35e" stroke="#8c6f15" stroke-width="3"/><text x="794" y="413" font-family="Arial" font-size="24">4.7k</text>
+  <rect x="760" y="490" width="120" height="48" fill="#f4d35e" stroke="#8c6f15" stroke-width="3"/><text x="794" y="523" font-family="Arial" font-size="24">4.7k</text>
+  <text x="735" y="650" font-family="Arial,Microsoft YaHei" font-size="23" fill="#172033">左端共接 3.3V 母线</text>
+  <text x="735" y="685" font-family="Arial,Microsoft YaHei" font-size="23" fill="#172033">右端各自接 A/B/D</text>
+  <rect x="1120" y="145" width="225" height="650" rx="14" fill="#e6f0ff" stroke="#4775b8" stroke-width="3"/>
+  <text x="1155" y="195" font-family="Arial,Microsoft YaHei" font-size="27" font-weight="700" fill="#172033">PMOD1</text>
+  <text x="1150" y="300" font-family="Arial" font-size="24" fill="#172033">AA21</text>
+  <text x="1150" y="410" font-family="Arial" font-size="24" fill="#172033">AB22</text>
+  <text x="1150" y="520" font-family="Arial" font-size="24" fill="#172033">Y22</text>
+  <text x="1150" y="640" font-family="Arial" font-size="24" fill="#17613c">GND</text>
+  <text x="1150" y="710" font-family="Arial" font-size="24" fill="#17613c">3V3</text>
+  <path d="M268 300 C480 300 560 294 760 294" fill="none" stroke="#b55242" stroke-width="6"/>
+  <path d="M268 390 C490 390 560 404 760 404" fill="none" stroke="#b55242" stroke-width="6"/>
+  <path d="M268 570 C480 570 580 514 760 514" fill="none" stroke="#356db5" stroke-width="6"/>
+  <path d="M880 294 C1000 294 1030 300 1150 300" fill="none" stroke="#b55242" stroke-width="6"/>
+  <path d="M880 404 C1000 404 1030 410 1150 410" fill="none" stroke="#b55242" stroke-width="6"/>
+  <path d="M880 514 C1000 514 1030 520 1150 520" fill="none" stroke="#356db5" stroke-width="6"/>
+  <path d="M250 480 L590 480 L590 640 L1150 640" fill="none" stroke="#2d8858" stroke-width="6"/>
+  <path d="M250 660 L590 660" fill="none" stroke="#356db5" stroke-width="6"/>
+  <path d="M590 660 L590 640" fill="none" stroke="#356db5" stroke-width="6"/>
+  <path d="M735 710 L1050 710 L1050 710 L1150 710" fill="none" stroke="#2d8858" stroke-width="6"/>
+  <text x="60" y="850" font-family="Arial,Microsoft YaHei" font-size="22" fill="#8b2e24">A、B、D 三个节点各自独立，不能互相短接；C、E 只接 GND。</text>
+  <rect x="15" y="15" width="1370" height="120" fill="#fff" stroke="#c00" stroke-width="5"/>
+  <text x="45" y="62" font-family="Arial,Microsoft YaHei" font-size="30" font-weight="700" fill="#c00">已作废：不要按此图接线（旧 PMOD 接线及上拉画法有误）</text>
+  <text x="45" y="105" font-family="Arial,Microsoft YaHei" font-size="25" fill="#c00">当前 J13：A→A21，B→B21，D→B18；见 EC11_DIAGNOSTIC.md</text>
+</svg>

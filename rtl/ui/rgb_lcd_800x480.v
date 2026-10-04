@@ -1,12 +1,13 @@
 `timescale 1ns/1ps
 // RGB666 display. pixel_clk is a dedicated ~33.3 MHz PLL output.
 // Synchronize the status inputs to pixel_clk before connecting them here.
-module rgb_lcd_800x480 (
+module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0) (
     input wire pixel_clk,
     input wire rst_n,
     input wire [23:0] key_state,
     input wire [15:0] volume_value,
     input wire [15:0] instrument_value,
+    input wire [31:0] diagnostic_state,
     output wire sc_clk,
     output reg sc_hs,
     output reg sc_vs,
@@ -28,6 +29,10 @@ module rgb_lcd_800x480 (
     reg [5:0] key_x;
     reg [23:0] frame_keys;
     reg [15:0] frame_volume, frame_instrument;
+    reg [31:0] frame_diagnostic;
+    wire [9:0] up_width = {1'b0, frame_diagnostic[31:24], 1'b0};
+    wire [9:0] down_width = {1'b0, frame_diagnostic[23:16], 1'b0};
+    wire [9:0] edge_width = {1'b0, frame_diagnostic[15:8], 1'b0};
     wire [9:0] volume_width = {frame_volume[6:0], 2'b0};
     reg [5:0] r_pixel, g_pixel, b_pixel;
     wire [8:0] marker_left = 9'd48 + frame_instrument[2:0] * 9'd40;
@@ -43,11 +48,12 @@ module rgb_lcd_800x480 (
     end
 
     always @(posedge pixel_clk or negedge rst_n) begin
-        if (!rst_n) begin frame_keys <= 0; frame_volume <= 64; frame_instrument <= 0; end
+        if (!rst_n) begin frame_keys <= 0; frame_volume <= 64; frame_instrument <= 0; frame_diagnostic <= 0; end
         else if (frame_start) begin
             frame_keys <= key_state;
             frame_volume <= volume_value;
             frame_instrument <= instrument_value;
+            frame_diagnostic <= diagnostic_state;
         end
     end
 
@@ -98,6 +104,30 @@ module rgb_lcd_800x480 (
             if (v_count >= 34 && v_count < 48 && h_count >= marker_left &&
                 h_count < marker_right) begin
                 r_pixel=6'd58; g_pixel=6'd39; b_pixel=6'd13;
+            end
+            if (ENABLE_DIAGNOSTICS != 0) begin
+                // Left-to-right: A, B, switch (high=released), decoder ready.
+                if (v_count >= 24 && v_count < 56 &&
+                    ((h_count >= 560 && h_count < 584) ||
+                     (h_count >= 608 && h_count < 632) ||
+                     (h_count >= 656 && h_count < 680) ||
+                     (h_count >= 704 && h_count < 728))) begin
+                    r_pixel=6'd58; g_pixel=6'd10; b_pixel=6'd10;
+                    if ((h_count < 584 && frame_diagnostic[0]) ||
+                        (h_count >= 608 && h_count < 632 && frame_diagnostic[1]) ||
+                        (h_count >= 656 && h_count < 680 && frame_diagnostic[2]) ||
+                        (h_count >= 704 && frame_diagnostic[3])) begin
+                        r_pixel=6'd10; g_pixel=6'd58; b_pixel=6'd10;
+                    end
+                end
+                if (v_count >= 100 && v_count < 110 && h_count >= 48 && h_count < 48+edge_width)
+                    begin r_pixel=6'd58; g_pixel=6'd39; b_pixel=6'd10; end
+                if (v_count >= 114 && v_count < 124 && h_count >= 48 && h_count < 48+up_width)
+                    begin r_pixel=6'd10; g_pixel=6'd54; b_pixel=6'd54; end
+                if (v_count >= 128 && v_count < 138 && h_count >= 48 && h_count < 48+down_width)
+                    begin r_pixel=6'd56; g_pixel=6'd12; b_pixel=6'd42; end
+                if (v_count >= 66 && v_count < 88 && h_count >= 608 && h_count < 640)
+                    begin r_pixel=6'd8; g_pixel=6'd20; b_pixel=(frame_diagnostic[7:4] == 0) ? 6'd20 : 6'd60; end
             end
         end
     end
