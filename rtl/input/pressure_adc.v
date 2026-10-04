@@ -6,9 +6,11 @@ module pressure_adc #(
     parameter integer SPI_CLK_DIV = 12,
     parameter integer SAMPLE_DIV = 12288, // 1 kS/s at 12.288 MHz
     parameter integer FILTER_SHIFT = 3,   // EMA alpha = 1 / 2^FILTER_SHIFT
-    parameter integer ZERO_LEVEL = 0,
-    parameter integer FULL_SCALE = 1023,
-    parameter integer DEADBAND = 0,
+    // Initial estimate for FSR -> 3.3 V, 5.1 kOhm -> GND divider.
+    // Replace these after measuring the real sensor on the target board.
+    parameter integer ZERO_LEVEL = 20,
+    parameter integer FULL_SCALE = 800,
+    parameter integer DEADBAND = 8,
     parameter integer ENABLE_FAULT_CHECK = 0,
     parameter integer FAULT_LOW_LEVEL = 0,
     parameter integer FAULT_HIGH_LEVEL = 1023
