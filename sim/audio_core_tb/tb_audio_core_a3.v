@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 `include "event_defs.vh"
 
-module tb_audio_core_a3;
+module tb_audio_core_a3 #(parameter integer SAMPLE_CLOCKS=256);
     // Absolute simulation time is accelerated; the hardware cycle ratio is 256.
     reg clk = 0;
     always #5 clk = ~clk;
@@ -47,7 +47,7 @@ module tb_audio_core_a3;
         if (!rst_n) begin
             sample_tick <= 0;
             ticks <= 0;
-        end else if (ticks == 255) begin
+        end else if (ticks == SAMPLE_CLOCKS-1) begin
             sample_tick <= 1;
             ticks <= 0;
         end else begin
@@ -74,7 +74,7 @@ module tb_audio_core_a3;
     `define CHECK(c, text) begin \
         checks = checks + 1; \
         if ((c) !== 1'b1) $fatal(1, "A3 FAIL: %s", text); \
-        $display("[PASS] %s", text); \
+        $display("[PASS] %s", text); $fflush(); \
     end
 
     task reset_core;
@@ -150,9 +150,9 @@ module tb_audio_core_a3;
             last_valid = 0;
             monitor_hold = 0;
         end else if (audio_core_valid) begin
-            if (cycles - last_tick != 50)
-                $fatal(1, "sample latency is not 50 clocks");
-            if (last_valid != 0 && cycles - last_valid != 256)
+            if (cycles - last_tick != 109)
+                $fatal(1, "sample latency is not 109 clocks");
+            if (last_valid != 0 && cycles - last_valid != SAMPLE_CLOCKS)
                 $fatal(1, "dropped or duplicated audio sample");
             if ((^audio_left) === 1'bx || audio_left !== audio_right)
                 $fatal(1, "unknown sample or stereo mismatch");
@@ -272,8 +272,11 @@ module tb_audio_core_a3;
         for (j = 0; j < 3; j = j + 1) begin
             send_param(`PARAM_VOLUME, 2048 << j);
             wait_samples(140);
+            send_event(`EVENT_NOTE_ON, 69, 127);
+            wait_samples(80);
             measure(64);
             energy[j] = measured_energy;
+            $display("GAIN energy[%0d]=%0d",j,measured_energy); $fflush();
         end
         `CHECK(energy[0] > 0 && energy[1] > energy[0]*3 &&
                energy[2] > energy[1]*3, "volume increases RMS monotonically");

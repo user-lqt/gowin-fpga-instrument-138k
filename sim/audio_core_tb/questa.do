@@ -4,7 +4,7 @@ set script_dir [file dirname [file normalize [info script]]]
 set repo [file normalize [file join $script_dir ../..]]
 set target tb_adsr
 if {[info exists 1]} { set target [set 1] }
-if {$target ni {tb_audio_core tb_audio_core_a2 tb_adsr tb_mixer tb_voice_allocator tb_voice}} {
+if {$target ni {tb_audio_core tb_audio_core_a2 tb_adsr tb_mixer tb_voice_allocator tb_voice tb_audio_core_a3 tb_core_hardware tb_velocity_response}} {
     error "Unknown testbench: $target"
 }
 set build [file join $script_dir build questa]

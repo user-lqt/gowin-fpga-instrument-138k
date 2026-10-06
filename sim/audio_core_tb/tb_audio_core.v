@@ -63,6 +63,7 @@ module tb_audio_core;
     wire                event_overflow;
     wire                param_overflow;
 
+    // This legacy fixture exercises the original 16-entry overflow boundary.
     audio_core #(.ENABLE_POLYPHONY(0), .EVENT_DEPTH(16)) dut (
         .clk                (clk),
         .rst_n              (rst_n),

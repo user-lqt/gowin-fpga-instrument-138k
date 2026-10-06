@@ -85,7 +85,7 @@ module tb_audio_core_a3_long;
         if (sample_tick) tick_cycle = cycle;
         #1;
         if (rst_n && engine_ready) begin
-            if (cycle - tick_cycle == 15) begin
+            if (cycle - tick_cycle == 78) begin
                 reference_sum = 0;
                 for (k = 0; k < 32; k = k + 1)
                     reference_sum = reference_sum + $signed(dut.a2.voice_samples[k*24 +: 24]);
@@ -96,7 +96,7 @@ module tb_audio_core_a3_long;
                                   reference_scaled[23:0];
             end
             if (audio_core_valid) begin
-                if (cycle - tick_cycle != 50 ||
+                if (cycle - tick_cycle != 109 ||
                     (previous_valid != 0 && cycle - previous_valid != 256))
                     $fatal(1, "A3 long sample latency/cadence mismatch");
                 if ((^audio_left) === 1'bx || audio_left !== audio_right ||
@@ -159,7 +159,7 @@ module tb_audio_core_a3_long;
             $fwrite(trace, "\n");
         end
         $fflush(trace);
-        $display("[PASS] 4096 full-load samples: 32 phases, mixer reference, 50/256 cadence");
+        $display("[PASS] 4096 full-load samples: 32 phases, mixer reference, 109/256 cadence");
         for (i = 0; i < 32; i = i + 1) send_event(`EVENT_NOTE_OFF, 48+i);
         for (s = 0; s < 4835; s = s + 1) begin
             next_sample;

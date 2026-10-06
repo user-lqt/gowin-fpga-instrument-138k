@@ -3,7 +3,8 @@ module adsr #(
     parameter integer DECAY_SAMPLES   = 2400,
     parameter [15:0]  SUSTAIN_LEVEL   = 16'd45875,
     parameter integer RELEASE_SAMPLES = 4800,
-    parameter integer ENABLE_TIMBRES = 0
+    parameter integer ENABLE_TIMBRES = 0,
+    parameter integer EXTERNAL_RELEASE = 0
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -11,6 +12,8 @@ module adsr #(
     input  wire        note_on,
     input  wire        note_off,
     input  wire [1:0]  instrument,
+    input  wire [15:0] shared_release_quotient,
+    input  wire [15:0] shared_release_modulus,
     output reg  [15:0] level,
     output wire        active,
     output reg  [2:0]  stage
@@ -24,6 +27,11 @@ module adsr #(
         (65535 + ATTACK_SAMPLES - 1) / ATTACK_SAMPLES;
     localparam integer DECAY_STEP =
         (65535 - SUSTAIN_LEVEL + DECAY_SAMPLES - 1) / DECAY_SAMPLES;
+    localparam integer RELEASE_BITS = RELEASE_SAMPLES > 1 ?
+        $clog2(RELEASE_SAMPLES) : 1;
+    localparam integer STEP_BITS = 65535 / RELEASE_SAMPLES > 0 ?
+        $clog2(65535 / RELEASE_SAMPLES + 1) : 1;
+    localparam [RELEASE_BITS:0] RELEASE_LIMIT = RELEASE_SAMPLES;
     wire [15:0] attack_length = !ENABLE_TIMBRES ? ATTACK_SAMPLES :
         instrument == 0 ? 120 : 48;
     wire [15:0] decay_length = !ENABLE_TIMBRES ? DECAY_SAMPLES :
@@ -37,16 +45,32 @@ module adsr #(
         (instrument == 1 || instrument == 3) ?
         (({1'b0, level} + 17'd32767) >> 15) : 1;
     reg [15:0] elapsed;
-    reg [31:0] piano_decay_error;
-    wire [31:0] piano_decay_sum = piano_decay_error + {16'd0, level};
+    // The piano remainder is below 32768; release errors are below the divisor.
+    reg [14:0] piano_decay_error;
+    wire [16:0] piano_decay_sum = {2'b0, piano_decay_error} + {1'b0, level};
     wire [16:0] piano_decay_step = level > 16'd12000 ?
         (piano_decay_sum >> 13) : (piano_decay_sum >> 15);
-    reg [16:0] release_step;
-    reg [31:0] release_remainder;
-    reg [31:0] release_error;
-    wire [31:0] release_error_sum = release_error + release_remainder;
-    wire release_extra = release_error_sum >= RELEASE_SAMPLES;
-    wire [16:0] release_decrement = release_step + release_extra;
+    reg [STEP_BITS-1:0] release_step;
+    reg [RELEASE_BITS-1:0] release_remainder;
+    reg [RELEASE_BITS-1:0] release_error;
+    wire [RELEASE_BITS:0] release_error_sum =
+        {1'b0, release_error} + {1'b0, release_remainder};
+    wire release_extra = release_error_sum >= RELEASE_LIMIT;
+    wire [STEP_BITS:0] release_decrement =
+        {1'b0, release_step} + release_extra;
+    wire [STEP_BITS-1:0] release_quotient;
+    wire [RELEASE_BITS-1:0] release_modulus;
+    generate if (EXTERNAL_RELEASE) begin : shared_division
+        assign release_quotient=shared_release_quotient;
+        assign release_modulus=shared_release_modulus;
+    end else if (RELEASE_SAMPLES <= 65535) begin : bounded_divisor
+        localparam [15:0] DIVISOR = RELEASE_SAMPLES;
+        assign release_quotient = level / DIVISOR;
+        assign release_modulus = level % DIVISOR;
+    end else begin : long_release
+        assign release_quotient = 0;
+        assign release_modulus = level;
+    end endgenerate
 
     assign active = (stage != IDLE);
 
@@ -55,9 +79,9 @@ module adsr #(
             level <= 16'd0;
             elapsed <= 16'd0;
             piano_decay_error <= 0;
-            release_step <= 17'd0;
-            release_remainder <= 32'd0;
-            release_error <= 32'd0;
+            release_step <= 0;
+            release_remainder <= 0;
+            release_error <= 0;
             stage <= IDLE;
         end else if (note_on) begin
             if (ENABLE_TIMBRES) level <= 0;
@@ -66,9 +90,9 @@ module adsr #(
             stage <= ATTACK;
         end else if (note_off && active) begin
             elapsed <= 16'd0;
-            release_step <= level / RELEASE_SAMPLES;
-            release_remainder <= level % RELEASE_SAMPLES;
-            release_error <= 32'd0;
+            release_step <= release_quotient;
+            release_remainder <= release_modulus;
+            release_error <= 0;
             stage <= RELEASE;
         end else if (sample_tick) begin
             case (stage)
@@ -88,8 +112,8 @@ module adsr #(
                         // Measured upright-piano envelope: fast body decay,
                         // then a quieter, slower soundboard/string tail.
                         piano_decay_error <= level > 16'd12000 ?
-                            (piano_decay_sum & 32'd8191) :
-                            (piano_decay_sum & 32'd32767);
+                            (piano_decay_sum & 17'd8191) :
+                            (piano_decay_sum & 17'd32767);
                         if (level <= 1) begin
                             level <= 0;
                             stage <= SUSTAIN;
@@ -118,7 +142,7 @@ module adsr #(
                     end else begin
                         level <= level - release_decrement;
                         release_error <= release_extra ?
-                            release_error_sum - RELEASE_SAMPLES :
+                            release_error_sum - RELEASE_LIMIT :
                             release_error_sum;
                         elapsed <= elapsed + 16'd1;
                     end
@@ -127,4 +151,31 @@ module adsr #(
             endcase
         end
     end
+endmodule
+
+// One allocator NOTE_OFF selects one envelope; release state stays per voice.
+module adsr_release_bank #(
+    parameter integer VOICES=32,
+    parameter integer RELEASE_SAMPLES=4800
+) (
+    input wire [VOICES-1:0] note_off,
+    input wire [VOICES*16-1:0] levels,
+    output wire [15:0] quotient,modulus
+);
+    reg [15:0] selected_level;
+    integer slot;
+    always @* begin
+        selected_level=0;
+        for(slot=0;slot<VOICES;slot=slot+1)
+            selected_level=selected_level |
+                (levels[slot*16+:16] & {16{note_off[slot]}});
+    end
+    generate if(RELEASE_SAMPLES<=65535) begin : bounded
+        localparam [15:0] DIVISOR=RELEASE_SAMPLES;
+        assign quotient=selected_level/DIVISOR;
+        assign modulus=selected_level%DIVISOR;
+    end else begin : long_release
+        assign quotient=0;
+        assign modulus=selected_level;
+    end endgenerate
 endmodule

@@ -23,8 +23,8 @@ module tb_audio_core_a3_audition;
         if (!rst_n) begin
             divider <= 0; sample_tick <= 0;
         end else begin
-            divider <= divider == 63 ? 0 : divider + 1;
-            sample_tick <= divider == 63;
+            divider <= divider == 255 ? 0 : divider + 1;
+            sample_tick <= divider == 255;
         end
     end
     // Only slot count differs. Oscillator, envelope and mixer are production RTL.
@@ -45,8 +45,8 @@ module tb_audio_core_a3_audition;
         if (!rst_n) begin
             last_valid = 0; seen_valid = 0;
         end else if (valid) begin
-            if (cycle - tick_cycle != 19 ||
-                (last_valid != 0 && cycle - last_valid != 64))
+            if (cycle - tick_cycle != 75 ||
+                (last_valid != 0 && cycle - last_valid != 256))
                 $fatal(1, "audition sample cadence mismatch");
             if ((^left) === 1'bx || left !== right || overload ||
                 event_overflow || param_overflow)

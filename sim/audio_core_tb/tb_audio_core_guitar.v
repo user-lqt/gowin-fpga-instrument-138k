@@ -28,8 +28,8 @@ module tb_audio_core_guitar;
                 dut.a2.voice_active[probe]) begin
                 if (dut.a2.voices[probe].u_voice.guitar.u_string.output_sample > 32767 ||
                     dut.a2.voices[probe].u_voice.guitar.u_string.output_sample < -32768 ||
-                    dut.a2.voices[probe].u_voice.guitar.u_body.tone > 32767 ||
-                    dut.a2.voices[probe].u_voice.guitar.u_body.tone < -32768)
+                    dut.a2.shared_arithmetic.filters[0].u_body_bank.tone[probe] > 32767 ||
+                    dut.a2.shared_arithmetic.filters[0].u_body_bank.tone[probe] < -32768)
                     $fatal(1, "guitar internal waveform clipping");
             end
         end
@@ -37,8 +37,8 @@ module tb_audio_core_guitar;
     always @(posedge clk) begin
         if (!rst_n) begin divider <= 0; sample_tick <= 0; end
         else begin
-            divider <= divider == 31 ? 0 : divider + 1;
-            sample_tick <= divider == 31;
+            divider <= divider == 255 ? 0 : divider + 1;
+            sample_tick <= divider == 255;
         end
     end
     // Accelerated simulation pacing only; PCM sample rate remains 48 kHz.
@@ -57,8 +57,8 @@ module tb_audio_core_guitar;
         #1;
         if (!rst_n) begin last_valid = 0; seen = 0; end
         else if (valid) begin
-            if (cycle - tick_cycle != 22 ||
-                (last_valid != 0 && cycle - last_valid != 32))
+            if (cycle - tick_cycle != 81 ||
+                (last_valid != 0 && cycle - last_valid != 256))
                 $fatal(1, "guitar sample latency/cadence");
             if ((^left) === 1'bx || left !== right || overload ||
                 event_overflow || param_overflow)
@@ -159,5 +159,5 @@ module tb_audio_core_guitar;
         $display("GUITAR AUDITION PASS");
         $finish;
     end
-    initial begin #200_000_000; $fatal(1, "guitar timeout"); end
+    initial begin #1_600_000_000; $fatal(1, "guitar timeout"); end
 endmodule

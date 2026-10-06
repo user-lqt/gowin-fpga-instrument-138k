@@ -25,6 +25,45 @@ module mixer #(
                    scaled < -45'sd8388608 ? 24'sh800000 : scaled[23:0];
 endmodule
 
+module voice_gain_bank #(
+    parameter integer LANES=4,
+    parameter integer VELOCITY_START=14
+) (
+    input wire clk,rst_n,sample_tick,
+    input wire [LANES*27-1:0] operands_a,
+    input wire [LANES*18-1:0] operands_b,
+    output wire [LANES*4-1:0] steps,
+    output wire signed [44:0] product
+);
+    localparam integer INDEX_BITS=LANES>1 ? $clog2(LANES) : 1;
+    reg [7:0] cycle;
+    reg [INDEX_BITS-1:0] lane;
+    reg [3:0] operation;
+    always @* begin
+        lane=0; operation=0;
+        if(cycle>=2 && cycle<2+LANES) begin lane=cycle-2; operation=2; end
+        else if(cycle>=2+LANES && cycle<2+2*LANES) begin
+            lane=cycle-(2+LANES); operation=3;
+        end else if(cycle>=VELOCITY_START && cycle<VELOCITY_START+LANES) begin
+            lane=cycle-VELOCITY_START; operation=14;
+        end else if(cycle>=VELOCITY_START+LANES && cycle<VELOCITY_START+2*LANES) begin
+            lane=cycle-(VELOCITY_START+LANES); operation=15;
+        end
+    end
+    wire signed [26:0] a=operands_a[lane*27+:27];
+    wire signed [17:0] b=operands_b[lane*18+:18];
+    assign product=a*b;
+    genvar v;
+    generate for(v=0;v<LANES;v=v+1) begin : lane_steps
+        assign steps[v*4+:4]=lane==v ? operation : 4'd0;
+    end endgenerate
+    always @(posedge clk or negedge rst_n) begin
+        if(!rst_n) cycle<=0;
+        else if(sample_tick) cycle<=1;
+        else if(cycle!=0) cycle<=cycle==VELOCITY_START-1+2*LANES ? 0 : cycle+1'b1;
+    end
+endmodule
+
 // A3: one signed adder per clock, followed by registered volume and saturation.
 // Start at tick+15; the parent latches the result at tick+(VOICES+18).
 module mixer_serial #(

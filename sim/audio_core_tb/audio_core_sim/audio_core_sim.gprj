@@ -12,6 +12,14 @@
         <File path="../../../rtl/audio_core/phase_acc.v" type="file.verilog" enable="1"/>
         <File path="../../../rtl/audio_core/wavetable.v" type="file.verilog" enable="1"/>
         <File path="../../../rtl/audio_core/oscillator.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/note_to_period.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/plucked_string.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/guitar_body.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/guitar_body_tone_bank.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/bianzhong.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/bianzhong_ram_bank.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/pitch_expression.v" type="file.verilog" enable="1"/>
+        <File path="../../../rtl/audio_core/pitch_fraction_rom.v" type="file.verilog" enable="1"/>
         <File path="../../../rtl/audio_core/adsr.v" type="file.verilog" enable="1"/>
         <File path="../../../rtl/audio_core/voice_allocator.v" type="file.verilog" enable="1"/>
         <File path="../../../rtl/audio_core/voice.v" type="file.verilog" enable="1"/>

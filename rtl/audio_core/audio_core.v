@@ -17,6 +17,8 @@ module audio_core #(
     parameter integer VOICE_COUNT = 32,
     parameter integer ENABLE_STEAL = 1,
     parameter integer ENABLE_TIMBRES = 1,
+    parameter integer SHARE_VOICE_ARITHMETIC = 1,
+    parameter integer ENABLE_EXPRESSION = 0,
     parameter integer EVENT_DEPTH = 64,
     parameter integer ATTACK_SAMPLES = 480,
     parameter integer DECAY_SAMPLES = 2400,
@@ -75,7 +77,14 @@ module audio_core #(
     localparam integer PARAM_DEPTH = 4;
     localparam integer EVENT_PTR_BITS = $clog2(EVENT_DEPTH);
     localparam integer A3_MODE = ENABLE_POLYPHONY && ENABLE_TIMBRES;
-    localparam integer AUDIO_LATENCY = A3_MODE ? VOICE_COUNT + 18 : 3;
+    localparam integer SHARED_ARITHMETIC = A3_MODE && SHARE_VOICE_ARITHMETIC;
+    localparam integer GAIN_LANES = VOICE_COUNT < 4 ? VOICE_COUNT : 4;
+    localparam integer BODY_LANES = VOICE_COUNT < 8 ? VOICE_COUNT : 8;
+    // Body outputs use the preceding frame's filter state, so the filter
+    // recurrence may finish after gain processing but before the next tick.
+    localparam integer FILTER_LANES = VOICE_COUNT < 16 ? VOICE_COUNT : 16;
+    localparam integer MIX_START = SHARED_ARITHMETIC ? 69+GAIN_LANES : 14;
+    localparam integer AUDIO_LATENCY = A3_MODE ? VOICE_COUNT + MIX_START + 4 : 3;
     localparam [15:0] DEFAULT_VOLUME = A3_MODE ? 16'h07ff :
                                       ENABLE_POLYPHONY ? 16'h3fff : 16'hffff;
     reg [AUDIO_LATENCY-1:0] tick_sr;
@@ -286,9 +295,43 @@ module audio_core #(
         wire [VOICE_COUNT*7-1:0] voice_note_id;
         wire [VOICE_COUNT*8-1:0] voice_velocity;
         wire [VOICE_COUNT*2-1:0] voice_instrument;
+        wire [VOICE_COUNT*32-1:0] voice_fc;
+        wire [VOICE_COUNT*48-1:0] voice_period;
+        wire [VOICE_COUNT*32-1:0] rendered_fc;
+        wire [VOICE_COUNT*48-1:0] rendered_period;
+        if(ENABLE_EXPRESSION && A3_MODE) begin : expression
+            pitch_expression_bank #(.VOICES(VOICE_COUNT)) u_pitch(
+                .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                .param_valid(sample_tick && (p_pop || p_bypass)),
+                .param_id(selected_param_id),.param_value(selected_param_val),
+                .note_on(voice_note_on),.notes(voice_note_id),
+                .base_fcs(voice_fc),.base_periods(voice_period),
+                .fcs(rendered_fc),.periods(rendered_period),.busy());
+        end else begin : fixed_pitch
+            assign rendered_fc=voice_fc;
+            assign rendered_period=voice_period;
+        end
+        wire [31:0] selected_fc;
+        wire [47:0] selected_period;
+        note_to_fc shared_fc (.note_id(selected_note),.fc(selected_fc));
+        note_to_period shared_period (.note_id(selected_note),.period_q16(selected_period));
         wire [VOICE_COUNT*24-1:0] voice_samples;
+        wire [VOICE_COUNT*16-1:0] body_string_waves,body_waves;
+        wire [VOICE_COUNT*16-1:0] bell_waves;
+        wire [VOICE_COUNT-1:0] bell_note_on;
+        wire [VOICE_COUNT*12-1:0] oscillator_addresses;
+        wire [VOICE_COUNT*18-1:0] oscillator_operands;
+        wire [VOICE_COUNT*8-1:0] oscillator_gains;
+        wire [VOICE_COUNT*7-1:0] oscillator_cycles;
+        wire [VOICE_COUNT*16-1:0] oscillator_lookups;
+        wire [VOICE_COUNT*27-1:0] oscillator_products;
+        wire [VOICE_COUNT*27-1:0] gain_operands_a;
+        wire [VOICE_COUNT*18-1:0] gain_operands_b;
+        wire [VOICE_COUNT*4-1:0] gain_steps;
+        wire [VOICE_COUNT*45-1:0] gain_products;
         wire [VOICE_COUNT*16-1:0] envelope_levels;
         wire [VOICE_COUNT*3-1:0] envelope_stages;
+        wire [15:0] shared_release_quotient,shared_release_modulus;
         wire full_pulse;
         wire signed [23:0] mixed_audio;
         wire mixed_overload;
@@ -298,24 +341,109 @@ module audio_core #(
 
         voice_allocator #(
             .VOICES(VOICE_COUNT),
-            .STEAL_ON_FULL(ENABLE_STEAL)
+            .STEAL_ON_FULL(ENABLE_STEAL),
+            .SHARED_AGE(SHARED_ARITHMETIC)
         ) u_allocator (
             .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
             .event_valid(ev_pop || ev_bypass),
             .event_type(selected_type), .note_id(selected_note),
             .velocity(selected_vel), .voice_active(voice_active),
             .instrument(instrument),
+            .note_fc(selected_fc),.note_period(selected_period),
             .envelope_levels(envelope_levels),
             .voice_note_on(voice_note_on), .voice_note_off(voice_note_off),
             .key_down(key_down), .voice_note_id(voice_note_id),
             .voice_velocity(voice_velocity), .voice_instrument(voice_instrument),
+            .voice_fc(voice_fc),.voice_period(voice_period),
             .full_pulse(full_pulse)
         );
 
-        genvar v;
+        genvar v,bank;
+        if(SHARED_ARITHMETIC) begin : release_division
+            adsr_release_bank #(.VOICES(VOICE_COUNT),
+                .RELEASE_SAMPLES(RELEASE_SAMPLES)) u_bank(
+                .note_off(voice_note_off),.levels(envelope_levels),
+                .quotient(shared_release_quotient),
+                .modulus(shared_release_modulus));
+        end else begin : private_release
+            assign shared_release_quotient=0;
+            assign shared_release_modulus=0;
+        end
+        if(SHARED_ARITHMETIC) begin : shared_arithmetic
+            for(bank=0;bank<(VOICE_COUNT+FILTER_LANES-1)/FILTER_LANES;bank=bank+1) begin : filters
+                localparam integer COUNT=VOICE_COUNT-bank*FILTER_LANES < FILTER_LANES ?
+                    VOICE_COUNT-bank*FILTER_LANES : FILTER_LANES;
+                guitar_body_tone_bank #(.LANES(COUNT)) u_body_bank(
+                    .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                    .note_on(voice_note_on[bank*FILTER_LANES+:COUNT]),
+                    .string_waves(body_string_waves[bank*FILTER_LANES*16+:COUNT*16]),
+                    .waves(body_waves[bank*FILTER_LANES*16+:COUNT*16])
+                );
+            end
+            for(bank=0;bank<(VOICE_COUNT+BODY_LANES-1)/BODY_LANES;bank=bank+1) begin : bodies
+                localparam integer COUNT=VOICE_COUNT-bank*BODY_LANES < BODY_LANES ?
+                    VOICE_COUNT-bank*BODY_LANES : BODY_LANES;
+                bianzhong_ram_bank #(.LANES(COUNT),
+                    .DYNAMIC_PITCH(ENABLE_EXPRESSION)) u_bell_bank(
+                    .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                    .note_on(bell_note_on[bank*BODY_LANES+:COUNT]),
+                    .fcs(rendered_fc[bank*BODY_LANES*32+:COUNT*32]),
+                    .waves(bell_waves[bank*BODY_LANES*16+:COUNT*16])
+                );
+                wire [6:0] oscillator_cycle;
+                wire signed [15:0] oscillator_lookup;
+                wire signed [26:0] oscillator_product;
+                oscillator_bank #(.LANES(COUNT)) u_oscillator_bank(
+                    .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                    .addresses(oscillator_addresses[bank*BODY_LANES*12+:COUNT*12]),
+                    .operands(oscillator_operands[bank*BODY_LANES*18+:COUNT*18]),
+                    .gains(oscillator_gains[bank*BODY_LANES*8+:COUNT*8]),
+                    .cycle(oscillator_cycle),.lookup_wave(oscillator_lookup),
+                    .product(oscillator_product)
+                );
+                for(v=0;v<COUNT;v=v+1) begin : oscillators
+                    assign oscillator_cycles[(bank*BODY_LANES+v)*7+:7]=oscillator_cycle;
+                    assign oscillator_lookups[(bank*BODY_LANES+v)*16+:16]=oscillator_lookup;
+                    assign oscillator_products[(bank*BODY_LANES+v)*27+:27]=oscillator_product;
+                end
+            end
+            for(bank=0;bank<(VOICE_COUNT+GAIN_LANES-1)/GAIN_LANES;bank=bank+1) begin : gains
+                localparam integer COUNT=VOICE_COUNT-bank*GAIN_LANES < GAIN_LANES ?
+                    VOICE_COUNT-bank*GAIN_LANES : GAIN_LANES;
+                wire signed [44:0] product;
+                voice_gain_bank #(.LANES(COUNT),.VELOCITY_START(70)) u_gain_bank(
+                    .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                    .operands_a(gain_operands_a[bank*GAIN_LANES*27+:COUNT*27]),
+                    .operands_b(gain_operands_b[bank*GAIN_LANES*18+:COUNT*18]),
+                    .steps(gain_steps[bank*GAIN_LANES*4+:COUNT*4]),.product(product)
+                );
+                for(v=0;v<COUNT;v=v+1) begin : products
+                    assign gain_products[(bank*GAIN_LANES+v)*45+:45]=product;
+                end
+            end
+        end else begin : private_arithmetic
+            assign body_waves=0;
+            assign bell_waves=0;
+            assign oscillator_cycles=0;
+            assign oscillator_lookups=0;
+            assign oscillator_products=0;
+            assign gain_steps=0;
+            assign gain_products=0;
+        end
         for (v = 0; v < VOICE_COUNT; v = v + 1) begin : voices
+            assign bell_note_on[v]=voice_note_on[v] && voice_instrument[v*2+:2]==2;
             voice #(
                 .ENABLE_TIMBRES(ENABLE_TIMBRES),
+                .DYNAMIC_PITCH(ENABLE_EXPRESSION),
+                .EXTERNAL_PITCH(1),
+                .SHARED_BODY(SHARED_ARITHMETIC),
+                .SHARED_GAIN(SHARED_ARITHMETIC),
+                .SHARED_BELL(SHARED_ARITHMETIC),
+                .SHARED_OSCILLATOR(SHARED_ARITHMETIC),
+                .SHARED_RELEASE(SHARED_ARITHMETIC),
+                .OSCILLATOR_LANES(VOICE_COUNT-(v/BODY_LANES)*BODY_LANES < BODY_LANES ?
+                    VOICE_COUNT-(v/BODY_LANES)*BODY_LANES : BODY_LANES),
+                .OSCILLATOR_LANE(v%BODY_LANES),
                 .ATTACK_SAMPLES(ATTACK_SAMPLES),
                 .DECAY_SAMPLES(DECAY_SAMPLES),
                 .SUSTAIN_LEVEL(SUSTAIN_LEVEL),
@@ -326,6 +454,23 @@ module audio_core #(
                 .note_id(voice_note_id[v*7 +: 7]),
                 .velocity(voice_velocity[v*8 +: 8]),
                 .instrument(voice_instrument[v*2 +: 2]),
+                .pitch_fc(rendered_fc[v*32 +: 32]),
+                .pitch_period(rendered_period[v*48 +: 48]),
+                .shared_release_quotient(shared_release_quotient),
+                .shared_release_modulus(shared_release_modulus),
+                .body_wave(body_waves[v*16+:16]),
+                .bell_bank_wave(bell_waves[v*16+:16]),
+                .oscillator_cycle(oscillator_cycles[v*7+:7]),
+                .oscillator_lookup(oscillator_lookups[v*16+:16]),
+                .oscillator_product(oscillator_products[v*27+:27]),
+                .oscillator_address(oscillator_addresses[v*12+:12]),
+                .oscillator_operand(oscillator_operands[v*18+:18]),
+                .oscillator_gain(oscillator_gains[v*8+:8]),
+                .body_string_wave(body_string_waves[v*16+:16]),
+                .gain_step(gain_steps[v*4+:4]),
+                .gain_product(gain_products[v*45+:45]),
+                .gain_operand_a(gain_operands_a[v*27+:27]),
+                .gain_operand_b(gain_operands_b[v*18+:18]),
                 .audio(voice_samples[v*24 +: 24]), .active(voice_active[v]),
                 .envelope_level(envelope_levels[v*16 +: 16]),
                 .envelope_stage(envelope_stages[v*3 +: 3])
@@ -334,7 +479,7 @@ module audio_core #(
 
         if (A3_MODE) begin : serial_mix
             mixer_serial #(.VOICES(VOICE_COUNT)) u_mixer (
-                .clk(clk), .rst_n(rst_n), .start(tick_sr[14]),
+                .clk(clk), .rst_n(rst_n), .start(tick_sr[MIX_START]),
                 .voice_samples(voice_samples), .volume(volume),
                 .audio(mixed_audio), .overload_flag(mixed_overload)
             );
