@@ -1,0 +1,20 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
+    <FileList>
+        <File path="E:/GowinProjects/synth_top_integration_latest/project/fsr_adc_probe_top.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/common/reset_sync.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/input/expression_mapper.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/input/fsr_expression_control.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/input/mcp3008_sampler.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/input/mcp3008_spi.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/system/clock_gen.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/ui/lcd_status_bridge.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/rtl/ui/rgb_lcd_800x480.v" type="file.verilog" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/constraint/instrument_24_rgb_mega138k.cst" type="file.cst" enable="1"/>
+        <File path="E:/GowinProjects/synth_top_integration_latest/constraint/fsr_adc_probe_mega138k.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>

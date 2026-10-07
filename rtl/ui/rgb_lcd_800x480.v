@@ -2,7 +2,8 @@
 // RGB666 display. pixel_clk is a dedicated ~33.3 MHz PLL output.
 // Synchronize the status inputs to pixel_clk before connecting them here.
 module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
-    parameter integer ENABLE_B_MENU = 0) (
+    parameter integer ENABLE_B_MENU = 0,
+    parameter integer ENABLE_FSR_STATUS = 0) (
     input wire pixel_clk,
     input wire rst_n,
     input wire [23:0] key_state,
@@ -11,6 +12,9 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
     input wire [31:0] diagnostic_state,
     input wire control_menu,
     input wire [6:0] glide_value,effect_value,
+    input wire [15:0] adc_digits,
+    input wire [11:0] vibrato_digits,
+    input wire sensor_ready,
     output wire sc_clk,
     output reg sc_hs,
     output reg sc_vs,
@@ -35,6 +39,9 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
     reg [31:0] frame_diagnostic;
     reg frame_menu;
     reg [6:0] frame_glide,frame_effect;
+    reg [15:0] frame_adc_digits;
+    reg [11:0] frame_vibrato_digits;
+    reg frame_sensor_ready;
     integer text_cell,text_x,text_y;
     reg text_hit;
     reg [34:0] text_glyph;
@@ -52,6 +59,63 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
             endcase
         end
     endfunction
+    function [34:0] status_glyph;
+        input [4:0] symbol;
+        begin
+            case(symbol)
+                0: status_glyph={5'b01110,5'b10001,5'b10011,5'b10101,5'b11001,5'b10001,5'b01110};
+                1: status_glyph={5'b00100,5'b01100,5'b00100,5'b00100,5'b00100,5'b00100,5'b01110};
+                2: status_glyph={5'b01110,5'b10001,5'b00001,5'b00010,5'b00100,5'b01000,5'b11111};
+                3: status_glyph={5'b11110,5'b00001,5'b00001,5'b01110,5'b00001,5'b00001,5'b11110};
+                4: status_glyph={5'b00010,5'b00110,5'b01010,5'b10010,5'b11111,5'b00010,5'b00010};
+                5: status_glyph={5'b11111,5'b10000,5'b10000,5'b11110,5'b00001,5'b00001,5'b11110};
+                6: status_glyph={5'b01110,5'b10000,5'b10000,5'b11110,5'b10001,5'b10001,5'b01110};
+                7: status_glyph={5'b11111,5'b00001,5'b00010,5'b00100,5'b01000,5'b01000,5'b01000};
+                8: status_glyph={5'b01110,5'b10001,5'b10001,5'b01110,5'b10001,5'b10001,5'b01110};
+                9: status_glyph={5'b01110,5'b10001,5'b10001,5'b01111,5'b00001,5'b00001,5'b01110};
+                10: status_glyph={5'b01110,5'b10001,5'b10001,5'b11111,5'b10001,5'b10001,5'b10001}; // A
+                11: status_glyph={5'b11110,5'b10001,5'b10001,5'b10001,5'b10001,5'b10001,5'b11110}; // D
+                12: status_glyph={5'b01110,5'b10001,5'b10000,5'b10000,5'b10000,5'b10001,5'b01110}; // C
+                13: status_glyph={5'b10001,5'b10001,5'b10001,5'b10001,5'b10001,5'b01010,5'b00100}; // V
+                14: status_glyph={5'b11111,5'b00100,5'b00100,5'b00100,5'b00100,5'b00100,5'b11111}; // I
+                15: status_glyph={5'b11110,5'b10001,5'b10001,5'b11110,5'b10001,5'b10001,5'b11110}; // B
+                16: status_glyph={5'b11001,5'b11010,5'b00100,5'b01000,5'b10110,5'b00110,5'b00000}; // %
+                17: status_glyph={5'b00000,5'b00000,5'b00000,5'b11111,5'b00000,5'b00000,5'b00000}; // -
+                default: status_glyph=0;
+            endcase
+        end
+    endfunction
+    wire [10:0] status_x=h_count-11'd48;
+    wire [9:0] status_y=v_count-10'd102;
+    wire [4:0] status_cell=status_x[8:4];
+    wire [2:0] status_col=status_x[3:1],status_row=status_y[3:1];
+    reg [4:0] status_symbol;
+    reg [34:0] status_bitmap;
+    reg status_hit;
+    always @* begin
+        status_symbol=5'd18;
+        case(status_cell)
+            0: status_symbol=10;
+            1: status_symbol=11;
+            2: status_symbol=12;
+            4: status_symbol=frame_sensor_ready ? {1'b0,frame_adc_digits[15:12]} : 5'd17;
+            5: status_symbol=frame_sensor_ready ? {1'b0,frame_adc_digits[11:8]} : 5'd17;
+            6: status_symbol=frame_sensor_ready ? {1'b0,frame_adc_digits[7:4]} : 5'd17;
+            7: status_symbol=frame_sensor_ready ? {1'b0,frame_adc_digits[3:0]} : 5'd17;
+            9: status_symbol=13;
+            10: status_symbol=14;
+            11: status_symbol=15;
+            13: status_symbol=frame_sensor_ready ? {1'b0,frame_vibrato_digits[11:8]} : 5'd17;
+            14: status_symbol=frame_sensor_ready ? {1'b0,frame_vibrato_digits[7:4]} : 5'd17;
+            15: status_symbol=frame_sensor_ready ? {1'b0,frame_vibrato_digits[3:0]} : 5'd17;
+            16: status_symbol=16;
+            default: ;
+        endcase
+        status_bitmap=status_glyph(status_symbol);
+        status_hit=0;
+        if(h_count>=48 && h_count<320 && v_count>=102 && v_count<116 && status_col<5)
+            status_hit=status_bitmap[34-status_row*5-status_col];
+    end
     wire [9:0] up_width = {1'b0, frame_diagnostic[31:24], 1'b0};
     wire [9:0] down_width = {1'b0, frame_diagnostic[23:16], 1'b0};
     wire [9:0] edge_width = {1'b0, frame_diagnostic[15:8], 1'b0};
@@ -86,13 +150,16 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
 
     always @(posedge pixel_clk or negedge rst_n) begin
         if (!rst_n) begin frame_keys <= 0; frame_volume <= 64; frame_instrument <= 0; frame_diagnostic <= 0;
-            frame_menu<=0;frame_glide<=0;frame_effect<=0;end
+            frame_menu<=0;frame_glide<=0;frame_effect<=0;
+            frame_adc_digits<=0;frame_vibrato_digits<=0;frame_sensor_ready<=0;end
         else if (frame_start) begin
             frame_keys <= key_state;
             frame_volume <= volume_value;
             frame_instrument <= instrument_value;
             frame_diagnostic <= diagnostic_state;
             frame_menu<=control_menu;frame_glide<=glide_value;frame_effect<=effect_value;
+            frame_adc_digits<=adc_digits;frame_vibrato_digits<=vibrato_digits;
+            frame_sensor_ready<=sensor_ready;
         end
     end
 
@@ -196,6 +263,9 @@ module rgb_lcd_800x480 #(parameter integer ENABLE_DIAGNOSTICS = 0,
                      (h_count>=448 && h_count<448+{frame_effect,1'b0}))) begin
                     r_pixel=6'd12;g_pixel=6'd54;b_pixel=6'd42;
                 end
+            end
+            if(ENABLE_FSR_STATUS != 0 && status_hit) begin
+                r_pixel=63;g_pixel=frame_sensor_ready ? 6'd63 : 6'd39;b_pixel=frame_sensor_ready ? 6'd63 : 6'd0;
             end
         end
     end

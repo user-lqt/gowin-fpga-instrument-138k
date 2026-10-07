@@ -3,7 +3,7 @@
 module mcp3008_model (
     input wire cs_n, sclk, mosi,
     input wire [9:0] ch0, ch1, ch2,
-    output reg miso = 0
+    output reg miso = 1
 );
     integer rises = 0;
     reg [4:0] command = 0;
@@ -11,7 +11,7 @@ module mcp3008_model (
     always @(negedge cs_n) begin
         rises = 0;
         command = 0;
-        miso = 0;
+        miso = 1;
     end
     always @(posedge sclk) if (!cs_n) begin
         rises = rises + 1;
@@ -27,8 +27,10 @@ module mcp3008_model (
         end
     end
     always @(negedge sclk or posedge cs_n) begin
-        if (cs_n) miso = 0;
-        else if (rises >= 6 && rises < 16) miso = conversion[15-rises];
+        // Pull-up represents DOUT high impedance before the null response.
+        if (cs_n || rises < 6) miso = 1;
+        else if (rises == 6) miso = 0;
+        else if (rises >= 7 && rises <= 16) miso = conversion[16-rises];
         else miso = 0;
     end
 endmodule

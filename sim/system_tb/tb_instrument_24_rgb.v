@@ -17,7 +17,7 @@ module tb_instrument_24_rgb;
     wire bck, ws, din;
     wire adc_cs_n,adc_sclk,adc_mosi,adc_miso;
     mcp3008_model adc(.cs_n(adc_cs_n),.sclk(adc_sclk),.mosi(adc_mosi),
-        .ch0(10'd561),.ch1(10'd512),.ch2(10'd1023),.miso(adc_miso));
+        .ch0(10'd1),.ch1(10'd512),.ch2(10'd1023),.miso(adc_miso));
     instrument_24_rgb_top dut (
         .i_clk_in(reference), .i_rst_n(reset_button), .col_in(cols),
         .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n), .row_out(rows),

@@ -7,10 +7,12 @@ module instrument_24_rgb_top #(
     parameter integer DEBOUNCE_FRAMES = 40,
     parameter integer DEFAULT_INSTRUMENT = 0,
     parameter integer FORMAL_CONTROLS = 1,
-    parameter integer FSR_ZERO_LEVEL = 570,
-    parameter integer FSR_FULL_SCALE = 945,
+    // CH0 to GND measured at 2 mV released and 2.9 V under heavy pressure.
+    parameter integer FSR_ZERO_LEVEL = 1,
+    parameter integer FSR_FULL_SCALE = 899,
     parameter integer FSR_DEADBAND = 8,
     parameter integer ADC_SAMPLE_DIV = 4096,
+    parameter integer ENABLE_JOYSTICK = 0,
     parameter integer MASTER_GAIN_SHIFT = 5 // 1/32 headroom for the 32-voice sum.
 ) (
     input wire i_clk_in, i_rst_n,
@@ -123,13 +125,15 @@ module instrument_24_rgb_top #(
     wire param_valid,control_overflow;
     wire [3:0] param_id;
     wire [15:0] param_value;
-    wire adc_busy,adc_sample_valid;
+    wire adc_busy,adc_sample_valid,adc_sample_error;
     wire [2:0] adc_sample_channel;
     wire [9:0] adc_ch0,adc_ch1,adc_ch2;
-    mcp3008_sampler #(.CLK_DIV(12),.SAMPLE_DIV(ADC_SAMPLE_DIV)) u_mcp3008_sampler (
+    mcp3008_sampler #(.CLK_DIV(12),.SAMPLE_DIV(ADC_SAMPLE_DIV),
+        .CHANNEL_COUNT(ENABLE_JOYSTICK != 0 ? 3 : 1)) u_mcp3008_sampler (
         .clk(clk_audio),.rst_n(rst_n && system_ready),.adc_miso(adc_miso),
         .adc_cs_n(adc_cs_n),.adc_sclk(adc_sclk),.adc_mosi(adc_mosi),.busy(adc_busy),
-        .sample_valid(adc_sample_valid),.sample_channel(adc_sample_channel),
+        .sample_valid(adc_sample_valid),.sample_error(adc_sample_error),
+        .sample_channel(adc_sample_channel),
         .ch0_data(adc_ch0),.ch1_data(adc_ch1),.ch2_data(adc_ch2)
     );
     wire joystick_param_valid;
@@ -153,7 +157,8 @@ module instrument_24_rgb_top #(
         .DEADBAND(FSR_DEADBAND)
     ) u_fsr_control (
         .clk(clk_audio), .rst_n(rst_n && system_ready),
-        .sample_valid(adc_sample_valid), .sample_channel(adc_sample_channel),
+        .sample_valid(adc_sample_valid), .sample_error(adc_sample_error),
+        .sample_channel(adc_sample_channel),
         .ch0_data(adc_ch0), .param_valid(fsr_param_valid),
         .param_id(fsr_param_id), .param_value(fsr_param_value),
         .filtered_value(fsr_filtered), .modulation_value(fsr_modulation),
@@ -164,7 +169,8 @@ module instrument_24_rgb_top #(
         .a_valid(encoder_param_valid),.a_id(encoder_param_id),.a_value(encoder_param_value),
         .b_valid(encoder_b_param_valid),.b_id(encoder_b_param_id),.b_value(encoder_b_param_value),
         // FSR owns modulation; Y-axis events must not overwrite its depth.
-        .c_valid(joystick_param_valid && joystick_param_id==`PARAM_PITCH_BEND),
+        .c_valid(ENABLE_JOYSTICK != 0 && joystick_param_valid &&
+            joystick_param_id==`PARAM_PITCH_BEND),
         .c_id(joystick_param_id),.c_value(joystick_param_value),
         .d_valid(fsr_param_valid),.d_id(fsr_param_id),.d_value(fsr_param_value),
         .valid(param_valid),.id(param_id),.value(param_value),.overflow(control_overflow)
@@ -196,19 +202,75 @@ module instrument_24_rgb_top #(
         .o_bck(o_hp_bck), .o_ws(o_hp_ws), .o_din(o_hp_din)
     );
     wire lcd_frame_start;
-    wire [102:0] display_status;
-    lcd_status_bridge #(.WIDTH(103)) u_display_bridge (
+    // Pipeline mapping, percent scaling and BCD conversion separately so LCD
+    // telemetry does not create a filter-to-display critical path.
+    function [15:0] decimal_digits;
+        input [9:0] binary_value;
+        reg [15:0] bcd;
+        integer digit, bit_index;
+        begin
+            bcd = 0;
+            for (bit_index=9; bit_index>=0; bit_index=bit_index-1) begin
+                for (digit=0; digit<4; digit=digit+1)
+                    if (bcd[digit*4+:4] >= 5)
+                        bcd[digit*4+:4] = bcd[digit*4+:4] + 4'd3;
+                bcd = {bcd[14:0], binary_value[bit_index]};
+            end
+            decimal_digits = bcd;
+        end
+    endfunction
+    reg [15:0] fsr_display_modulation;
+    reg [31:0] fsr_percent_scaled;
+    reg [9:0] fsr_percent;
+    reg [9:0] adc_snapshot, adc_scaled, adc_percent;
+    reg ready_snapshot, ready_scaled, ready_percent, fsr_display_ready;
+    reg [15:0] adc_digits, fsr_digits;
+    always @(posedge clk_audio or negedge rst_n) begin
+        if (!rst_n) begin
+            fsr_display_modulation <= 0;
+            fsr_percent_scaled <= 0;
+            fsr_percent <= 0;
+            adc_snapshot <= 0;
+            adc_scaled <= 0;
+            adc_percent <= 0;
+            ready_snapshot <= 0;
+            ready_scaled <= 0;
+            ready_percent <= 0;
+            fsr_display_ready <= 0;
+            adc_digits <= 0;
+            fsr_digits <= 0;
+        end else begin
+            fsr_display_modulation <= fsr_modulation;
+            adc_snapshot <= adc_ch0;
+            ready_snapshot <= fsr_sensor_ready;
+            fsr_percent_scaled <= fsr_display_modulation * 32'd100 + 32'd32767;
+            adc_scaled <= adc_snapshot;
+            ready_scaled <= ready_snapshot;
+            fsr_percent <= fsr_percent_scaled / 32'd65535;
+            adc_percent <= adc_scaled;
+            ready_percent <= ready_scaled;
+            adc_digits <= decimal_digits(adc_percent);
+            fsr_digits <= decimal_digits(fsr_percent);
+            fsr_display_ready <= ready_percent;
+        end
+    end
+    wire [131:0] display_status;
+    lcd_status_bridge #(.WIDTH(132)) u_display_bridge (
         .source_clk(clk_audio), .source_rst_n(rst_n),
-        .source_status({encoder_b_menu,glide_value,effect_value,diagnostic_status, key_state, volume_value, instrument_value}),
+        .source_status({fsr_display_ready,fsr_digits[11:0],adc_digits,
+            encoder_b_menu,glide_value,effect_value,diagnostic_status, key_state, volume_value, instrument_value}),
         .pixel_clk(pixel_clk), .pixel_rst_n(pixel_rst_n), .frame_start(lcd_frame_start),
         .pixel_status(display_status)
     );
-    rgb_lcd_800x480 #(.ENABLE_DIAGNOSTICS(FORMAL_CONTROLS == 0),.ENABLE_B_MENU(1)) u_lcd (
+    rgb_lcd_800x480 #(.ENABLE_DIAGNOSTICS(FORMAL_CONTROLS == 0),
+        .ENABLE_B_MENU(1),.ENABLE_FSR_STATUS(1)) u_lcd (
         .pixel_clk(pixel_clk), .rst_n(pixel_rst_n), .key_state(display_status[55:32]),
         .volume_value(display_status[31:16]), .instrument_value(display_status[15:0]),
         .diagnostic_state(display_status[87:56]),
         .control_menu(display_status[102]),.glide_value(display_status[101:95]),
         .effect_value(display_status[94:88]),
+        .adc_digits(display_status[118:103]),.vibrato_digits(display_status[130:119]),
+        .sensor_ready(display_status[131]),
         .frame_start(lcd_frame_start), .sc_clk(lcd_sc_clk), .sc_hs(lcd_sc_hs),
         .sc_vs(lcd_sc_vs), .sc_de(lcd_sc_de), .r_out(lcd_r_out), .g_out(lcd_g_out), .b_out(lcd_b_out)
     );

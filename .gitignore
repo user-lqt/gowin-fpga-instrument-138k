@@ -152,3 +152,5 @@ project/instrument_24_rgb_fsr_vibrato*/*
 !project/instrument_24_rgb_fsr_vibrato/instrument_24_rgb_fsr_vibrato.gprj
 project/instrument_24_rgb_fsr_two_timbres*/*
 !project/instrument_24_rgb_fsr_two_timbres/instrument_24_rgb_fsr_two_timbres.gprj
+project/instrument_24_rgb_fsr_measured*/*
+!project/instrument_24_rgb_fsr_measured/instrument_24_rgb_fsr_measured.gprj

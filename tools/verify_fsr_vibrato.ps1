@@ -1,6 +1,7 @@
 param(
     [string]$IcarusBin = '',
     [switch]$TwoTimbres,
+    [switch]$NoJoystick,
     [string[]]$Tests = @('tb_fsr_expression_control','tb_pitch_vibrato',
         'tb_encoder_param_queue','tb_audio_frame_buffer','tb_core_hardware',
         'tb_instrument_fsr_vibrato','tb_keyboard_24_dual','tb_rgb_lcd_800x480')
@@ -23,10 +24,11 @@ $sources += @('rtl/common/reset_sync.v','rtl/system/sample_scheduler.v',
     'rtl/input/expression_mapper.v','rtl/input/fsr_expression_control.v',
     'rtl/ui/parameter_manager.v','rtl/ui/rgb_lcd_800x480.v','rtl/ui/lcd_status_bridge.v',
     'sim/system_tb/clock_gen_24_sim.v','sim/system_tb/mcp3008_model.v',
-    'project/instrument_24_rgb_top.v') | ForEach-Object { Join-Path $root $_ }
+    'project/instrument_24_rgb_top.v','project/fsr_adc_probe_top.v') | ForEach-Object { Join-Path $root $_ }
 $allowed = @('tb_fsr_expression_control','tb_pitch_vibrato','tb_encoder_param_queue',
     'tb_audio_frame_buffer','tb_core_hardware','tb_instrument_fsr_vibrato',
-    'tb_keyboard_24_dual','tb_rgb_lcd_800x480','tb_instrument_24_rgb')
+    'tb_keyboard_24_dual','tb_rgb_lcd_800x480','tb_instrument_24_rgb','tb_mcp3008_spi',
+    'tb_fsr_adc_probe')
 Push-Location $run
 try {
     foreach ($test in $Tests) {
@@ -38,6 +40,9 @@ try {
         if ($test -eq 'tb_core_hardware') {
             $parameters = @('-Ptb_core_hardware.ENABLE_EXPRESSION=1','-Ptb_core_hardware.TEST_VIBRATO=1')
             if ($TwoTimbres) { $parameters += '-Ptb_core_hardware.ENABLE_GUITAR=0' }
+        }
+        if ($NoJoystick -and $test -eq 'tb_instrument_fsr_vibrato') {
+            $parameters += '-Ptb_instrument_fsr_vibrato.ENABLE_JOYSTICK=0'
         }
         & $compiler -g2012 -s $test -I "$root/rtl/common" -I "$root/rtl/input" `
             @parameters -o $output @sources $bench

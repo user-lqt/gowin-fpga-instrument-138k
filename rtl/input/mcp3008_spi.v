@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // MCP3008 single-ended SPI mode 0 master.
-// One conversion is 5 command bits, one null bit, then B9..B0.
+// Five command clocks, one acquisition clock, one null clock, then B9..B0.
 // sclk is derived from clk and idles low; MOSI changes on falling edges and
 // DOUT is sampled on rising edges.
 module mcp3008_spi #(
@@ -12,7 +12,8 @@ module mcp3008_spi #(
     input wire adc_miso,
     output reg adc_cs_n, adc_sclk, adc_mosi,
     output reg busy, done,
-    output reg [9:0] adc_data
+    output reg [9:0] adc_data,
+    output reg conversion_valid
 );
     function integer count_width;
         input integer n;
@@ -29,14 +30,14 @@ module mcp3008_spi #(
     reg [4:0] rising_index;
     reg [4:0] command;
     reg [9:0] sample_shift;
-    reg finish_pending;
+    reg finish_pending, null_valid;
     wire spi_tick = div_count==DIV_LAST;
 
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
             adc_cs_n<=1;adc_sclk<=0;adc_mosi<=0;busy<=0;done<=0;
             adc_data<=0;div_count<=0;rising_index<=0;command<=0;
-            sample_shift<=0;finish_pending<=0;
+            sample_shift<=0;finish_pending<=0;null_valid<=0;conversion_valid<=0;
         end else begin
             done<=0;
             if(!busy) begin
@@ -46,15 +47,19 @@ module mcp3008_spi #(
                     command<={2'b11,channel};
                     adc_mosi<=1;
                     rising_index<=0;sample_shift<=0;finish_pending<=0;
+                    null_valid<=0;conversion_valid<=0;
                 end
             end else if(spi_tick) begin
                 div_count<=0;
                 if(!adc_sclk) begin
                     // Rising edge: consume the command/null/data bit.
                     adc_sclk<=1;
-                    if(rising_index>=6 && rising_index<=15)
+                    // D0 is latched on clock 5, null appears after falling
+                    // clock 6, and B9 appears after falling clock 7 (DS21295D).
+                    if(rising_index==6) null_valid<=!adc_miso;
+                    if(rising_index>=7 && rising_index<=16)
                         sample_shift <= {sample_shift[8:0],adc_miso};
-                    if(rising_index==15) finish_pending<=1;
+                    if(rising_index==16) finish_pending<=1;
                     rising_index<=rising_index+1'b1;
                 end else begin
                     // Falling edge: prepare the next command bit.
@@ -62,6 +67,7 @@ module mcp3008_spi #(
                     if(finish_pending) begin
                         adc_cs_n<=1;busy<=0;done<=1;
                         adc_data<=sample_shift;
+                        conversion_valid<=null_valid;
                         finish_pending<=0;adc_mosi<=0;
                     end else if(rising_index<5)
                         adc_mosi<=command[4-rising_index];
