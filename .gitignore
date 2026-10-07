@@ -140,6 +140,7 @@ _extract/
 # Local diagnostics/simulator caches; source projects remain tracked.
 tmp/
 sim/*_build/
+sim/*_build_*/
 sim/audio_core_tb/build/
 project/*/impl/
 project/*/temp/

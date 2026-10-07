@@ -2,7 +2,7 @@ param(
     [string]$IcarusBin = '',
     [switch]$TwoTimbres,
     [switch]$NoJoystick,
-    [string[]]$Tests = @('tb_fsr_expression_control','tb_pitch_vibrato',
+    [string[]]$Tests = @('tb_joystick_control','tb_fsr_expression_control','tb_pitch_vibrato',
         'tb_encoder_param_queue','tb_audio_frame_buffer','tb_core_hardware',
         'tb_instrument_fsr_vibrato','tb_keyboard_24_dual','tb_rgb_lcd_800x480')
 )
@@ -28,7 +28,7 @@ $sources += @('rtl/common/reset_sync.v','rtl/system/sample_scheduler.v',
 $allowed = @('tb_fsr_expression_control','tb_pitch_vibrato','tb_encoder_param_queue',
     'tb_audio_frame_buffer','tb_core_hardware','tb_instrument_fsr_vibrato',
     'tb_keyboard_24_dual','tb_rgb_lcd_800x480','tb_instrument_24_rgb','tb_mcp3008_spi',
-    'tb_fsr_adc_probe')
+    'tb_fsr_adc_probe','tb_joystick_control')
 Push-Location $run
 try {
     foreach ($test in $Tests) {

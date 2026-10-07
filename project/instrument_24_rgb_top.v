@@ -143,6 +143,7 @@ module instrument_24_rgb_top #(
     wire [15:0] joystick_modulation;
     joystick_control u_joystick_control (
         .clk(clk_audio),.rst_n(rst_n && system_ready),.sample_valid(adc_sample_valid),
+        .sample_error(adc_sample_error),
         .sample_channel(adc_sample_channel),.ch1_x(adc_ch1),.ch2_y(adc_ch2),
         .param_valid(joystick_param_valid),.param_id(joystick_param_id),
         .param_value(joystick_param_value),.pitch_bend(joystick_pitch_bend),

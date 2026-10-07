@@ -119,6 +119,12 @@ module tb_instrument_fsr_vibrato #(parameter integer ENABLE_JOYSTICK=1);
         end
         if(dut.u_audio_core.a2.expression.u_pitch.u_vibrato.depth!=65535)
             $fatal(1,"bend and vibrato did not coexist");
+        if(ENABLE_JOYSTICK != 0) begin
+            x=0;
+            wait(dut.u_audio_core.a2.expression.u_pitch.bend==-8192);
+            if(dut.active_voice_count!=1 || ons!=1 || offs!=0)
+                $fatal(1,"joystick bend changed held note lifetime");
+        end
         pressure=1;x=512;
         wait(dut.fsr_modulation==0);samples(280);
         if(dut.u_audio_core.a2.expression.u_pitch.u_vibrato.pitch_offset!=0 ||
@@ -131,14 +137,19 @@ module tb_instrument_fsr_vibrato #(parameter integer ENABLE_JOYSTICK=1);
         check_neutral_pitch=1;samples(300);check_neutral_pitch=0;
         pressure=899;
         wait(dut.fsr_modulation==65535);samples(280);
+        if(ENABLE_JOYSTICK != 0) begin
+            x=1023;wait(dut.u_audio_core.a2.expression.u_pitch.bend==8191);
+        end
         @(negedge cs_n);adc_disconnected=1;
         wait(!dut.fsr_sensor_ready);samples(280);
         if(dut.u_audio_core.a2.expression.u_pitch.u_vibrato.depth_target!=0 ||
            dut.u_audio_core.a2.expression.u_pitch.u_vibrato.pitch_offset!=0)
             $fatal(1,"pulled-high ADC left maximum vibrato enabled");
+        if(dut.u_audio_core.a2.expression.u_pitch.bend!=0)
+            $fatal(1,"pulled-high ADC left joystick bend enabled");
         if(dut.fsr_display_ready || dut.adc_digits!=0 || dut.fsr_digits!=0)
             $fatal(1,"failed ADC displayed a valid full-scale pressure");
-        @(posedge cs_n);adc_disconnected=0;pressure=1;
+        @(posedge cs_n);adc_disconnected=0;pressure=1;x=512;
         wait(dut.fsr_sensor_ready);samples(300);
         if(dut.adc_digits!==16'h0001 || dut.fsr_digits!==16'h0000)
             $fatal(1,"valid ADC did not recover after disconnected DOUT");
