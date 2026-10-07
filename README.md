@@ -1,21 +1,20 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
-> **shuyou 当前双 EC11 交付**：完整工程、烧录入口及 A→C 后续分工见
-> [当前交接说明](docs/SHUYOU_HANDOFF.md)。成员 A 完成并上传 EC11_A 三音色、
-> EC11_B 滑音实现，最后由成员 C 合并验收；滑音/效果声音当前仍待实现。
-
-> **shuyou10.4 当前可用版本**：24 键、RGB 屏及 J13 EC11 已上板反馈可用。
-> 工程入口、烧录文件、构建方法和接线见 [2026-10-04 交付说明](docs/SHUYOU_2026_10_04.md)。
-> EC11 使用 J13 的 A21/B21/B18，不再使用旧 PMOD 接线图。
-> 后续正式交互版：旋转始终调音量、短按循环三音色；见
-> [EC11 正式交互说明](docs/EC11_FORMAL_CONTROLS.md)，使用独立的新烧录文件。
-> 双旋钮菜单版接线和入口见 [EC11_B 滑音／效果菜单](docs/EC11_B_WIRING.md)。
-> B 端参数发送已实现，滑音和效果声音处理仍待成员 A 接入。
-> MCP3008/摇杆已接入顶层但尚未接入音频算法；见
-> [MCP3008与摇杆 RTL 说明](docs/JOYSTICK_MCP3008_RTL.md)。
-> 当前已根据最新分配接入顶层：J13-24/25/26/27 = ADC_CS/SCLK/MOSI/MISO。
-> ADC/摇杆分支交接（成员 A 完成弯音/调制，成员 C 最后合并）见
-> [JOYSTICK_HANDOFF.md](docs/JOYSTICK_HANDOFF.md)。
+> **当前整机唯一入口：`integration/c-stage3`。** 工程为
+> `project/instrument_24_rgb_top/instrument_24_rgb_top.gprj`，现有烧录文件为
+> `project/instrument_24_rgb_top/impl/pnr/instrument_24_rgb_top.fs`。
+> 正式分支、工作目录和历史版本见 [分支整理记录](docs/GITHUB_BRANCH_CLEANUP.md)。
+>
+> **当前整机仍为 4 声部。** A 已在 `dev-audio` 的 `6035c11` 交付 32 声部和
+> 钢琴、吉他、编钟，待 C 集成、构建并上板验收。力度开发由 B 负责，力度改变
+> 音量、泛音和音色，基频保持不变；旧固件慢按降八度属于历史行为。
+> 摇杆 ADC 已接入整机，但弯音、滑音、FSR 颤音和音效尚未完成整机验收。
+> 当前功能、分工与下一步以 [当前状态与任务](docs/CURRENT_STATUS.md) 为准。
+>
+> 双 EC11 接线见 [接线说明](docs/EC11_B_WIRING.md)，ADC 接线见
+> [MCP3008 与摇杆说明](docs/JOYSTICK_MCP3008_RTL.md)。
+> 已上板的单 EC11 历史版本保存在 `board-j13-ec11` 标签，
+> [旧交付说明](docs/SHUYOU_2026_10_04.md) 仅对应该版本。
 
 > 全国大学生嵌入式芯片与系统设计竞赛 2026 · FPGA 创新设计赛道 · **高云半导体 选题二**
 > 平台：**Sipeed Tang Mega 138K Dock** · 芯片 **GW5AST-LV138PG484AC1/I0**
@@ -115,8 +114,8 @@ git push
 git fetch origin
 git merge origin/main       # 或 git rebase origin/main
 
-# 功能做完 → 发 Pull Request 合并到 main
-gh pr create --base main --head dev-audio --title "stage1: 单音 DDS 通路" --body "见 testbench 结果"
+# 模块交付 → 发 Pull Request 到唯一整机入口
+gh pr create --base integration/c-stage3 --head dev-audio --title "audio: 音频模块交付" --body "见测试证据及待验收范围"
 ```
 
 完整规则（分支命名、提交信息规范、PR 检查单、冲突处理、阶段标签）见
@@ -140,14 +139,11 @@ gh pr create --base main --head dev-audio --title "stage1: 单音 DDS 通路" --
 
 ## 六、当前状态
 
-- [x] 官方赛题与宣讲材料归档
-- [x] 团队总计划书与三份个人任务书归档
-- [x] 硬件采购清单归档
-- [x] 平台与器件信息核实（Tang Mega 138K）
-- [x] 仓库骨架 + 接口文件冻结草案
-- [ ] **阶段 0**：三个 Gowin 工程建立、三个 testbench 跑通、接口正式冻结
-- [ ] **阶段 1**：单音 DAC 出声
-- [ ] **阶段 2**：基础可提交版本
+- 24 键、RGB、双 EC11 和 MCP3008 采样代码已有整机入口；单 EC11 上板基线与双 EC11 历史交付均可按标签追溯。
+- 整机仍为 4 声部；A 的 32 声部、钢琴/吉他/编钟交付位于 `dev-audio`，尚未进入现有整机烧录文件。
+- FSR 校准映射及触点顺序修复保留独立分支，整机兼容处理待完成。
+- 弯音、滑音、FSR 颤音、音效和最终力度方案需要整机集成与验收；64 声部候选尚非远程整机成果。
+- `main` 保留原发布版本，只通过验收 PR 更新；分支整理不等于阶段验收。
 
 阶段 0 的验收清单见 [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 最后一节。
 

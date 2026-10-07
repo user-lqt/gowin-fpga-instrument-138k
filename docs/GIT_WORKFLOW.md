@@ -12,6 +12,7 @@ main                    ← 永远可编译、可提交的稳定版本。只接�
 ├─ dev-audio            ← 成员 A 的日常开发分支
 ├─ dev-input            ← 成员 B 的日常开发分支
 ├─ dev-system           ← 成员 C 的日常开发分支
+├─ integration/c-stage3 ← 唯一整机合并、构建与验收入口
 └─ feature/<owner>-<topic>   ← 可选：单个人做大功能时从自己分支切出来
 ```
 
@@ -21,6 +22,16 @@ main                    ← 永远可编译、可提交的稳定版本。只接�
 | `dev-audio` | A | A 的常规工作都推到这里 |
 | `dev-input` | B | B 的常规工作都推到这里 |
 | `dev-system` | C | C 的常规工作都推到这里（C 也负责合并他人的 PR） |
+| `integration/c-stage3` | C 集成 | 接收 A/B/C 模块交付；通过整机验收后才向 `main` 提 PR |
+
+2026-10-07 正式入口与历史标签见 [分支整理记录](GITHUB_BRANCH_CLEANUP.md)。
+`dev-system` 从当前整机入口快进恢复，C 的日常目录为
+`E:\GowinProjects\synth_top_system`；整机集成目录为
+`E:\GowinProjects\synth_top_integration_latest`。两分支起点一致，后续各自提交，
+由 C 将系统开发成果通过 PR 合入集成分支。
+`main` 仅发布验收成果；旧 `feature/c-24-key-rgb`、`shuyou`、`joystick`
+不再作为交付目标，本地历史分支和未提交文件继续保留。不要再从历史分支执行推送，
+否则可能重新创建已清理的远程分支。
 
 **打标签的时机**（标签只能由 C 打）：
 
@@ -148,10 +159,11 @@ git push
 
 ## 5. Pull Request 与合并
 
-功能做完 → 发 PR 到 `main`：
+模块功能做完 → 发 PR 到 `integration/c-stage3`；整机验收通过后，再由 C
+从集成分支向 `main` 发发布 PR：
 
 ```bash
-gh pr create --base main --head dev-audio \
+gh pr create --base integration/c-stage3 --head dev-audio \
   --title "stage1(audio): 单音 DDS 通路" \
   --body "## 做了什么
 - note_to_fc / phase_acc / wavetable / oscillator
