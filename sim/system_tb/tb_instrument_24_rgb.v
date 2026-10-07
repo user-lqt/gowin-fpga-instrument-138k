@@ -15,10 +15,14 @@ module tb_instrument_24_rgb;
     wire lcd_clk, lcd_hs, lcd_vs, lcd_de;
     wire [5:0] red, green, blue;
     wire bck, ws, din;
+    wire adc_cs_n,adc_sclk,adc_mosi,adc_miso;
+    mcp3008_model adc(.cs_n(adc_cs_n),.sclk(adc_sclk),.mosi(adc_mosi),
+        .ch0(10'd561),.ch1(10'd512),.ch2(10'd1023),.miso(adc_miso));
     instrument_24_rgb_top dut (
         .i_clk_in(reference), .i_rst_n(reset_button), .col_in(cols),
         .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n), .row_out(rows),
         .enc2_a(1'b1),.enc2_b(1'b1),.enc2_sw_n(1'b1),
+        .adc_miso(adc_miso),.adc_cs_n(adc_cs_n),.adc_sclk(adc_sclk),.adc_mosi(adc_mosi),
         .o_hp_bck(bck), .o_hp_ws(ws), .o_hp_din(din), .o_pa_en(), .o_led(), .o_locked(),
         .lcd_sc_clk(lcd_clk), .lcd_sc_hs(lcd_hs), .lcd_sc_vs(lcd_vs), .lcd_sc_de(lcd_de),
         .lcd_r_out(red), .lcd_g_out(green), .lcd_b_out(blue)
@@ -39,16 +43,16 @@ module tb_instrument_24_rgb;
     endtask
     initial begin
         repeat(5) @(negedge reference); reset_button=0;
-        wait(dut.keyboard_ready); samples(5);
-        if(dut.u_audio_core.volume!=33026) $fatal(1,"startup volume failed");
+        wait(dut.keyboard_ready); samples(530);
+        if(dut.u_audio_core.volume!=(33026 >> 5)) $fatal(1,"32-voice startup volume/headroom failed");
         contacts=48'h41;
         wait(ons==1); samples(600);
         if(dut.active_voice_count!=1 || nonzero<100 || serial_ones<100)
             $fatal(1,"key did not reach DAC");
-        // Both contacts of every key close: 24 events, four accepted voices.
+        // Both contacts of every key close: 24 events, 24 accepted voices.
         contacts=48'hffffffffffff;
         wait(ons==24); samples(600);
-        if(dut.active_voice_count!=4) $fatal(1,"four-voice integration failed");
+        if(dut.active_voice_count!=24) $fatal(1,"24-key/32-voice integration failed");
         // Across two different clock domains, the whole mask must arrive.
         wait(dut.u_lcd.frame_keys==24'hffffff);
         contacts=0; wait(offs==24); samples(100);
@@ -58,7 +62,7 @@ module tb_instrument_24_rgb;
         repeat(10) @(negedge reference);
         if(rows!==8'hzz || dut.active_voice_count!=0 || lcd_de!==0)
             $fatal(1,"reset did not clear keyboard/audio/display");
-        $display("PASS instrument24 scan-to-DAC, 24-key burst, four voices, atomic display update and reset");
+        $display("PASS instrument24 scan-to-DAC, 24-key burst, 32-voice core, atomic display update and reset");
         $finish;
     end
     initial begin #200000000; $fatal(1,"instrument24 timeout"); end

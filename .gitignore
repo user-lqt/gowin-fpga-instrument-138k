@@ -146,3 +146,9 @@ project/*/temp/
 project/*/prj/
 project/*/*.gprj.user
 *.pb
+
+# FSR builds use new project directories to preserve every earlier bitstream.
+project/instrument_24_rgb_fsr_vibrato*/*
+!project/instrument_24_rgb_fsr_vibrato/instrument_24_rgb_fsr_vibrato.gprj
+project/instrument_24_rgb_fsr_two_timbres*/*
+!project/instrument_24_rgb_fsr_two_timbres/instrument_24_rgb_fsr_two_timbres.gprj

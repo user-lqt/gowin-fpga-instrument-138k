@@ -2,7 +2,8 @@
 // Round-robin sampler for CH0=FSR, CH1=VRx and CH2=VRy.
 module mcp3008_sampler #(
     parameter integer CLK_DIV=12,
-    parameter integer CHANNEL_COUNT=3
+    parameter integer CHANNEL_COUNT=3,
+    parameter integer SAMPLE_DIV=0 // Start interval; 4096 gives 1 kS/s/channel.
 ) (
     input wire clk,rst_n,
     input wire adc_miso,
@@ -14,6 +15,7 @@ module mcp3008_sampler #(
 );
     reg start;
     reg [2:0] channel;
+    reg [31:0] wait_cycles;
     wire done;
     wire [9:0] adc_data;
     mcp3008_spi #(.CLK_DIV(CLK_DIV)) spi(
@@ -22,11 +24,15 @@ module mcp3008_sampler #(
         .done(done),.adc_data(adc_data)
     );
     always @(posedge clk or negedge rst_n) begin
-        if(!rst_n) begin start<=0;channel<=0;sample_valid<=0;sample_channel<=0;
+        if(!rst_n) begin start<=0;channel<=0;sample_valid<=0;sample_channel<=0;wait_cycles<=0;
             ch0_data<=0;ch1_data<=0;ch2_data<=0;
         end else begin
             start<=0;sample_valid<=0;
-            if(!busy && !done) start<=1;
+            if(wait_cycles!=0) wait_cycles<=wait_cycles-1'b1;
+            if(!busy && !done && !start && wait_cycles==0) begin
+                start<=1;
+                wait_cycles<=SAMPLE_DIV>0 ? SAMPLE_DIV-1 : 0;
+            end
             if(done) begin
                 sample_valid<=1;sample_channel<=channel;
                 case(channel)

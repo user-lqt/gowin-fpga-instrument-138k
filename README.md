@@ -1,14 +1,19 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
 > **当前整机唯一入口：`integration/c-stage3`。** 工程为
-> `project/instrument_24_rgb_top/instrument_24_rgb_top.gprj`，现有烧录文件为
-> `project/instrument_24_rgb_top/impl/pnr/instrument_24_rgb_top.fs`。
+> `project/instrument_24_rgb_fsr_two_timbres/instrument_24_rgb_fsr_two_timbres.gprj`，
+> 构建脚本为 `tools/build_fsr_two_timbres.tcl`，最新本地烧录文件为
+> `project/instrument_24_rgb_fsr_two_timbres/impl/pnr/instrument_24_rgb_fsr_two_timbres.fs`。
+> 仓库提交源码、工程和验证记录；下载源码后需运行构建脚本生成 `.fs`。
 > 正式分支、工作目录和历史版本见 [分支整理记录](docs/GITHUB_BRANCH_CLEANUP.md)。
 >
-> **当前整机仍为 4 声部。** A 已在 `dev-audio` 的 `6035c11` 交付 32 声部和
-> 钢琴、吉他、编钟，待 C 集成、构建并上板验收。力度开发由 B 负责，力度改变
+> **当前整机为 32 声部、钢琴与编钟两种音色。** 已集成 A 的 `6035c11`
+> 音频 RTL，吉他硬件按本轮配置排除，源码保留。FSR 控制约 5 Hz、最大
+> ±50 音分的颤音，摇杆 X 控制弯音。仿真、综合、布局布线与时序检查已通过，
+> 新固件实体上板效果待确认。力度开发由 B 负责，力度改变
 > 音量、泛音和音色，基频保持不变；旧固件慢按降八度属于历史行为。
-> 摇杆 ADC 已接入整机，但弯音、滑音、FSR 颤音和音效尚未完成整机验收。
+> 原 4 声部烧录文件仍保留于 `project/instrument_24_rgb_top/impl/pnr/`。
+> 构建命令、资源时序及上板步骤见 [FSR 颤音接入与测试](docs/FSR_VIBRATO_INTEGRATION.md)。
 > 当前功能、分工与下一步以 [当前状态与任务](docs/CURRENT_STATUS.md) 为准。
 >
 > 双 EC11 接线见 [接线说明](docs/EC11_B_WIRING.md)，ADC 接线见
@@ -140,9 +145,9 @@ gh pr create --base integration/c-stage3 --head dev-audio --title "audio: 音频
 ## 六、当前状态
 
 - 24 键、RGB、双 EC11 和 MCP3008 采样代码已有整机入口；单 EC11 上板基线与双 EC11 历史交付均可按标签追溯。
-- 整机仍为 4 声部；A 的 32 声部、钢琴/吉他/编钟交付位于 `dev-audio`，尚未进入现有整机烧录文件。
-- FSR 校准映射及触点顺序修复保留独立分支，整机兼容处理待完成。
-- 弯音、滑音、FSR 颤音、音效和最终力度方案需要整机集成与验收；64 声部候选尚非远程整机成果。
+- 当前整机集成 32 声部、钢琴与编钟，FSR 颤音和摇杆 X 弯音已进入双音色构建；仿真及最终时序通过，上板待确认。
+- FSR 使用 5.1 kΩ 分压与估计标定参数，需实物确认；触点顺序修复保留独立分支，整机兼容处理待完成。
+- 滑音已有音频核心回归，硬件音效和最终力度方案仍需交付、集成与验收；64 声部候选尚非远程整机成果。
 - `main` 保留原发布版本，只通过验收 PR 更新；分支整理不等于阶段验收。
 
 阶段 0 的验收清单见 [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 最后一节。

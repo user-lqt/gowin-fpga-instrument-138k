@@ -1,12 +1,17 @@
 `include "event_defs.vh"
-// 24 dual-contact keys, four audio voices and an independent RGB pixel PLL.
+// 24 keys, 32 voices, piano/bell only, FSR vibrato and an RGB pixel PLL.
 // 25 us row dwell: 200 us velocity resolution, 8 ms press debounce,
 // 12.8 ms release debounce. Velocity is captured before debounce.
 module instrument_24_rgb_top #(
     parameter integer ROW_CYCLES = 307,
     parameter integer DEBOUNCE_FRAMES = 40,
     parameter integer DEFAULT_INSTRUMENT = 0,
-    parameter integer FORMAL_CONTROLS = 1
+    parameter integer FORMAL_CONTROLS = 1,
+    parameter integer FSR_ZERO_LEVEL = 570,
+    parameter integer FSR_FULL_SCALE = 945,
+    parameter integer FSR_DEADBAND = 8,
+    parameter integer ADC_SAMPLE_DIV = 4096,
+    parameter integer MASTER_GAIN_SHIFT = 5 // 1/32 headroom for the 32-voice sum.
 ) (
     input wire i_clk_in, i_rst_n,
     input wire [5:0] col_in,
@@ -20,7 +25,6 @@ module instrument_24_rgb_top #(
     output wire [5:0] lcd_r_out, lcd_g_out, lcd_b_out
 );
     wire board_rst_n = ~i_rst_n;
-    localparam [15:0] INSTRUMENT_VALUE = DEFAULT_INSTRUMENT;
     wire clk_audio, pixel_clk, audio_pll_locked, pixel_pll_locked;
     wire rst_n, pixel_rst_n;
     clock_gen u_clock_gen (
@@ -75,8 +79,8 @@ module instrument_24_rgb_top #(
     wire ui_dirty;
     wire diagnostic_step_up, diagnostic_step_down;
     encoder_control #(.FILTER_CYCLES(2500), .BUTTON_CYCLES(245760),
-        .REVERSE_DIR(0), .INSTRUMENT_COUNT(3), .FORMAL_CONTROLS(FORMAL_CONTROLS),
-        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT)) u_encoder_control (
+        .REVERSE_DIR(0), .INSTRUMENT_COUNT(2), .FORMAL_CONTROLS(FORMAL_CONTROLS),
+        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT==0 ? 0 : 1)) u_encoder_control (
         .clk(clk_audio), .rst_n(rst_n && system_ready),
         .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n),
         .input_ready(encoder_ready), .volume_value(volume_value),
@@ -122,7 +126,7 @@ module instrument_24_rgb_top #(
     wire adc_busy,adc_sample_valid;
     wire [2:0] adc_sample_channel;
     wire [9:0] adc_ch0,adc_ch1,adc_ch2;
-    mcp3008_sampler #(.CLK_DIV(12)) u_mcp3008_sampler (
+    mcp3008_sampler #(.CLK_DIV(12),.SAMPLE_DIV(ADC_SAMPLE_DIV)) u_mcp3008_sampler (
         .clk(clk_audio),.rst_n(rst_n && system_ready),.adc_miso(adc_miso),
         .adc_cs_n(adc_cs_n),.adc_sclk(adc_sclk),.adc_mosi(adc_mosi),.busy(adc_busy),
         .sample_valid(adc_sample_valid),.sample_channel(adc_sample_channel),
@@ -140,27 +144,55 @@ module instrument_24_rgb_top #(
         .param_value(joystick_param_value),.pitch_bend(joystick_pitch_bend),
         .modulation(joystick_modulation),.filtered_x(),.filtered_y()
     );
+    wire fsr_param_valid, fsr_sensor_ready;
+    wire [3:0] fsr_param_id;
+    wire [15:0] fsr_param_value, fsr_modulation;
+    wire [9:0] fsr_filtered;
+    fsr_expression_control #(
+        .ZERO_LEVEL(FSR_ZERO_LEVEL), .FULL_SCALE(FSR_FULL_SCALE),
+        .DEADBAND(FSR_DEADBAND)
+    ) u_fsr_control (
+        .clk(clk_audio), .rst_n(rst_n && system_ready),
+        .sample_valid(adc_sample_valid), .sample_channel(adc_sample_channel),
+        .ch0_data(adc_ch0), .param_valid(fsr_param_valid),
+        .param_id(fsr_param_id), .param_value(fsr_param_value),
+        .filtered_value(fsr_filtered), .modulation_value(fsr_modulation),
+        .sensor_ready(fsr_sensor_ready)
+    );
     encoder_param_queue u_control_queue (
         .clk(clk_audio),.rst_n(rst_n && system_ready),.sample_tick(sample_tick),
         .a_valid(encoder_param_valid),.a_id(encoder_param_id),.a_value(encoder_param_value),
         .b_valid(encoder_b_param_valid),.b_id(encoder_b_param_id),.b_value(encoder_b_param_value),
-        .c_valid(joystick_param_valid),.c_id(joystick_param_id),.c_value(joystick_param_value),
+        // FSR owns modulation; Y-axis events must not overwrite its depth.
+        .c_valid(joystick_param_valid && joystick_param_id==`PARAM_PITCH_BEND),
+        .c_id(joystick_param_id),.c_value(joystick_param_value),
+        .d_valid(fsr_param_valid),.d_id(fsr_param_id),.d_value(fsr_param_value),
         .valid(param_valid),.id(param_id),.value(param_value),.overflow(control_overflow)
     );
     wire signed [23:0] audio_left, audio_right;
     wire [5:0] active_voice_count;
     wire audio_core_valid, overload_flag;
-    audio_core u_audio_core (
+    // UI slots 0/1 are piano/bell; retain audio IDs 0/2 for compatibility.
+    wire [15:0] audio_param_value = param_id==`PARAM_VOLUME ?
+        param_value >> MASTER_GAIN_SHIFT : param_id==`PARAM_INSTRUMENT ?
+        (param_value==0 ? 16'd0 : 16'd2) : param_value;
+    audio_core #(.VOICE_COUNT(32), .ENABLE_EXPRESSION(1), .ENABLE_GUITAR(0)) u_audio_core (
         .clk(clk_audio), .rst_n(rst_n), .sample_tick(sample_tick),
         .event_valid(event_valid), .event_type(event_type), .note_id(note_id), .velocity(velocity),
-        .param_valid(param_valid), .param_id(param_id), .param_value(param_value),
+        .param_valid(param_valid), .param_id(param_id), .param_value(audio_param_value),
         .audio_core_valid(audio_core_valid), .audio_left(audio_left), .audio_right(audio_right),
         .active_voice_count(active_voice_count), .engine_ready(engine_ready),
         .overload_flag(overload_flag), .event_overflow(event_overflow), .param_overflow(param_overflow)
     );
+    wire signed [15:0] dac_frame_left, dac_frame_right;
+    audio_frame_buffer u_audio_frame_buffer (
+        .clk(clk_audio), .rst_n(rst_n), .pcm_valid(audio_core_valid),
+        .frame_start(frame_start), .pcm_left(audio_left), .pcm_right(audio_right),
+        .frame_left(dac_frame_left), .frame_right(dac_frame_right)
+    );
     i2s_tx_official u_i2s_tx (
         .clk_audio(clk_audio), .rst_n(rst_n), .bck_in(bck), .bck_en(bck_en),
-        .sample_l(audio_left[23:8]), .sample_r(audio_right[23:8]), .frame_start(frame_start),
+        .sample_l(dac_frame_left), .sample_r(dac_frame_right), .frame_start(frame_start),
         .o_bck(o_hp_bck), .o_ws(o_hp_ws), .o_din(o_hp_din)
     );
     wire lcd_frame_start;
