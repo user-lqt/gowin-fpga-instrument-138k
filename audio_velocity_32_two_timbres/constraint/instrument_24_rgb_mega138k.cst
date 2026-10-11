@@ -1,0 +1,127 @@
+// Board audio/reset/LED baseline, plus B's 24-key and official RGB pinout.
+IO_LOC  "i_clk_in"  V22;
+IO_PORT "i_clk_in"  IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_LOC  "o_hp_bck"  Y17;
+IO_PORT "o_hp_bck"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_hp_ws"   AB17;
+IO_PORT "o_hp_ws"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_hp_din"  AA16;
+IO_PORT "o_hp_din"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_pa_en"   AB16;
+IO_PORT "o_pa_en"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "i_rst_n"  F4;
+IO_PORT "i_rst_n"  IO_TYPE=LVCMOS15 PULL_MODE=NONE BANK_VCCIO=1.5;
+IO_LOC  "o_led"    W21;
+IO_PORT "o_led"    IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_locked" W22;
+IO_PORT "o_locked" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+// Merge into the active top-level CST when keyboard_24_input is instantiated.
+// Do not simultaneously assign these balls to the legacy keypad, OLED or EC11.
+IO_LOC "row_out[0]" E14;
+IO_LOC "row_out[1]" E13;
+IO_LOC "row_out[2]" C15;
+IO_LOC "row_out[3]" C14;
+IO_LOC "row_out[4]" B13;
+IO_LOC "row_out[5]" C13;
+IO_LOC "row_out[6]" A14;
+IO_LOC "row_out[7]" A13;
+IO_LOC "col_in[0]" B16;
+IO_LOC "col_in[1]" B15;
+IO_LOC "col_in[2]" A16;
+IO_LOC "col_in[3]" A15;
+IO_LOC "col_in[4]" A20;
+IO_LOC "col_in[5]" B20;
+IO_PORT "row_out[0]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[1]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[2]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[3]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[4]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[5]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[6]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_PORT "row_out[7]" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+// Internal pull-ups provide a defined idle-high state. Keep the six external
+// 10 kOhm pull-ups where possible; the internal pulls are a fallback for bring-up.
+IO_PORT "col_in[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_PORT "col_in[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_PORT "col_in[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_PORT "col_in[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_PORT "col_in[4]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_PORT "col_in[5]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+// EC11_A on 31005 dock J13: 17=A21, 18=B21, 19=B18.
+// Bank2 is shared with the working keyboard. External 4.7k pulls use 3.3 V.
+IO_LOC "enc_a" A21;
+IO_PORT "enc_a" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc_b" B21;
+IO_PORT "enc_b" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc_sw_n" B18;
+IO_PORT "enc_sw_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+// EC11_B menu, J13-21/C17, J13-22/D17, J13-23/E19.
+IO_LOC "enc2_a" C17;
+IO_PORT "enc2_a" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc2_b" D17;
+IO_PORT "enc2_b" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "enc2_sw_n" E19;
+IO_PORT "enc2_sw_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+// Sipeed Tang Mega 138K RGB666 LCD header, from the official example.
+// Merge only when rgb_lcd_800x480 is present in the active top level.
+IO_LOC "lcd_sc_de" L14;
+IO_LOC "lcd_sc_vs" L15;
+IO_LOC "lcd_sc_hs" N20;
+IO_LOC "lcd_sc_clk" L19;
+IO_LOC "lcd_b_out[5]" M20;
+IO_LOC "lcd_b_out[4]" L16;
+IO_LOC "lcd_b_out[3]" K16;
+IO_LOC "lcd_b_out[2]" N18;
+IO_LOC "lcd_b_out[1]" N19;
+IO_LOC "lcd_b_out[0]" M18;
+IO_LOC "lcd_g_out[5]" L18;
+IO_LOC "lcd_g_out[4]" N22;
+IO_LOC "lcd_g_out[3]" M22;
+IO_LOC "lcd_g_out[2]" M21;
+IO_LOC "lcd_g_out[1]" L21;
+IO_LOC "lcd_g_out[0]" K18;
+IO_LOC "lcd_r_out[5]" K21;
+IO_LOC "lcd_r_out[4]" K22;
+IO_LOC "lcd_r_out[3]" J22;
+IO_LOC "lcd_r_out[2]" H22;
+IO_LOC "lcd_r_out[1]" G17;
+IO_LOC "lcd_r_out[0]" G18;
+IO_PORT "lcd_sc_de" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_sc_vs" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_sc_hs" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_sc_clk" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[0]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[1]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[2]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[3]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[4]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_b_out[5]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[0]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[1]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[2]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[3]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[4]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_g_out[5]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[0]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[1]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[2]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[3]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[4]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+IO_PORT "lcd_r_out[5]" IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3;
+// MCP3008 FSR CH0: integration/c-stage3 1cccb07.
+// 31005 J13-20 = SDRAM0_CLK = BANK2_B17 (unused by this design).
+IO_LOC "led_strip_din" B17;
+IO_PORT "led_strip_din" IO_TYPE=LVCMOS33 PULL_MODE=DOWN DRIVE=8 BANK_VCCIO=3.3;
+// ESP32-C3 UART bridge on J13: C18 (FPGA RX), C19 (FPGA TX).
+IO_LOC "ble_uart_rx" C18;
+IO_PORT "ble_uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "ble_uart_tx" C19;
+IO_PORT "ble_uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "adc_cs_n" A18;
+IO_PORT "adc_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "adc_sclk" D15;
+IO_PORT "adc_sclk" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "adc_mosi" D14;
+IO_PORT "adc_mosi" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "adc_miso" D16;
+IO_PORT "adc_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;

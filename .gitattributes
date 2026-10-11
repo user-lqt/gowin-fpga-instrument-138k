@@ -26,6 +26,7 @@
 *.jpeg   binary
 *.bmp    binary
 *.bit    binary
+*.fs     binary
 *.bin    binary
 *.pdf    binary
 

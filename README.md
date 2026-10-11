@@ -1,5 +1,7 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
+当前成员B完整板上工程（含ESP32-C3蓝牙）：请先阅读 [CURRENT_COMPLETE_PROJECT.md](CURRENT_COMPLETE_PROJECT.md)，并打开其中指定的独立Gowin工程。
+
 > 全国大学生嵌入式芯片与系统设计竞赛 2026 · FPGA 创新设计赛道 · **高云半导体 选题二**
 > 平台：**Sipeed Tang Mega 138K Dock** · 芯片 **GW5AST-LV138PG484AC1/I0**
 

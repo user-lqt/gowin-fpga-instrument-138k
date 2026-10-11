@@ -1,0 +1,58 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
+    <FileList>
+        <File path="../../project/instrument_24_rgb_top.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/adsr.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/audio_core.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/bianzhong.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/bianzhong_ram_bank.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/fm_operator.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/guitar_body.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/guitar_body_tone_bank.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/mixer.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/note_to_fc.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/note_to_period.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/oscillator.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/phase_acc.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/pitch_expression.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/pitch_fraction_rom.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/plucked_string.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/voice.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/voice_allocator.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/audio_core/wavetable.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/common/reset_sync.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/ble_uart_rx.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_b_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_b_input.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/encoder_param_queue.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/expression_mapper.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/fsr_expression_control.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/key_debounce.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/keyboard_24_dual.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/keyboard_24_input.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/matrix_scan_8x6.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/mcp3008_sampler.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/mcp3008_spi.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/audio_delay_fx.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/clock_gen.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/i2s_tx_official.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/keyboard_led_strip.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/lesson_guide.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/polyphony_test.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/sample_scheduler.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/system/system_status.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/instrument_dashboard.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/lcd_status_bridge.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/parameter_manager.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/rgb_lcd_800x480.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/waveform_buffer.v" type="file.verilog" enable="1"/>
+        <File path="../../constraint/instrument_24_rgb_mega138k.cst" type="file.cst" enable="1"/>
+        <File path="../../constraint/instrument_24_rgb_mega138k.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>
