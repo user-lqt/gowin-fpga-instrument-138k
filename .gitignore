@@ -155,3 +155,6 @@ project/instrument_24_rgb_fsr_two_timbres*/*
 !project/instrument_24_rgb_fsr_two_timbres/instrument_24_rgb_fsr_two_timbres.gprj
 project/instrument_24_rgb_fsr_measured*/*
 !project/instrument_24_rgb_fsr_measured/instrument_24_rgb_fsr_measured.gprj
+
+# Joystick test projects contain a generated top with ENABLE_JOYSTICK=1.
+project/instrument_24_rgb_joystick_bend_test*/

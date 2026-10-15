@@ -1,5 +1,14 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
+> **摇杆弯音测试分支：`feature/c-joystick-bend-test-20261015`。**
+> 从仓库根目录使用 Gowin `gw_sh` 运行 `tools/build_joystick_bend_test.tcl`，
+> 生成启用摇杆 X 轴约 ±2 个半音弯音的独立工程，保留钢琴、编钟、32 声部及 FSR 颤音。
+> 标准顶层默认仍关闭摇杆；本分支测试脚本生成的顶层副本已启用摇杆。
+> 五项仿真及最终时序检查通过，实物效果待确认。
+> 接线、构建、上板步骤见 [摇杆弯音测试说明](docs/JOYSTICK_BEND_TEST.md)。
+>
+> 以下为整机集成入口说明。
+
 > **当前整机唯一入口：`integration/c-stage3`。** 工程为
 > `project/instrument_24_rgb_fsr_two_timbres/instrument_24_rgb_fsr_two_timbres.gprj`，
 > 构建脚本为 `tools/build_fsr_two_timbres.tcl`，最新本地烧录文件为

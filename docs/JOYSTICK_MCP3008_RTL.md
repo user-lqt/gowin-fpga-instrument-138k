@@ -1,11 +1,13 @@
 # MCP3008 + PS2 摇杆 RTL
 
-2026-10-07 更新，交付分支为 `integration/c-stage3`。摇杆 X 已接入当前
+2026-10-15 更新。集成基线为 `integration/c-stage3`，本次测试交付分支为
+`feature/c-joystick-bend-test-20261015`。摇杆 X 已接入当前
 双音色、32 声部、FSR 颤音整机。本文描述当前实现；10 月 4 日的交接说明
 保留在 `JOYSTICK_HANDOFF.md`，其中“音频尚未接收参数”属于历史状态。
 
-当前用户的摇杆模块尚未接上，顶层默认 `ENABLE_JOYSTICK=0`，仅采 CH0。
-本次交付源码和仿真，尚未为启用摇杆的配置生成新的可烧录 `.fs`。
+标准顶层默认 `ENABLE_JOYSTICK=0`，仅采 CH0。独立弯音测试工程使用
+`ENABLE_JOYSTICK=1`，轮询 CH0/CH1/CH2。构建方法、接线和测试步骤见
+`JOYSTICK_BEND_TEST.md`；生成后的固件路径及验证结果另存于固件旁的说明文件。
 
 ## 模块
 
@@ -54,16 +56,18 @@ AGND/DGND共地；VDD-DGND和VREF-AGND附近各放100nF。FSR分压接CH0，
 ## 启用与上板操作
 
 1. 接好摇杆 VCC/GND/VRx/VRy，VCC 使用 3.3 V。X/Y 模拟线不直连 FPGA。
-2. 将 `project/instrument_24_rgb_top.v` 的 `ENABLE_JOYSTICK` 默认参数改为 1。
-   未接模块时保持 0，避免悬空的模拟输入导致音高漂移。
-3. 使用 `tools/build_fsr_measured_noguitar.tcl` 重新构建。脚本保留钢琴/编钟、
-   排除吉他，并为重试创建独立工程目录，不覆盖旧固件。
+2. 运行 `tools/build_joystick_bend_test.tcl`。脚本复制标准顶层并在副本中设置
+   `ENABLE_JOYSTICK=1`，保留钢琴/编钟、32 声部和 FSR，创建带时间戳的独立工程。
+3. 等综合、布局布线及最终时序检查完成后，烧录新工程 `impl/pnr` 下的 `.fs`。
+   标准顶层仍默认关闭摇杆；未接模块时使用原有关闭摇杆的固件，避免悬空输入
+   导致音高漂移。
 4. FSR 不施压，只按住一个琴键。摇杆居中时保持原音高，X 往两端拨应连续
    降低/升高约 2 个半音，放手回中后恢复原音高；实际左右方向以模块安装为准。
 5. 再压住 FSR，同时拨 X：弯音和颤音应共存。拨 Y 不应改变颤音深度。
    松琴键后正常进入尾音并停止，不产生额外音符。
 
 当前模块没有自动居中校准，也没有接入摇杆 SW 按钮。
+当前屏幕 `ADC` / `VIB` 显示 CH0 压力及颤音深度，拨动摇杆 X 不要求这些数字变化。
 
 ## 仿真
 
@@ -82,6 +86,23 @@ ADC_SCLK=J13-25/D15，ADC_MOSI=J13-26/D14，ADC_MISO=J13-27/D16。
 四根线均为3.3V逻辑，MCP3008与FPGA共地；接线后先做0V/1.65V/3.3V验证。
 
 ## 本次验证记录
+
+2026-10-15：
+
+- 新测试固件：`E:\GowinProjects\firmware\joystick_bend_two_timbres_20261015_195741.fs`。
+  独立工程为 `project/instrument_24_rgb_joystick_bend_test_20261015_193632`，
+  其 `generated/instrument_24_rgb_top.v` 与标准顶层仅有 `ENABLE_JOYSTICK=1` 的差别。
+- ModelSim 10.1d 重跑摇杆、MCP3008 SPI、四路参数队列、颤音、启用摇杆的整机
+  共 5 项仿真，全部通过。日志与 `verification.json` 位于
+  `sim/joystick_bend_test_build/sim_20261015_193707`。
+- Gowin V1.9.12 综合、布局布线及位流生成完成；setup/hold 违规端点均为 0。
+  音频 Fmax 13.464 MHz（约束 12.288 MHz），像素 Fmax 53.159 MHz（约束
+  33.333 MHz），LCD 输出时钟 Fmax 41.422 MHz（约束 33.333 MHz）。
+- 最终占用：Logic 78173/138240，Register 25077/139095，BSRAM 28/340，
+  DSP 38.5/298。PR1014 仍提示输入参考时钟使用通用路由，最终受约束时序通过。
+- 文件 37074089 字节，SHA256：
+  `A4433F492F559387437CEE32F0CCD834429758B35E832F0C31CEC05D320BC96A`。
+  导出副本与原始 `.fs` 哈希一致。实物上板验收待用户测试。
 
 2026-10-07：
 
