@@ -6,7 +6,7 @@ module tb_keyboard_led_strip;
     reg [23:0] guide_keys=0;
     wire din;
     wire [23:0] remaining;
-    keyboard_led_strip dut(.clk(clk),.rst_n(rst_n),.lesson_running(lesson_running),
+    keyboard_led_strip dut(.clk(clk),.rst_n(rst_n),.lesson_running(lesson_running),.beat_flash(1'b0),
         .guide_keys(guide_keys),.led_din(din),.remaining(remaining));
     integer lamp,b,high_cycles,k;
     reg [23:0] received,expected;
@@ -55,6 +55,10 @@ module tb_keyboard_led_strip;
             repeat(3) @(negedge clk);
             check_frame(24'b1<<key);
         end
+        lesson_running=0;
+        check_frame(0);
+        lesson_running=1;guide_keys=24'hFFFFFF;
+        check_frame(24'hFFFFFF);
         lesson_running=0;
         check_frame(0);
         lesson_running=1;guide_keys=1;

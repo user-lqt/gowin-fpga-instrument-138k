@@ -1,12 +1,13 @@
-// Board audio/reset/LED baseline, plus B's 24-key and official RGB pinout.
+// External PCM5102A I2S on J13. Legacy o_hp_* port names now drive GPIO.
 IO_LOC  "i_clk_in"  V22;
 IO_PORT "i_clk_in"  IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
-IO_LOC  "o_hp_bck"  Y17;
-IO_PORT "o_hp_bck"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
-IO_LOC  "o_hp_ws"   AB17;
-IO_PORT "o_hp_ws"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
-IO_LOC  "o_hp_din"  AA16;
-IO_PORT "o_hp_din"  IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+// 31005 Rev1.3 J13-23=A19, J13-28=E16, J13-31=E17.
+IO_LOC  "o_hp_bck"  A19;
+IO_PORT "o_hp_bck"  IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_hp_ws"   E16;
+IO_PORT "o_hp_ws"   IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "o_hp_din"  E17;
+IO_PORT "o_hp_din"  IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC  "o_pa_en"   AB16;
 IO_PORT "o_pa_en"   IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC  "i_rst_n"  F4;

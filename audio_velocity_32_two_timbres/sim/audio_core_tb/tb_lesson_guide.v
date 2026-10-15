@@ -1,48 +1,64 @@
 `timescale 1ns/1ps
 module tb_lesson_guide;
- reg clk=0,rst_n=0,song_mode=0,toggle=0,song=0;
+ reg clk=0,rst_n=0,song_mode=0,select_valid=0;
+ reg [1:0] select_song=0;
  reg [23:0] keys=0;
- wire running;wire [4:0] position;wire [1:0] beat;wire [23:0] guides;
+ wire running,complete,unavailable;
+ wire [1:0] song,beat;
+ wire [9:0] position,total;
+ wire [23:0] guides;
  always #5 clk=~clk;
- lesson_guide dut(.clk(clk),.rst_n(rst_n),.song_mode(song_mode),.toggle(toggle),
-  .song(song),.keys(keys),.running(running),.position(position),.beat(beat),.guide_keys(guides));
- integer score[0:13];integer i;
+ lesson_guide dut(.clk(clk),.rst_n(rst_n),.song_mode(song_mode),
+  .sample_tick(1'b0),.rhythm_enabled(1'b0),.local_start(1'b0),.local_song(2'd1),.tempo(8'd120),
+  .user_length(8'd0),.user_key(8'd0),.user_duration(8'd1),.user_ready(1'b0),
+  .select_valid(select_valid),.select_song(select_song),.keys(keys),
+  .running(running),.complete(complete),.unavailable(unavailable),.song(song),
+  .position(position),.total(total),.beat(beat),.guide_keys(guides));
  task cycles;begin repeat(3) @(negedge clk);end endtask
- task strike;input integer k;begin keys=24'd1<<k;cycles;keys=0;cycles;end endtask
- task restart;begin toggle=1;cycles;toggle=0;cycles;end endtask
+ task choose;input [1:0] id;begin
+  @(negedge clk);select_song=id;select_valid=1;
+  @(negedge clk);select_valid=0;cycles;
+ end endtask
+ integer p,k,target;
+ reg [23:0] mask;
  initial begin
-  score[0]=0;score[1]=0;score[2]=7;score[3]=7;score[4]=9;score[5]=9;score[6]=7;
-  score[7]=5;score[8]=5;score[9]=4;score[10]=4;score[11]=2;score[12]=2;score[13]=0;
   cycles;rst_n=1;cycles;
-  if(guides!==0 || running) $fatal(1,"outside SONG");
-  keys=1;cycles;song_mode=1;cycles;
-  if(guides!==1 || position!=0 || !running) $fatal(1,"entry or held key");
-  repeat(100) @(negedge clk);
-  if(position!=0) $fatal(1,"advanced without new press");
-  keys=0;cycles;strike(23);
+  choose(1);song_mode=1;cycles;
+  if(running || guides!=0 || song!=0) $fatal(1,"outside command retained");
+  choose(1);
+  if(!running || total!=54 || guides!=(24'd1<<4)) $fatal(1,"Jasmine start");
+  keys=24'd1;cycles;
   if(position!=0) $fatal(1,"wrong key advanced");
-  keys=1;cycles;
-  if(position!=1 || guides!==1) $fatal(1,"first C");
-  cycles;if(position!=1) $fatal(1,"repeat note consumed held key");
-  keys=0;cycles;strike(0);
-  if(position!=2 || guides!==(24'd1<<7)) $fatal(1,"second C");
-  song_mode=0;#1;if(guides!==0) $fatal(1,"exit not gated");cycles;
-  strike(7);song_mode=1;cycles;
-  if(position!=0 || guides!==1) $fatal(1,"reentry did not restart");
-  for(i=0;i<14;i=i+1) begin
-   if(position!=i || guides!==(24'd1<<score[i])) $fatal(1,"score step %0d",i);
-   strike(score[i]);
+  keys=0;cycles;
+  for(p=0;p<54;p=p+1) begin
+   mask=guides;
+   if(mask==0 || (mask & (mask-1))!=0 || mask[5]) $fatal(1,"bad guide or K6");
+   keys=mask;cycles;
+   if(position!=p+1) $fatal(1,"step %0d",p);
+   cycles;if(position!=p+1) $fatal(1,"held key repeated");
+   keys=0;cycles;
   end
-  if(running || guides!==0 || position!=14) $fatal(1,"completion");
-  strike(0);if(running) $fatal(1,"restarted unexpectedly");
-  restart;if(position!=0 || guides!==1) $fatal(1,"long restart");
-  song=1;cycles;if(position!=0 || guides!==(24'd1<<4)) $fatal(1,"song change");
-  song=0;cycles;if(guides!==1) $fatal(1,"song back");
-  song_mode=0;cycles;song_mode=1;cycles;
-  if(guides!==1 || position!=0) $fatal(1,"second reentry");
-  rst_n=0;cycles;if(guides!==0) $fatal(1,"reset");rst_n=1;cycles;
-  if(guides!==1 || !running) $fatal(1,"reset in SONG");
-  $display("PASS: score order, correct/wrong/held/repeated keys, no auto advance, completion, restart, mode exit/reentry");
+  if(running || !complete || guides!=24'hFFFFFF) $fatal(1,"completion lights");
+  choose(2);
+  if(complete || !running || unavailable || song!=2 || total!=60 || guides!=(24'd1<<16)) $fatal(1,"Fingerprint chorus selection");
+  for(p=0;p<60;p=p+1) begin
+   mask=guides;
+   if(mask==0 || (mask & (mask-1))!=0 || mask[5]) $fatal(1,"Fingerprint bad target or K6");
+   keys=mask;cycles;
+   if(position!=p+1) $fatal(1,"Fingerprint step %0d",p);
+   cycles;if(position!=p+1) $fatal(1,"Fingerprint held key advanced");
+   keys=0;cycles;
+  end
+  if(running || !complete || guides!=24'hFFFFFF) $fatal(1,"Fingerprint completion");
+  choose(3);if(!unavailable || song!=3) $fatal(1,"slot3");
+  choose(1);if(!running || position!=0) $fatal(1,"restart after completion");
+  choose(0);if(!running) $fatal(1,"invalid choice disturbed guide");
+  song_mode=0;#1;if(guides!=0) $fatal(1,"exit gating");cycles;
+  song_mode=1;cycles;
+  if(running || complete || song!=0 || guides!=0) $fatal(1,"re-entry must wait");
+  choose(1);rst_n=0;cycles;rst_n=1;cycles;
+  if(running || guides!=0) $fatal(1,"reset must wait");
+  $display("PASS: BLE selection, Jasmine 54 and Fingerprint chorus 60 steps, no K6, wrong/held keys, completion, switching, exit/reentry/reset, slot3 unavailable");
   $finish;
  end
  initial begin #100000;$fatal(1,"timeout");end

@@ -7,6 +7,8 @@ module encoder_b_control #(
  output reg [6:0] glide_value,effect_value,
  output reg glide_enabled, output reg [7:0] tempo,
  output reg song_select, output reg lesson_toggle, output reg test_toggle,
+ output reg [1:0] local_song,
+ output reg [3:0] inspect_band,
  output reg param_valid, output reg [3:0] param_id,
  output reg [15:0] param_value);
  wire up,down,held,press,release_button;
@@ -30,7 +32,7 @@ module encoder_b_control #(
  always @(posedge clk or negedge rst_n) begin
  if(!rst_n) begin
  menu<=0;glide_value<=15;effect_value<=0;glide_enabled<=0;
- tempo<=120;song_select<=0;lesson_toggle<=0;test_toggle<=0;
+ tempo<=120;song_select<=0;lesson_toggle<=0;test_toggle<=0;local_song<=1;inspect_band<=0;
  held_cycles<=0;long_done<=0;startup<=0;
  param_valid<=0;param_id<=`PARAM_GLIDE;param_value<=0;
  end else begin
@@ -49,7 +51,7 @@ module encoder_b_control #(
  3:tempo<=120;
  4:test_toggle<=1;
  endcase
- end else if(short_action) menu<=menu==4 ? 0 : menu+1'b1;
+ end else if(short_action) menu<=menu==5 ? 0 : menu+1'b1;
  else if(up ^ down) begin
  case(menu)
  0:begin
@@ -65,8 +67,9 @@ module encoder_b_control #(
  else if(down && effect_value!=0) begin effect_value<=effect_value<4 ? 0 : effect_value-4;
  param_valid<=1;param_id<=`PARAM_EFFECT_MIX;param_value<=mix_payload(effect_value<4 ? 0 : effect_value-4);end
  end
- 2:song_select<=up;
+ 2:begin song_select<=up;local_song<=up ? (local_song==3 ? 1 : local_song+1'b1) : (local_song==1 ? 3 : local_song-1'b1);end
  3:if(up && tempo<200) tempo<=tempo+5;else if(down && tempo>40) tempo<=tempo-5;
+ 5:inspect_band<=up ? inspect_band+1'b1 : inspect_band-1'b1;
  endcase
  end
  end end

@@ -6,6 +6,9 @@
     <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
     <FileList>
         <File path="../../project/instrument_24_rgb_top.v" type="file.verilog" enable="1"/>
+        <File path="src/i2s_tx_pcm5102a.v" type="file.verilog" enable="1"/>
+        <File path="src/instrument_link.v" type="file.verilog" enable="1"/>
+        <File path="src/performance_event_merge.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/audio_core/adsr.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/audio_core/audio_core.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/audio_core/bianzhong.v" type="file.verilog" enable="1"/>
@@ -47,6 +50,7 @@
         <File path="../../rtl/system/polyphony_test.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/system/sample_scheduler.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/system/system_status.v" type="file.verilog" enable="1"/>
+        <File path="../../rtl/ui/audio_visualizer.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/ui/instrument_dashboard.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/ui/lcd_status_bridge.v" type="file.verilog" enable="1"/>
         <File path="../../rtl/ui/parameter_manager.v" type="file.verilog" enable="1"/>

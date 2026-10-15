@@ -12,7 +12,10 @@ try {
     $sources+=@('encoder','key_debounce','encoder_b_control' | ForEach-Object {"$root/rtl/input/$_.v"})
     $sources+=@('mcp3008_spi','mcp3008_sampler','expression_mapper','fsr_expression_control','encoder_param_queue' | ForEach-Object {"$root/rtl/input/$_.v"})
     $sources+=@("$root/rtl/system/audio_delay_fx.v","$root/rtl/system/polyphony_test.v","$root/rtl/ui/waveform_buffer.v")
-    $sources+=@("$root/rtl/system/keyboard_led_strip.v","$root/rtl/system/lesson_guide.v")
+    $sources+=@("$root/rtl/system/keyboard_led_strip.v","$root/rtl/system/lesson_guide.v","$root/rtl/input/ble_uart_rx.v","$root/sim/audio_core_tb/tb_ble_song_uart.v")
+    $sources+=@("$root/rtl/ui/audio_visualizer.v","$root/sim/audio_core_tb/tb_audio_visualizer.v")
+    $sources+=@("$root/rtl/input/instrument_link.v","$root/rtl/input/performance_event_merge.v","$root/sim/audio_core_tb/tb_extensions.v")
+    $tests+=@('tb_ble_song_uart','tb_audio_visualizer','tb_extensions')
     & "$bin/xvlog.bat" --sv -i "$root/rtl/common" -i "$root/rtl/input" @sources
     if($LASTEXITCODE -ne 0){throw 'compile failed'}
     foreach($test in $tests){

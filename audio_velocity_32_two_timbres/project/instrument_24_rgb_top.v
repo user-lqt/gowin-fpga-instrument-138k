@@ -41,7 +41,7 @@ module instrument_24_rgb_top #(
         .o_clk_sys(), .o_pll_locked(pixel_pll_locked)
     );
     // Audio must not be held in reset by an optional RGB panel clock.  A panel
-    // PLL or LCD cable can fail independently while the onboard DAC remains
+    // PLL or LCD cable can fail independently while the external DAC remains
     // usable; keep the two clock domains' reset release independent.
     wire audio_reset_ready = board_rst_n && audio_pll_locked;
     wire pixel_reset_ready = board_rst_n && pixel_pll_locked;
@@ -49,7 +49,7 @@ module instrument_24_rgb_top #(
     reset_sync u_pixel_reset (.clk(pixel_clk), .arst_n(pixel_reset_ready), .rst_n(pixel_rst_n));
 
     wire sample_tick, bck, bck_en, frame_start;
-    sample_scheduler #(.CLK_DIV_BCK(4), .CLK_DIV_SAMPLE(256)) u_scheduler (
+    sample_scheduler #(.CLK_DIV_BCK(2), .CLK_DIV_SAMPLE(256)) u_scheduler (
         .clk_audio(clk_audio), .rst_n(rst_n), .sample_tick(sample_tick), .bck(bck), .bck_en(bck_en)
     );
     wire engine_ready, event_overflow, param_overflow, audio_locked, i2s_active, system_ready;
@@ -69,10 +69,15 @@ module instrument_24_rgb_top #(
     wire [1:0] ble_event_type;
     wire [6:0] ble_note_id;
     wire [7:0] ble_velocity;
-    assign ble_uart_tx = 1'b1;
+    wire link_command_valid;
+    wire [7:0] link_command,link_a,link_b;
+    wire ble_song_valid;
+    wire [1:0] ble_song_id;
     ble_uart_rx u_ble_uart (.clk(clk_audio),.rst_n(rst_n && system_ready),.uart_rx(ble_uart_rx),
         .event_valid(ble_event_valid),.event_type(ble_event_type),.note_id(ble_note_id),
-        .velocity(ble_velocity),.frame_error(ble_frame_error));
+        .velocity(ble_velocity),.frame_error(ble_frame_error),
+        .song_valid(ble_song_valid),.song_id(ble_song_id),
+        .command_valid(link_command_valid),.command(link_command),.argument_a(link_a),.argument_b(link_b));
     wire [23:0] key_state;
     keyboard_24_input #(.ROW_CYCLES(ROW_CYCLES), .DEBOUNCE_FRAMES(DEBOUNCE_FRAMES),
         // 5004 includes saturation beyond 5003 scan frames (~1 second).
@@ -128,7 +133,25 @@ module instrument_24_rgb_top #(
     wire [7:0] test_velocity;
     wire glide_enabled,song_select,lesson_toggle,lesson_running;
     wire [7:0] tempo;
-    wire [4:0] lesson_position;
+    wire [9:0] lesson_position,lesson_total;
+    wire [1:0] lesson_song;
+    wire lesson_complete,lesson_unavailable;
+    wire [1:0] local_song;
+    wire [3:0] inspect_band;
+    wire [7:0] user_score_length,user_score_key,user_score_duration,remote_tempo;
+    wire [6:0] score_address;
+    wire user_score_ready,rhythm_enabled,remote_tempo_valid,count_in,beat_flash;
+    wire [2:0] timing_grade;
+    wire [9:0] correct_count,miss_count;
+    reg [7:0] lesson_tempo,previous_tempo;
+    always @(posedge clk_audio or negedge rst_n) begin
+        if(!rst_n) begin lesson_tempo<=120;previous_tempo<=120;end
+        else begin
+            previous_tempo<=tempo;
+            if(remote_tempo_valid) lesson_tempo<=remote_tempo;
+            else if(tempo!=previous_tempo) lesson_tempo<=tempo;
+        end
+    end
     wire [1:0] lesson_beat;
     wire [23:0] guide_keys;
     wire [6:0] glide_value,effect_value;
@@ -140,16 +163,22 @@ module instrument_24_rgb_top #(
         .input_ready(encoder_b_ready),.menu(encoder_b_menu),
         .glide_enabled(glide_enabled),.tempo(tempo),.song_select(song_select),.lesson_toggle(lesson_toggle),
         .test_toggle(test_toggle),
+        .local_song(local_song),.inspect_band(inspect_band),
         .glide_value(glide_value),.effect_value(effect_value),
         .param_valid(encoder_b_param_valid),.param_id(encoder_b_param_id),
         .param_value(encoder_b_param_value)
     );
     lesson_guide u_lesson(.clk(clk_audio),.rst_n(rst_n && system_ready),
-        .song_mode(encoder_b_menu==3'd2),.toggle(lesson_toggle),.song(song_select),.keys(key_state),
-        .running(lesson_running),.position(lesson_position),.beat(lesson_beat),.guide_keys(guide_keys));
+        .sample_tick(sample_tick),.rhythm_enabled(rhythm_enabled),.local_start(lesson_toggle),.local_song(local_song),
+        .tempo(lesson_tempo),.user_length(user_score_length),.user_key(user_score_key),.user_duration(user_score_duration),
+        .user_ready(user_score_ready),.score_address(score_address),.count_in(count_in),.beat_flash(beat_flash),
+        .timing_grade(timing_grade),.correct_count(correct_count),.miss_count(miss_count),
+        .song_mode(encoder_b_menu==3'd2),.select_valid(ble_song_valid),.select_song(ble_song_id),.keys(key_state),
+        .running(lesson_running),.complete(lesson_complete),.unavailable(lesson_unavailable),
+        .song(lesson_song),.total(lesson_total),.position(lesson_position),.beat(lesson_beat),.guide_keys(guide_keys));
     keyboard_led_strip u_led_strip (
         .clk(clk_audio), .rst_n(rst_n && system_ready),
-        .lesson_running(lesson_running), .guide_keys(guide_keys),
+        .lesson_running(encoder_b_menu==3'd2), .guide_keys(guide_keys),.beat_flash(beat_flash),
         .led_din(led_strip_din), .remaining()
     );
     wire param_valid,control_overflow;
@@ -181,13 +210,29 @@ module instrument_24_rgb_top #(
     wire signed [23:0] audio_left, audio_right;
     wire [5:0] active_voice_count;
     wire audio_core_valid, overload_flag;
-    wire merged_event_valid = ble_event_valid ? 1'b1 : test_event_valid;
-    wire [1:0] merged_event_type = ble_event_valid ? ble_event_type : test_event_type;
-    wire [6:0] merged_note = ble_event_valid ? ble_note_id : test_note;
-    wire [7:0] merged_velocity = ble_event_valid ? ble_velocity : test_velocity;
+    wire merged_event_valid,merge_overflow;
+    wire [1:0] merged_event_type,mapped_type;
+    wire [6:0] merged_note,mapped_note;
+    wire [7:0] merged_velocity,mapped_velocity;
+    wire mapped_valid,recording,dumping,record_overflow,reply_overflow;
+    wire [9:0] record_count;
+    instrument_link u_link(.clk(clk_audio),.rst_n(rst_n && system_ready),.sample_tick(sample_tick),
+        .command_valid(link_command_valid),.command(link_command),.a(link_a),.b(link_b),.keys(key_state),
+        .keyboard_valid(event_valid),.keyboard_type(event_type),.keyboard_note(note_id),.keyboard_velocity(velocity),
+        .mapped_valid(mapped_valid),.mapped_type(mapped_type),.mapped_note(mapped_note),.mapped_velocity(mapped_velocity),
+        .record_valid(merged_event_valid && !test_active),.record_type(merged_event_type),
+        .record_note(merged_note),.record_velocity(merged_velocity),.lesson_running(lesson_running),.song_mode(encoder_b_menu==2),
+        .score_address(score_address),.score_key(user_score_key),.score_duration(user_score_duration),
+        .score_length(user_score_length),.score_ready(user_score_ready),.rhythm_enabled(rhythm_enabled),
+        .remote_tempo(remote_tempo),.tempo_valid(remote_tempo_valid),.recording(recording),.record_count(record_count),
+        .record_overflow(record_overflow),.dumping(dumping),.reply_overflow(reply_overflow),.tx(ble_uart_tx));
+    performance_event_merge u_event_merge(.clk(clk_audio),.rst_n(rst_n && system_ready),
+        .a_valid(test_event_valid),.a_type(test_event_type),.a_note(test_note),.a_velocity(test_velocity),
+        .b_valid(ble_event_valid),.b_type(ble_event_type),.b_note(ble_note_id),.b_velocity(ble_velocity),
+        .valid(merged_event_valid),.kind(merged_event_type),.note(merged_note),.velocity(merged_velocity),.overflow(merge_overflow));
     polyphony_test u_test(.clk(clk_audio),.rst_n(rst_n && system_ready),
         .sample_tick(sample_tick),.toggle(test_toggle),.keys(key_state),
-        .keyboard_valid(event_valid),.keyboard_type(event_type),.keyboard_note(note_id),.keyboard_velocity(velocity),
+        .keyboard_valid(mapped_valid),.keyboard_type(mapped_type),.keyboard_note(mapped_note),.keyboard_velocity(mapped_velocity),
         .active(test_active),.event_valid(test_event_valid),.event_type(test_event_type),.note_id(test_note),.velocity(test_velocity));
     audio_core #(.ENABLE_EXPRESSION(ENABLE_EXPRESSION),.ENABLE_GUITAR(0)) u_audio_core (
         .clk(clk_audio), .rst_n(rst_n), .sample_tick(sample_tick),
@@ -205,9 +250,9 @@ module instrument_24_rgb_top #(
     audio_delay_fx u_fx(.clk(clk_audio),.rst_n(rst_n),.valid(audio_core_valid),
         .param_valid(param_valid),.param_id(param_id),.param_value(param_value),
         .audio_in(audio_left),.audio_out(effected_audio));
-    i2s_tx_official u_i2s_tx (
+    i2s_tx_pcm5102a u_i2s_tx (
         .clk_audio(clk_audio), .rst_n(rst_n), .bck_in(bck), .bck_en(bck_en),
-        .sample_l(effected_audio[23:8]), .sample_r(effected_audio[23:8]), .frame_start(frame_start),
+        .sample_l(effected_audio), .sample_r(effected_audio), .frame_start(frame_start),
         .o_bck(o_hp_bck), .o_ws(o_hp_ws), .o_din(o_hp_din)
     );
     wire lcd_frame_start;
@@ -217,14 +262,16 @@ module instrument_24_rgb_top #(
     always @(posedge clk_audio or negedge rst_n) begin
         if(!rst_n) begin last_velocity<=0;last_note<=0;last_key<=0;end
         else if(event_valid && event_type==`EVENT_NOTE_ON) begin
-            last_velocity<=velocity;last_note<=note_id;last_key<=note_id-60;
+            last_velocity<=velocity;last_key<=note_id-60;
         end
+        else if(mapped_valid && mapped_type==`EVENT_NOTE_ON) last_note<=mapped_note;
     end
-    wire [7:0] display_errors=system_error | {4'd0,overload_flag,control_overflow,param_overflow,event_overflow};
-    wire [149:0] display_status;
-    lcd_status_bridge #(.WIDTH(150)) u_display_bridge (
+    wire [7:0] display_errors=system_error | {reply_overflow,record_overflow,merge_overflow,1'b0,overload_flag,control_overflow,param_overflow,event_overflow};
+    wire [168:0] display_status;
+    lcd_status_bridge #(.WIDTH(169)) u_display_bridge (
         .source_clk(clk_audio), .source_rst_n(rst_n),
-        .source_status({encoder_b_menu[2],test_active,guide_keys,lesson_position,lesson_beat,lesson_running,song_select,tempo,
+        .source_status({lesson_song,lesson_complete,lesson_unavailable,lesson_total,lesson_position[9:5],
+            encoder_b_menu[2],test_active,guide_keys,lesson_position[4:0],lesson_beat,lesson_running,1'b0,lesson_tempo,
             last_key,last_note,last_velocity,display_errors,active_voice_count,
             glide_enabled,encoder_b_menu[1:0],glide_value,effect_value,key_state,volume_value,instrument_value}),
         .pixel_clk(pixel_clk), .pixel_rst_n(pixel_rst_n), .frame_start(lcd_frame_start),
@@ -240,7 +287,27 @@ module instrument_24_rgb_top #(
         .valid(waveform_valid[1]),.sample(effected_audio[23:8]),
         .pixel_clk(pixel_clk),.pixel_rst_n(pixel_rst_n),.frame_start(lcd_frame_start),
         .read_address(waveform_address),.minimum(waveform_minimum),.maximum(waveform_maximum),.ready(waveform_ready));
+    wire [127:0] spectrum_levels,display_spectrum;
+    wire [3:0] visual_gain_shift;
+    wire [48:0] display_features;
+    wire [48:0] source_features={visual_gain_shift,inspect_band,correct_count,miss_count,
+        record_count,local_song,user_score_ready,dumping,recording,rhythm_enabled,count_in,beat_flash,timing_grade};
+    lcd_status_bridge #(.WIDTH(49)) u_feature_bridge(
+        .source_clk(clk_audio),.source_rst_n(rst_n),.source_status(source_features),
+        .pixel_clk(pixel_clk),.pixel_rst_n(pixel_rst_n),.frame_start(lcd_frame_start),.pixel_status(display_features));
+    wire [13:0] xy_address;
+    wire xy_hit,xy_ready;
+    audio_visualizer u_visualizer(.audio_clk(clk_audio),.audio_rst_n(rst_n),
+        .valid(waveform_valid[1]),.sample(effected_audio[23:8]),.spectrum(spectrum_levels),.gain_shift(visual_gain_shift),
+        .pixel_clk(pixel_clk),.pixel_rst_n(pixel_rst_n),.frame_start(lcd_frame_start),
+        .xy_address(xy_address),.xy_hit(xy_hit),.xy_ready(xy_ready));
+    lcd_status_bridge #(.WIDTH(128)) u_spectrum_bridge(
+        .source_clk(clk_audio),.source_rst_n(rst_n),.source_status(spectrum_levels),
+        .pixel_clk(pixel_clk),.pixel_rst_n(pixel_rst_n),.frame_start(lcd_frame_start),
+        .pixel_status(display_spectrum));
     instrument_dashboard u_lcd (
+        .features(display_features),
+        .spectrum(display_spectrum),.xy_address(xy_address),.xy_hit(xy_hit),.xy_ready(xy_ready),
         .pixel_clk(pixel_clk), .rst_n(pixel_rst_n), .status(display_status),
         .wave_address(waveform_address),.wave_min(waveform_minimum),.wave_max(waveform_maximum),.wave_ready(waveform_ready),
         .frame_start(lcd_frame_start), .sc_clk(lcd_sc_clk), .sc_hs(lcd_sc_hs),

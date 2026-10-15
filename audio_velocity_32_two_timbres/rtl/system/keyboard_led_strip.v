@@ -6,11 +6,13 @@ module keyboard_led_strip #(
 ) (
     input wire clk, rst_n,
     input wire lesson_running,
+    input wire beat_flash,
     input wire [23:0] guide_keys,
     output reg led_din,
     output wire [23:0] remaining
 );
     reg [23:0] frame_mask;
+    reg frame_flash;
     reg [23:0] pixel;
     reg [15:0] lamp;
     reg [4:0] bit_index;
@@ -29,10 +31,10 @@ module keyboard_led_strip #(
             key_index = 0;
             if (number >= 2 && number <= 24 && !number[0]) begin
                 key_index = number[5:1] - 5'd1;
-                if (mask[key_index]) color = 24'h200000;
+                if (mask[key_index]) color = frame_flash ? 24'h602000 : 24'h200000;
             end else if (number >= 27 && number <= 49 && number[0]) begin
                 key_index = number[5:1] - 5'd1;
-                if (mask[key_index]) color = 24'h200000;
+                if (mask[key_index]) color = frame_flash ? 24'h602000 : 24'h200000;
             end
         end
     endfunction
@@ -41,6 +43,7 @@ module keyboard_led_strip #(
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             frame_mask <= 0;
+            frame_flash <= 0;
             pixel <= 0;
             lamp <= 1;
             bit_index <= 23;
@@ -54,6 +57,7 @@ module keyboard_led_strip #(
                 if (reset_count == 1499) begin
                     reset_count <= 0;
                     frame_mask <= lesson_running ? guide_keys : 24'd0;
+                    frame_flash <= beat_flash;
                     pixel <= 24'd0; // lamp 1 is outside the 24-key mapping
                     lamp <= 1;
                     bit_index <= 23;
@@ -71,11 +75,8 @@ module keyboard_led_strip #(
                             reset_count <= 0;
                         end else begin
                             lamp <= lamp+1'b1;
-                            // frame_mask is latched at the start of this frame.
-                            // Use the live target for the first transition so
-                            // entering SONG is visible in the very first frame.
-                            pixel <= lamp==16'd1 ?
-                                color(16'd2, lesson_running ? guide_keys : 24'd0) : next_color;
+                            // One consistent mask for the entire frame.
+                            pixel <= next_color;
                         end
                     end else bit_index <= bit_index-1'b1;
                 end else phase <= phase+1'b1;
