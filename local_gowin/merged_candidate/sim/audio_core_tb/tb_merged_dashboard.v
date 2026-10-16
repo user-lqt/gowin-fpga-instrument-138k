@@ -54,7 +54,7 @@ module tb_merged_dashboard;
         end
         // Check the production serial converter, not just the reference function.
         page_status=0;
-        page_status[31:16]=16'hfe00;page_status[78:73]=32;
+        page_status[31:16]=16'd127;page_status[78:73]=32;
         page_status[106:102]=23;page_status[101:95]=127;
         page_status[94:87]=127;page_status[62:56]=127;
         page_status[168:167]=3;page_status[116]=1;
@@ -85,6 +85,15 @@ module tb_merged_dashboard;
             endcase
             if(actual!==dut.decimal3(expected))
                 $fatal(1,"serial BCD field %0d actual %h expected %0d",field,actual,expected);
+        end
+        for(n=0;n<3;n=n+1) begin
+            case(n) 0:expected=0;1:expected=64;2:expected=127;endcase
+            page_status[31:16]=expected;
+            repeat(310) @(negedge clk);
+            if(dut.b_volume!==dut.decimal3(expected)) $fatal(1,"UI volume %0d",expected);
+            for(x=31;x<=33;x=x+1)
+                if(dut.character(0,x,dut.text_line(0))!==dut.digit(dut.decimal3(expected),33-x))
+                    $fatal(1,"VOL glyph %0d",x);
         end
         release dut.frame;release dut.feature_frame;release dut.levels;
         if(dut.frequency_bcd(15)!==20'h18750) $fatal(1,"frequency ROM");

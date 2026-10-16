@@ -26,7 +26,7 @@ module lesson_guide(
  input [1:0] id;
  begin case(id)
   1:score_length=54;
-  2:score_length=60;
+  2:score_length=42;
   default:score_length=0;
  endcase end
  endfunction
@@ -45,25 +45,20 @@ module lesson_guide(
   31,35,38,40,43,50,51:key_for=2;
   default:key_for=0;
  endcase
- else if(id==2) key_for=fingerprint_key(pos);
+ else if(id==2) key_for=twinkle_key(pos);
  end
  endfunction
-// Fingerprint chorus only: pickup + one chorus + first ending.
-// Original score indices 116..175; transposed B->A, no K6.
- function [4:0] fingerprint_key;
+// Twinkle Twinkle Little Star, G major, 42 notes; avoids broken K6.
+ function [4:0] twinkle_key;
  input [9:0] pos;
  begin case(pos)
-  10'd12,10'd17,10'd27,10'd44:fingerprint_key=5'd4;
-  10'd4,10'd8,10'd13,10'd21,10'd31,10'd35,10'd40,10'd48,10'd52,10'd56:fingerprint_key=5'd6;
-  10'd36:fingerprint_key=5'd8;
-  10'd3,10'd7,10'd11,10'd16,10'd20,10'd25,10'd30,10'd34,10'd43,10'd47,10'd55,10'd57,10'd58:fingerprint_key=5'd9;
-  10'd1,10'd2,10'd6,10'd10,10'd14,10'd15,10'd18,10'd19,10'd23,10'd24,10'd26,10'd28,10'd29,10'd33,10'd41,10'd42,10'd45,10'd46,10'd49,10'd50,10'd51:fingerprint_key=5'd11;
-  10'd5,10'd9,10'd22,10'd32,10'd54:fingerprint_key=5'd13;
-  10'd53:fingerprint_key=5'd14;
-  10'd0,10'd59:fingerprint_key=5'd16;
-  10'd37,10'd39:fingerprint_key=5'd21;
-  10'd38:fingerprint_key=5'd23;
-  default:fingerprint_key=0;
+  10'd0,10'd1,10'd13,10'd28,10'd29,10'd41:twinkle_key=5'd7;
+  10'd11,10'd12,10'd20,10'd27,10'd39,10'd40:twinkle_key=5'd9;
+  10'd9,10'd10,10'd18,10'd19,10'd25,10'd26,10'd37,10'd38:twinkle_key=5'd11;
+  10'd7,10'd8,10'd16,10'd17,10'd23,10'd24,10'd35,10'd36:twinkle_key=5'd12;
+  10'd2,10'd3,10'd6,10'd14,10'd15,10'd21,10'd22,10'd30,10'd31,10'd34:twinkle_key=5'd14;
+  10'd4,10'd5,10'd32,10'd33:twinkle_key=5'd16;
+  default:twinkle_key=5'd7;
  endcase end
  endfunction
  assign total=song==3 ? (user_ready ? {2'd0,user_length} : 10'd0) : score_length(song);
@@ -82,10 +77,9 @@ module lesson_guide(
  10,21,35,43,53:builtin_duration=4;
  endcase
  else if(id==2) begin
- builtin_duration=1;
+ builtin_duration=2;
  case(pos)
- 3,7,11,16,20,25,30,34,39,43,47,51,58:builtin_duration=2;
- 59:builtin_duration=8;
+ 6,13,20,27,34,41:builtin_duration=4;
  endcase end
  end endfunction
  wire [7:0] duration=song==3 ? user_duration : builtin_duration(song,position);
@@ -123,7 +117,7 @@ module lesson_guide(
      end else beat_phase<=next_beat_phase[21:0];
     end
    end
-   if(!song_mode || (!previous_mode && !starting)) begin
+   if(!song_mode || (select_valid && select_song==0) || (!previous_mode && !starting)) begin
     running<=0;complete<=0;unavailable<=0;song<=0;position<=0;beat<=0;
     count_in<=0;elapsed<=0;beat_phase<=0;timing_grade<=0;beat_flash<=0;flash_samples<=0;slot_units<=0;
    end else if(starting && requested>=1 && requested<=3) begin

@@ -19,9 +19,9 @@ module tb_dashboard_preview;
       (xy[6:0]-64)*(xy[6:0]-64)+(xy[13:7]-64)*(xy[13:7]-64)<1950);
  end
  initial begin
- status[31:16]=32768;status[78:73]=4;status[94:87]=127;status[101:95]=69;
+ status[31:16]=64;status[78:73]=4;status[94:87]=127;status[101:95]=69;
  status[106:102]=9;status[71:70]=2;status[69:63]=15;status[72]=1;
- status[168:167]=2;status[164:155]=60;status[123:119]=12;status[116]=1;
+ status[168:167]=2;status[164:155]=42;status[123:119]=12;status[116]=1;
  status[147:124]=24'd1<<9;status[55:32]=24'd1<<9;
  status[209:169]={1'b1,8'h10,12'h127,20'h00100};
  if(ANALYSIS) begin status[149]=1;status[71:70]=1;end

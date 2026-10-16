@@ -25,7 +25,8 @@ module tb_extensions;
  .record_valid(ev),.record_type(et),.record_note(en),.record_velocity(evelocity),
  .lesson_running(running),.song_mode(mode),.score_address(sa),.score_key(sk),.score_duration(sd),.score_length(sl),.score_ready(sr),
  .rhythm_enabled(rhythm),.remote_tempo(tempo),.tempo_valid(tv),.recording(rec),.record_count(rc),.record_overflow(ro),.dumping(dumping),.reply_overflow(qo),.tx(tx));
- lesson_guide lesson(.clk(clk),.rst_n(rst),.song_mode(mode),.select_valid(sv),.select_song(selection),
+ lesson_guide lesson(.clk(clk),.rst_n(rst),.song_mode(mode),
+ .select_valid(sv || (cv && cmd==8'hB3 && a==0 && b==0)),.select_song(sv ? selection : 2'd0),
  .sample_tick(tick),.rhythm_enabled(rhythm),.local_start(local_start),.local_song(2'd3),.tempo(8'd120),
  .user_ready(sr),.user_length(sl),.user_key(sk),.user_duration(sd),.score_address(sa),
  .count_in(count_in),.beat_flash(flash),.timing_grade(grade),.correct_count(good),.miss_count(miss),
@@ -124,6 +125,15 @@ module tb_extensions;
  command('hB1,1,0,0);repeat(3) @(negedge clk);
  if(!rhythm || !count_in || pos!=0) $fatal(1,"switch back to rhythm");
  command('hB2,80,0,0);if(tempo!=80) $fatal(1,"live tempo");
+ command('hB3,1,0,2);if(!running) $fatal(1,"invalid stop affected guide");
+ command('hB3,0,0,0);
+ if(running || guides!=0) $fatal(1,"upload stop did not clear guide");
+ command('hC0,2,0,0);command('hC1,8,2,0);command('hC1,10,2,0);command('hC2,0,0,0);
+ command('hB1,0,0,0);
+ @(negedge clk);sv=1;selection=3;@(negedge clk);sv=0;repeat(4) @(negedge clk);
+ if(!running || total!=2 || guides!=(24'd1<<7)) $fatal(1,"new downloaded score first LED");
+ keys=24'd1<<7;repeat(4) @(negedge clk);keys=0;repeat(4) @(negedge clk);
+ if(pos!=1 || guides!=(24'd1<<9)) $fatal(1,"new downloaded score next LED");
  if(qo) $fatal(1,"reply overflow");
  // Capacity is bounded; reject dump while recording, then stop on overflow.
  command('hE0,0,0,0);command('hE2,0,0,3);

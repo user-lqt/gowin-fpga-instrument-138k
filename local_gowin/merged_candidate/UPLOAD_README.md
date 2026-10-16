@@ -1,5 +1,21 @@
 # Current Integrated Instrument
 
+## 最新入口（2026-10-16 用户验证可用）
+
+- 工程：[`project/instrument_fixed_top/instrument_fixed_top.gprj`](project/instrument_fixed_top/instrument_fixed_top.gprj)。
+- 来源为用户指定并确认可用的 `E:/Gowin/Prj_music/instrument_integrated_fixed_20261016`，完整下载后保持目录结构。
+- 必须保留 `project/instrument_fixed_top/impl/instrument_fixed_top_process_config.json`，其中 `TopModule=instrument_24_rgb_top`。这是工程配置，不能当作构建缓存忽略。
+- 最新烧录文件：`prebuilt/instrument_fixed_top.fs`，来自用户 2026-10-16 20:01 完成的布局布线，校验见 `prebuilt/SHA256SUMS_fixed_top.txt`。
+- 手机网页：`tools/phone/index.html`，版本 20261016a。
+- 修复 VOL 显示、下载曲谱自动指引，第二首替换为避开 K6 的《小星星》，最大音量幅度提高约 50%，FX 不变。
+- 本次上传没有重新综合或布局布线。下面的旧工程入口、旧 prebuilt 与旧构建说明仅供历史参考，不是本次版本。
+
+以下为历史交接记录：
+
+2026-10-16 B fixes: read [FIXES_20261016.md](FIXES_20261016.md) first.
+The supplied `prebuilt/*.fs` is the unchanged A baseline, NOT the fixed firmware.
+Rebuild the project yourself to use the fixes. No synthesis or place/route was run for this update.
+
 ## Open And Program
 
 - Gowin project: `project/instrument_velocity_32_two_timbres/instrument_velocity_32_two_timbres.gprj`

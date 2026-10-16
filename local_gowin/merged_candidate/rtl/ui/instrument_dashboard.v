@@ -83,7 +83,8 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  // combinational binary-to-BCD networks without touching pixel coordinates.
  always @* begin
  case(decimal_cursor)
- 0:decimal_input={3'd0,volume[15:9]};
+ // volume is the UI's 0..127 value, not a 16-bit audio gain.
+ 0:decimal_input=volume[9:0];
  1:decimal_input={4'd0,voices};
  2:decimal_input={5'd0,key}+10'd1;
  3:decimal_input={3'd0,note};
@@ -161,7 +162,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  else if(unavailable) line=" SONG: SCORE NOT LOADED                           ";
  else if(complete) line=" SONG: COMPLETE / SEND NEXT SELECTION             ";
  else if(running && song==1) line=" SONG: JASMINE / FOLLOW THE BLUE KEY              ";
- else if(running && song==2) line=" SONG: FINGERPRINT CHORUS / FOLLOW THE BLUE KEY   ";
+ else if(running && song==2) line=" SONG: TWINKLE STAR / FOLLOW THE BLUE KEY         ";
  end
  if(row==12) line=recording ? "                                  REC ON  000     " : "                                  REC OFF 000     ";
  if(row==18 && !running && !complete) line="                                  PICK 0 HOLD     ";

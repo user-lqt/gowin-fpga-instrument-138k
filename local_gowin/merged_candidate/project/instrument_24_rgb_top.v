@@ -176,7 +176,9 @@ module instrument_24_rgb_top #(
         .tempo(lesson_tempo),.user_length(user_score_length),.user_key(user_score_key),.user_duration(user_score_duration),
         .user_ready(user_score_ready),.score_address(score_address),.count_in(count_in),.beat_flash(beat_flash),
         .timing_grade(timing_grade),.correct_count(correct_count),.miss_count(miss_count),
-        .song_mode(encoder_b_menu==3'd2),.select_valid(ble_song_valid),.select_song(ble_song_id),.keys(key_state),
+        .song_mode(encoder_b_menu==3'd2),
+        .select_valid(ble_song_valid || (link_command_valid && link_command==8'hB3 && link_a==0 && link_b==0)),
+        .select_song(ble_song_valid ? ble_song_id : 2'd0),.keys(key_state),
         .running(lesson_running),.complete(lesson_complete),.unavailable(lesson_unavailable),
         .song(lesson_song),.total(lesson_total),.position(lesson_position),.beat(lesson_beat),.guide_keys(guide_keys));
     keyboard_led_strip u_led_strip (
@@ -253,10 +255,11 @@ module instrument_24_rgb_top #(
         .ENABLE_GUITAR(1),.RAM_BODY(1),.SHARE_VOICE_ARITHMETIC(1)) u_audio_core (
         .clk(clk_audio), .rst_n(rst_n), .sample_tick(sample_tick),
         .event_valid(merged_event_valid), .event_type(merged_event_type), .note_id(merged_note), .velocity(merged_velocity),
-        // Double the previous master gain; UI midpoint is now ~0x1020.
+        // Gain 1.5x the preceding /8 setting: /8 + /16, no multiplier.
         .param_valid(param_valid), .param_id(param_id),
         // UI and engine share instrument IDs: piano=0, guitar=1, bell=2.
-        .param_value(param_id == `PARAM_VOLUME ? {3'd0,param_value[15:3]} : param_value),
+        .param_value(param_id == `PARAM_VOLUME ?
+            ({3'd0,param_value[15:3]} + {4'd0,param_value[15:4]}) : param_value),
         .audio_core_valid(audio_core_valid), .audio_left(audio_left), .audio_right(audio_right),
         .active_voice_count(active_voice_count), .engine_ready(engine_ready),
         .overload_flag(overload_flag), .event_overflow(event_overflow), .param_overflow(param_overflow)

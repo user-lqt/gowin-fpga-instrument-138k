@@ -20,6 +20,7 @@ module tb_lesson_guide;
   @(negedge clk);select_valid=0;cycles;
  end endtask
  integer p,k,target;
+ reg [7:0] melody[0:41];
  reg [23:0] mask;
  initial begin
   cycles;rst_n=1;cycles;
@@ -39,11 +40,16 @@ module tb_lesson_guide;
    keys=0;cycles;
   end
   if(running || !complete || guides!=24'hFFFFFF) $fatal(1,"completion lights");
+  // Independent physical-key reference for G-major Twinkle Twinkle.
+  {melody[0],melody[1],melody[2],melody[3],melody[4],melody[5],melody[6]}={8'd8,8'd8,8'd15,8'd15,8'd17,8'd17,8'd15};
+  {melody[7],melody[8],melody[9],melody[10],melody[11],melody[12],melody[13]}={8'd13,8'd13,8'd12,8'd12,8'd10,8'd10,8'd8};
+  {melody[14],melody[15],melody[16],melody[17],melody[18],melody[19],melody[20]}={8'd15,8'd15,8'd13,8'd13,8'd12,8'd12,8'd10};
+  for(p=0;p<7;p=p+1) begin melody[21+p]=melody[14+p];melody[28+p]=melody[p];melody[35+p]=melody[7+p];end
   choose(2);
-  if(complete || !running || unavailable || song!=2 || total!=60 || guides!=(24'd1<<16)) $fatal(1,"Fingerprint chorus selection");
-  for(p=0;p<60;p=p+1) begin
+  if(complete || !running || unavailable || song!=2 || total!=42 || guides!=(24'd1<<7)) $fatal(1,"Twinkle selection");
+  for(p=0;p<42;p=p+1) begin
    mask=guides;
-   if(mask==0 || (mask & (mask-1))!=0 || mask[5]) $fatal(1,"Fingerprint bad target or K6");
+   if(mask!=(24'd1<<(melody[p]-1)) || mask[5]) $fatal(1,"Twinkle target %0d",p);
    keys=mask;cycles;
    if(position!=p+1) $fatal(1,"Fingerprint step %0d",p);
    cycles;if(position!=p+1) $fatal(1,"Fingerprint held key advanced");
@@ -52,13 +58,14 @@ module tb_lesson_guide;
   if(running || !complete || guides!=24'hFFFFFF) $fatal(1,"Fingerprint completion");
   choose(3);if(!unavailable || song!=3) $fatal(1,"slot3");
   choose(1);if(!running || position!=0) $fatal(1,"restart after completion");
-  choose(0);if(!running) $fatal(1,"invalid choice disturbed guide");
+  choose(0);if(running || guides!=0 || complete) $fatal(1,"stop guide");
+  choose(1);
   song_mode=0;#1;if(guides!=0) $fatal(1,"exit gating");cycles;
   song_mode=1;cycles;
   if(running || complete || song!=0 || guides!=0) $fatal(1,"re-entry must wait");
   choose(1);rst_n=0;cycles;rst_n=1;cycles;
   if(running || guides!=0) $fatal(1,"reset must wait");
-  $display("PASS: BLE selection, Jasmine 54 and Fingerprint chorus 60 steps, no K6, wrong/held keys, completion, switching, exit/reentry/reset, slot3 unavailable");
+  $display("PASS: BLE selection, Jasmine 54 and Twinkle 42 steps, no K6, wrong/held keys, completion, stop, switching, exit/reentry/reset, slot3 unavailable");
   $finish;
  end
  initial begin #100000;$fatal(1,"timeout");end

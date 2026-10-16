@@ -1,5 +1,9 @@
 # 本地完整工程状态
 
+最新发布入口为 `project/instrument_fixed_top/instrument_fixed_top.gprj`，顶层配置与用户 20:01 构建的 `prebuilt/instrument_fixed_top.fs` 一并发布。用户已确认可用。以下旧入口不再推荐。
+
+2026-10-16：在成员 A 的 `d7198b2` 基础上修复音量显示、下载曲谱指引、替换第二曲并提高音量，详见 [FIXES_20261016.md](FIXES_20261016.md)。旧构建报告和 prebuilt 均为历史结果，本次未综合或布局布线。
+
 ## 来源与入口
 
 - 屏幕、蓝牙、手机网页、PCM5102A：`integration/b-current-20261015`，提交 `75e652fa900900c3facd5a7f67c072cc5556ecec`。

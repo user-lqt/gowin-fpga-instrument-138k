@@ -52,9 +52,15 @@ async function settings(){const mode=Number($('rhythm').value),tempo=Number($('t
 }
 action('settings',settings);
 action('play',async()=>{await settings();await command(0xb0,Number($('song').value));log('曲目已开始');});
-action('upload',async()=>{const notes=P.score($('score').value);await command(0xc0,notes.length);
- try{for(const [k,d] of notes)await command(0xc1,k,d);await command(0xc2);log('第三曲槽下载完成');}
- catch(e){if(device?.gatt?.connected)try{await command(0xc3);}catch{}throw e;}});
+action('upload',async()=>{const notes=P.score($('score').value);
+ // Stop a running guide before replacing its score. C0 still guards RAM writes.
+ await command(0xb3);await command(0xc0,notes.length);
+ try{for(const [k,d] of notes)await command(0xc1,k,d);await command(0xc2);}
+ catch(e){if(device?.gatt?.connected)try{await command(0xc3);}catch{}throw e;}
+ $('song').value='3';await settings();
+ try{await command(0xb0,3);log('第三曲槽下载完成，已开始指引；节奏模式先等待四拍预备');}
+ catch(e){log('曲谱已保存；请切到SONG页，再点开始 / 重练。'+e.message);}
+});
 $('scorefile').onchange=async e=>{if(e.target.files[0])$('score').value=await e.target.files[0].text();};
 action('fetchscore',async()=>{const url=new URL($('scoreurl').value);if(url.protocol!=='https:')throw Error('曲谱地址须为HTTPS');
  const result=await fetch(url);if(!result.ok)throw Error('曲谱服务器返回 '+result.status);

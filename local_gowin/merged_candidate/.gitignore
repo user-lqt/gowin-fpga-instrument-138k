@@ -1,5 +1,11 @@
 # Gowin outputs and user-specific settings.
 project/**/impl/
+!project/instrument_velocity_32_two_timbres/impl/
+project/instrument_velocity_32_two_timbres/impl/*
+!project/instrument_velocity_32_two_timbres/impl/instrument_velocity_32_two_timbres_process_config.json
+!project/instrument_fixed_top/impl/
+project/instrument_fixed_top/impl/*
+!project/instrument_fixed_top/impl/instrument_fixed_top_process_config.json
 *.gprj.user
 
 # Compiled simulation libraries and generated intermediates.

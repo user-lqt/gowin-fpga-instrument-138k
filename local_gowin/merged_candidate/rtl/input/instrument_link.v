@@ -94,6 +94,7 @@ module instrument_link #(parameter integer CLK_HZ=12288000,BAUD=115200,DUMP_GAP_
  8'hB0:if(!song_mode) result=3;else if(a==0 || a>3 || b!=0) result=2;else if(a==3 && !score_ready) result=4;
  8'hB1:if(a<=1 && b==0) begin rhythm_enabled<=a[0];detail={15'd0,a[0]};end else result=2;
  8'hB2:if(a>=40 && a<=200 && b==0) begin remote_tempo<=a;tempo_valid<=1;detail={8'd0,a};end else result=2;
+ 8'hB3:if(a!=0 || b!=0) result=2; // Top stops current guide; notes are unaffected.
  8'hC0:begin
  if(lesson_running || uploading) result=3;
  else if(a==0 || a>128 || b!=0) result=2;
