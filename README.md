@@ -1,5 +1,9 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
+## 当前完整整合工程
+
+本分支当前完整工程入口为 [`local_gowin/merged_candidate/UPLOAD_README.md`](local_gowin/merged_candidate/UPLOAD_README.md)，包含三音色、32 复音、输入、屏幕、蓝牙、约束、仿真及最新烧录文件。请打开该目录内的 Gowin 工程，不要将仓库根目录的成员 A 独立音频代码误认为完整整合版本。构建报告及验收边界见该入口。
+
 > 全国大学生嵌入式芯片与系统设计竞赛 2026 · FPGA 创新设计赛道 · **高云半导体 选题二**
 > 平台：**Sipeed Tang Mega 138K Dock** · 芯片 **GW5AST-LV138PG484AC1/I0**
 

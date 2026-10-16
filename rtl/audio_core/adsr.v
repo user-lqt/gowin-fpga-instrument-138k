@@ -4,7 +4,8 @@ module adsr #(
     parameter [15:0]  SUSTAIN_LEVEL   = 16'd45875,
     parameter integer RELEASE_SAMPLES = 4800,
     parameter integer ENABLE_TIMBRES = 0,
-    parameter integer EXTERNAL_RELEASE = 0
+    parameter integer EXTERNAL_RELEASE = 0,
+    parameter integer BELL_RING_SAMPLES = 288000
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -12,6 +13,7 @@ module adsr #(
     input  wire        note_on,
     input  wire        note_off,
     input  wire [1:0]  instrument,
+    input  wire [7:0]  velocity,
     input  wire [15:0] shared_release_quotient,
     input  wire [15:0] shared_release_modulus,
     output reg  [15:0] level,
@@ -33,18 +35,25 @@ module adsr #(
         $clog2(65535 / RELEASE_SAMPLES + 1) : 1;
     localparam [RELEASE_BITS:0] RELEASE_LIMIT = RELEASE_SAMPLES;
     wire [15:0] attack_length = !ENABLE_TIMBRES ? ATTACK_SAMPLES :
-        instrument == 0 ? 120 : 48;
+        instrument == 0 ? (velocity<=32 ? 120 : velocity<=90 ? 96 : 60) :
+        instrument == 2 ? (velocity<=32 ? 48 : velocity<=90 ? 32 : 24) : 48;
     wire [15:0] decay_length = !ENABLE_TIMBRES ? DECAY_SAMPLES :
         instrument == 0 ? 65535 : instrument == 2 ? 1 : 60000;
     wire [15:0] sustain = !ENABLE_TIMBRES ? SUSTAIN_LEVEL :
         instrument == 2 ? 65535 : 0;
     wire [16:0] attack_step_value = !ENABLE_TIMBRES ? ATTACK_STEP :
-        instrument == 0 ? 546 : 1366;
+        instrument == 0 ? (velocity<=32 ? 546 : velocity<=90 ? 683 : 1093) :
+        instrument == 2 ? (velocity<=32 ? 1366 : velocity<=90 ? 2048 : 2731) : 1366;
     wire [16:0] decay_step_value = !ENABLE_TIMBRES ? DECAY_STEP :
         instrument == 2 ? 0 :
         (instrument == 1 || instrument == 3) ?
         (({1'b0, level} + 17'd32767) >> 15) : 1;
-    reg [15:0] elapsed;
+    localparam integer ELAPSED_BITS=BELL_RING_SAMPLES>65536 ?
+        $clog2(BELL_RING_SAMPLES) : 16;
+    localparam integer BELL_FADE_SAMPLES=BELL_RING_SAMPLES<1 ? 1 :
+        BELL_RING_SAMPLES<32768 ? BELL_RING_SAMPLES : 32768;
+    localparam integer BELL_FADE_STEP=(65535+BELL_FADE_SAMPLES-1)/BELL_FADE_SAMPLES;
+    reg [ELAPSED_BITS-1:0] elapsed;
     // The piano remainder is below 32768; release errors are below the divisor.
     reg [14:0] piano_decay_error;
     wire [16:0] piano_decay_sum = {2'b0, piano_decay_error} + {1'b0, level};
@@ -88,7 +97,7 @@ module adsr #(
             piano_decay_error <= 0;
             elapsed <= 16'd0;
             stage <= ATTACK;
-        end else if (note_off && active) begin
+        end else if (note_off && active && !(ENABLE_TIMBRES && instrument==2)) begin
             elapsed <= 16'd0;
             release_step <= release_quotient;
             release_remainder <= release_modulus;
@@ -108,7 +117,17 @@ module adsr #(
                     end
                 end
                 DECAY: begin
-                    if (ENABLE_TIMBRES && instrument == 0) begin
+                    if (ENABLE_TIMBRES && instrument == 2) begin
+                        // NOTE_OFF is not a damper for a struck bell. Its
+                        // modes decay independently; fade and reclaim finitely.
+                        if(elapsed==BELL_RING_SAMPLES-1) begin
+                            level<=0;elapsed<=0;stage<=IDLE;
+                        end else begin
+                            elapsed<=elapsed+1'b1;
+                            if(elapsed>=BELL_RING_SAMPLES-BELL_FADE_SAMPLES)
+                                level<=level>BELL_FADE_STEP ? level-BELL_FADE_STEP : 0;
+                        end
+                    end else if (ENABLE_TIMBRES && instrument == 0) begin
                         // Measured upright-piano envelope: fast body decay,
                         // then a quieter, slower soundboard/string tail.
                         piano_decay_error <= level > 16'd12000 ?

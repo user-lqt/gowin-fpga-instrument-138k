@@ -3,7 +3,11 @@
 module tb_core_hardware #(
     parameter integer ENABLE_EXPRESSION=0,
     parameter integer TEST_VIBRATO=0,
-    parameter integer TRACE_EXPRESSION=0
+    parameter integer TRACE_EXPRESSION=0,
+    parameter integer RAM_BODY=1,
+    parameter integer TRACE_PROGRESS=0,
+    parameter integer FIRST_INSTRUMENT=0,
+    parameter integer LAST_INSTRUMENT=2
 );
     reg clk=0;
     always #5 clk=~clk;
@@ -19,7 +23,9 @@ module tb_core_hardware #(
     reg signed [23:0] held;
     integer divider=0,cycle=0,last_tick=0,last_valid=0;
     integer t,n,i,frames=0,sounded=0;
-    audio_core #(.RELEASE_SAMPLES(64),.ENABLE_EXPRESSION(ENABLE_EXPRESSION)) dut(
+    localparam integer BELL_TEST_SAMPLES=ENABLE_EXPRESSION ? 2048 : 512;
+    audio_core #(.RELEASE_SAMPLES(64),.BELL_RING_SAMPLES(BELL_TEST_SAMPLES),
+        .ENABLE_EXPRESSION(ENABLE_EXPRESSION),.RAM_BODY(RAM_BODY)) dut(
         .clk(clk),.rst_n(rst_n),.sample_tick(tick),
         .event_valid(event_valid),.event_type(event_type),.note_id(note_id),.velocity(velocity),
         .param_valid(param_valid),.param_id(param_id),.param_value(param_value),
@@ -34,6 +40,10 @@ module tb_core_hardware #(
             tick<=divider==255;
         end
         cycle=cycle+1;
+        if(TRACE_PROGRESS && (cycle<20 || cycle%1024==0)) begin
+            $display("HARDWARE progress cycle=%0d frames=%0d",cycle,frames);
+            $fflush();
+        end
         if(tick)last_tick=cycle;
         if(TRACE_EXPRESSION==2 && cycle==48282) $stop;
         if(TRACE_EXPRESSION==2 && cycle>=48282)
@@ -76,7 +86,7 @@ module tb_core_hardware #(
         end
     endtask
     initial begin
-        for(t=0;t<3;t=t+1)begin
+        for(t=FIRST_INSTRUMENT;t<=LAST_INSTRUMENT;t=t+1)begin
             @(negedge clk);rst_n=0;event_valid=0;param_valid=0;
             repeat(4)@(negedge clk);rst_n=1;
             $display("HARDWARE start t=%0d expression=%0d",t,ENABLE_EXPRESSION);
@@ -140,6 +150,11 @@ module tb_core_hardware #(
                 event_note(2,48+n);
             end
             wait_samples(128);
+            if(t==2) begin
+                if(active==0 || dut.a2.key_down!=0)
+                    $fatal(1,"released bells must ring without held keys");
+                wait_samples(BELL_TEST_SAMPLES);
+            end
             if(active!=0 || left!=0)$fatal(1,"hardware release stuck t=%0d",t);
             $display("PASS hardware t=%0d: 32 voices, distinct notes, silent release, 256-cycle samples",t);
             $fflush();

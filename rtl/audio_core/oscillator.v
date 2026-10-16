@@ -62,7 +62,7 @@ module oscillator #(
         reg signed [23:0] bright_product;
         wire signed [26:0] piano_bright = bright_product;
         wire signed [28:0] piano_result = (piano_h1 >>> 8) +
-            piano_upper + (piano_bright >>> 8);
+            (piano_upper >>> 1) + (piano_bright >>> 7);
         // Instrument 2 is rendered by voice.u_bell, not the obsolete flute path.
         wire signed [17:0] result = instrument == 2 ? 18'sd0 :
             instrument == 0 ? piano_result :

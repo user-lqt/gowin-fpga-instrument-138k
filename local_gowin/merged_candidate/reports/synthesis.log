@@ -1,0 +1,228 @@
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_24_rgb_top.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_24_rgb_top.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_24_rgb_top.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_24_rgb_top.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\adsr.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\adsr_state_bank.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":13)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":13)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bell_mode_profile.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bianzhong.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bianzhong_ram_bank.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\fm_operator.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\guitar_body.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\guitar_body_ram_bank.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\guitar_body_tone_bank.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\mixer.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_fc.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_fc.v":10)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_fc.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_fc.v":10)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_period.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":2)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":2)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\phase_acc.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\phase_acc.v":8)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\phase_acc.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\phase_acc.v":8)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_fraction_rom.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_lookup_sync.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\plucked_string.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":7)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":7)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice_allocator.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice_allocator.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice_allocator.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice_allocator.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\wavetable.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\reset_sync.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\ble_uart_rx.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\ble_uart_rx.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\ble_uart_rx.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\ble_uart_rx.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_b_control.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_b_control.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_b_control.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_b_control.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_b_input.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_control.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_param_queue.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\expression_mapper.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\fsr_expression_control.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\fsr_expression_control.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\fsr_expression_control.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\fsr_expression_control.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v":2)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v":2)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\key_debounce.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_dual.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\input_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_dual.v":2)
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\..\input\..\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\..\input\input_defs.vh":4)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\..\input\input_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\..\input\input_defs.vh":4)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_dual.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_dual.v":2)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_input.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\input_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_input.v":2)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_input.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_input.v":2)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\matrix_scan_8x6.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\mcp3008_sampler.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\mcp3008_spi.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\performance_event_merge.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\performance_event_merge.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\performance_event_merge.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\performance_event_merge.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\audio_delay_fx.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\audio_delay_fx.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\audio_delay_fx.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\audio_delay_fx.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\clock_gen.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\i2s_tx_pcm5102a.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\keyboard_led_strip.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\lesson_guide.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\polyphony_test.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\event_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\polyphony_test.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\polyphony_test.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\polyphony_test.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\sample_scheduler.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\system_status.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\status_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\system_status.v":1)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\system_status.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\system_status.v":1)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\audio_visualizer.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\instrument_dashboard.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\lcd_status_bridge.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\parameter_manager.v'
+Analyzing included file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\..\input\input_defs.vh'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\parameter_manager.v":2)
+Back to file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\parameter_manager.v'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\parameter_manager.v":2)
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\rgb_lcd_800x480.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\strike_display_formatter.v'
+Analyzing Verilog file 'C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\waveform_buffer.v'
+Compiling module 'instrument_24_rgb_top'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_24_rgb_top.v":5)
+Compiling module 'clock_gen'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\clock_gen.v":50)
+Compiling module 'clock_gen(IDIV_SEL=1,MDIV_SEL=20,ODIV0_SEL=30,ODIV1_SEL=30)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\clock_gen.v":50)
+Compiling module 'reset_sync'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\common\reset_sync.v":5)
+Compiling module 'sample_scheduler'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\sample_scheduler.v":9)
+Compiling module 'system_status'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\system_status.v":4)
+Compiling module 'ble_uart_rx'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\ble_uart_rx.v":5)
+Compiling module 'keyboard_24_input(ROW_CYCLES=307,DEBOUNCE_FRAMES=40,RELEASE_DEBOUNCE_FRAMES=64,AB_MAX_FRAMES=5004,BASE_NOTE=60)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_input.v":4)
+Compiling module 'matrix_scan_8x6(ROW_CYCLES=307)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\matrix_scan_8x6.v":5)
+Compiling module 'keyboard_24_dual(DEBOUNCE_FRAMES=40,RELEASE_DEBOUNCE_FRAMES=64,AB_MAX_FRAMES=5004)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\keyboard_24_dual.v":5)
+Compiling module 'encoder_control(BUTTON_CYCLES=245760,INSTRUMENT_COUNT=3,FORMAL_CONTROLS=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_control.v":8)
+Compiling module 'encoder'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder.v":13)
+Compiling module 'key_debounce(DEBOUNCE_CYCLES=245760)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\key_debounce.v":6)
+Compiling module 'parameter_manager(VOLUME_STEP=16'b0000000000000100,ENABLE_INSTRUMENT=1,INSTRUMENT_COUNT=3,ROTATE_VOLUME_PRESS_TIMBRE=1,DEFAULT_INSTRUMENT=16'b0000000000000000)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\parameter_manager.v":18)
+Compiling module 'encoder_b_control'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_b_control.v":2)
+Compiling module 'lesson_guide'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\lesson_guide.v":3)
+Compiling module 'keyboard_led_strip'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\keyboard_led_strip.v":4)
+Compiling module 'mcp3008_sampler(SAMPLE_DIV=4096)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\mcp3008_sampler.v":3)
+Compiling module 'mcp3008_spi'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\mcp3008_spi.v":6)
+Compiling module 'joystick_control'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v":8)
+Extracting RAM for identifier 'bend_table'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v":118)
+Extracting RAM for identifier 'modulation_table'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\joystick_control.v":119)
+Compiling module 'fsr_expression_control'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\fsr_expression_control.v":4)
+Compiling module 'expression_mapper(ZERO_LEVEL=1,FULL_SCALE=899,DEADBAND=8)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\expression_mapper.v":4)
+Compiling module 'encoder_param_queue'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_param_queue.v":3)
+Extracting RAM for identifier 'queue'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\encoder_param_queue.v":13)
+Compiling module 'instrument_link'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v":4)
+Extracting RAM for identifier 'score_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v":25)
+Extracting RAM for identifier 'recording_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v":28)
+Extracting RAM for identifier 'responses'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\instrument_link.v":39)
+Compiling module 'performance_event_merge'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\performance_event_merge.v":3)
+Extracting RAM for identifier 'fifo'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\input\performance_event_merge.v":8)
+Compiling module 'polyphony_test'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\polyphony_test.v":3)
+Compiling module 'audio_core(ENABLE_EXPRESSION=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":15)
+Extracting RAM for identifier 'ev_type_q'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":99)
+Extracting RAM for identifier 'ev_note_q'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":100)
+Extracting RAM for identifier 'ev_vel_q'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":101)
+Extracting RAM for identifier 'p_id_q'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":107)
+Extracting RAM for identifier 'p_val_q'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":108)
+Compiling module 'pitch_expression_bank(STATIC_BASE_PITCH=1,BOUNDED_PERIOD=1,SYNC_LOOKUP=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":4)
+Extracting RAM for identifier 'pitch'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":39)
+Extracting RAM for identifier 'goal'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":40)
+Extracting RAM for identifier 'slope'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":41)
+Extracting RAM for identifier 'remaining'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":42)
+Extracting RAM for identifier 'duration'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":43)
+Extracting RAM for identifier 'residue'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":44)
+Extracting RAM for identifier 'error'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":45)
+Extracting RAM for identifier 'descending'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":46)
+Compiling module 'pitch_vibrato'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_expression.v":257)
+Compiling module 'pitch_lookup_sync'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_lookup_sync.v":2)
+Extracting RAM for identifier 'note_rom'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_lookup_sync.v":6)
+Extracting RAM for identifier 'fraction_rom'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\pitch_lookup_sync.v":7)
+Compiling module 'note_to_fc'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_fc.v":12)
+Compiling module 'note_to_period'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\note_to_period.v":4)
+Compiling module 'voice_allocator(VOICES=32,STEAL_ON_FULL=1,SHARED_AGE=1,SERIAL_RANK=1,BROADCAST_BASE_PITCH=32'b00000000000000000000000000000001)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice_allocator.v":3)
+Compiling module 'adsr_state_bank'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\adsr_state_bank.v":4)
+Extracting RAM for identifier 'state_memory'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\adsr_state_bank.v":28)
+Compiling module 'guitar_body_ram_bank'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\guitar_body_ram_bank.v":4)
+Extracting RAM for identifier 'state_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\guitar_body_ram_bank.v":11)
+Extracting RAM for identifier 'tone_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\guitar_body_ram_bank.v":15)
+Compiling module 'bianzhong_ram_bank(DYNAMIC_PITCH=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bianzhong_ram_bank.v":2)
+Extracting RAM for identifier 'phases'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bianzhong_ram_bank.v":22)
+Extracting RAM for identifier 'levels'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bianzhong_ram_bank.v":23)
+Compiling module 'bell_mode_profile'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\bell_mode_profile.v":3)
+Compiling module 'bell_strike_level'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":344)
+Compiling module 'wavetable'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\wavetable.v":3)
+Extracting RAM for identifier 'rom'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\wavetable.v":8)
+Compiling module 'oscillator_bank(SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":260)
+Compiling module 'voice_gain_bank(LANES=8,VELOCITY_START=66)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\mixer.v":28)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'strike_profile'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":329)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'phase_acc'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\phase_acc.v":10)
+Compiling module 'plucked_string(DYNAMIC_PITCH=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\plucked_string.v":3)
+Extracting RAM for identifier 'delay_line'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\plucked_string.v":13)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=1,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=2,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=2,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=3,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=3,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=4,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=4,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=5,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=5,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=6,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=6,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'voice(ENABLE_TIMBRES=1,DYNAMIC_PITCH=1,EXTERNAL_PITCH=1,SHARED_BODY=1,SHARED_GAIN=1,SHARED_BELL=1,SHARED_OSCILLATOR=1,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1,SHARED_RELEASE=1,SHARED_ENVELOPE=1,OSCILLATOR_LANE=7,SUSTAIN_LEVEL=16'b1011001100110011)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\voice.v":9)
+Compiling module 'oscillator(ENABLE_TIMBRES=1,SHARED_ARITHMETIC=1,BANK_LANE=7,SHARED_STRETCH=1,SHARED_COEFFICIENTS=1,SHARED_PHASE_ADD=1,SHARED_UPPER_ADD=1)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\oscillator.v":3)
+Compiling module 'mixer_serial'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\mixer.v":75)
+Compiling module 'audio_delay_fx'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\audio_delay_fx.v":3)
+Extracting RAM for identifier 'memory'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\audio_delay_fx.v":6)
+Compiling module 'i2s_tx_pcm5102a'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\system\i2s_tx_pcm5102a.v":5)
+Compiling module 'strike_display_formatter'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\strike_display_formatter.v":2)
+Compiling module 'lcd_status_bridge(WIDTH=210)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\lcd_status_bridge.v":3)
+Compiling module 'waveform_buffer'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\waveform_buffer.v":2)
+Extracting RAM for identifier 'low_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\waveform_buffer.v":6)
+Extracting RAM for identifier 'high_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\waveform_buffer.v":6)
+Compiling module 'lcd_status_bridge(WIDTH=49)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\lcd_status_bridge.v":3)
+Compiling module 'audio_visualizer'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\audio_visualizer.v":4)
+Extracting RAM for identifier 'point_ram'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\audio_visualizer.v":92)
+Extracting RAM for identifier 'history'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\audio_visualizer.v":97)
+Compiling module 'lcd_status_bridge(WIDTH=128)'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\lcd_status_bridge.v":3)
+Compiling module 'instrument_dashboard'("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\ui\instrument_dashboard.v":1)
+NOTE  (EX0101) : Current top module is "instrument_24_rgb_top"
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+WARN  (NL0002) : The module "note_to_fc" instantiated to "a2.shared_fc" is swept in optimizing("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":331)
+WARN  (NL0002) : The module "note_to_period" instantiated to "a2.shared_period" is swept in optimizing("C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\rtl\audio_core\audio_core.v":332)
+[95%] Generate netlist file "C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_velocity_32_two_timbres\impl\gwsynthesis\instrument_velocity_32_two_timbres.vg" completed
+WARN  (CK3000) : Can't calculate clocks' relationship between: "u_clock_gen/pll_inst/CLKOUT0.default_gen_clk" and "u_pixel_clock/pll_inst/CLKOUT0.default_gen_clk"
+WARN  (CK3000) : Can't calculate clocks' relationship between: "u_pixel_clock/pll_inst/CLKOUT0.default_gen_clk" and "u_clock_gen/pll_inst/CLKOUT0.default_gen_clk"
+[100%] Generate report file "C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\merged_candidate\project\instrument_velocity_32_two_timbres\impl\gwsynthesis\instrument_velocity_32_two_timbres_syn.rpt.html" completed
+GowinSynthesis finish

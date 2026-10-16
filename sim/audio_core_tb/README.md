@@ -13,7 +13,8 @@ Member C owns the system project, synthesis, timing and board verification.
 No B/C source directories, pin constraints or common event headers are changed.
 
 Keep the common event interface unchanged: NOTE_ON carries `note_id` and
-8-bit `velocity` (normal range 1..127); NOTE_OFF releases the note.
+8-bit `velocity` (normal range 1..127); NOTE_OFF damps piano/guitar but lets
+the struck bell ring naturally.
 Velocity should alter amplitude and spectral proportions, not the note's
 fundamental frequency or note mapping.
 
@@ -57,7 +58,10 @@ Default 32-voice PCM valid latency is 109 clocks after sample_tick.
 Shared velocity gain starts at clock 70; envelope gain occupies clocks 74..77.
 Do not substitute the obsolete 50-clock timing.
 Default volume is 0x07ff with a 64-unit-per-sample ramp.
-Default NOTE_OFF release is 4800 samples.
+Default NOTE_OFF release is 4800 samples for piano and guitar.
+Bell NOTE_OFF clears key ownership without damping its eight modes. A struck
+bell finishes naturally, with a 288000-sample lifetime after attack and a
+32768-sample final fade; holding the key does not extend this lifetime.
 
 The guitar uses a fractional-delay feedback string and shared body banks.
 The bell uses eight inharmonic modes and shared RAM banks; it is not the
@@ -78,6 +82,9 @@ Run from the repository root with Icarus Verilog on PATH and Python/numpy:
 .\sim\audio_core_tb\run.ps1 -Stage All
 .\sim\audio_core_tb\run.ps1 -Stage Expression
 .\sim\audio_core_tb\run.ps1 -Stage Velocity
+.\sim\audio_core_tb\run.ps1 -Stage Dynamics
+.\sim\audio_core_tb\run.ps1 -Stage StringShared
+.\sim\audio_core_tb\run.ps1 -Stage GuitarHardware
 .\sim\audio_core_tb\run.ps1 -Stage A3Long
 .\sim\audio_core_tb\run.ps1 -Stage Piano
 .\sim\audio_core_tb\run.ps1 -Stage GuitarMelody
@@ -88,6 +95,18 @@ Run from the repository root with Icarus Verilog on PATH and Python/numpy:
 `Expression` runs that fixture with bend, glide and vibrato enabled together.
 `Velocity` captures soft, medium and hard strikes at one note for all three
 instruments, checks pitch invariance and records a CSV baseline for B.
+`Dynamics` checks all 65536 string-displacement inputs, the full piano gain
+curve, nine velocity PCM captures, short-tap versus held-bell PCM equality,
+the default six-second bell envelope lifetime, and normalized spectra.
+Its single-voice diagnostic uses 96 clocks/sample; `Hardware` and `Expression`
+remain the evidence for the real 32-voice 256-clock/sample budget.
+`StringShared` compares optimized/reference strings on every clock and
+delay write, including fill ending just before the first playback sample.
+It also exhaustively checks both narrow constant dividers.
+`GuitarHardware` selects the 32-voice guitar portion of `Expression` with
+bend, glide and vibrato enabled together at 256 clocks/sample.
+`measure_string_logic.ps1` optionally compares generic gates with Yosys;
+these counts do not replace Gowin synthesis or routing evidence.
 A1 uses the explicit legacy monophonic path.
 A2 uses four voices with timbres/stealing disabled and event depth 16.
 A3 covers 32 independent phases, stealing, held-instrument latching, velocity,
@@ -111,9 +130,12 @@ Delivery verification: A1 passed 46 checks; A2 unit checks passed
 The new velocity baseline passed 1197 frames for three instruments.
 Long/audition/guitar/melody fixtures were compiled, not fully rerun.
 Duplicate A3/hardware runs were stopped before completion; they are not
-reported as fresh passes. The delivered RTL matches the accepted private
+reported as fresh passes. The original delivery matched the accepted private
 32-voice candidate byte-for-byte, whose source-hash evidence audit passed
 (A3, full-load cadence, combined expression and system integration).
+That historical hash audit predates the local strike-dynamics and resource
+changes. Current revision evidence is in `docs/AUDIO_DYNAMICS.md` and
+`docs/AUDIO_RESOURCES.md`; do not treat the old audit as their verification.
 
 `questa.do` recompiles canonical sources in ignored `build/questa/`; A1/A2,
 A3 and hardware-cadence targets are available. Independent Questa verification

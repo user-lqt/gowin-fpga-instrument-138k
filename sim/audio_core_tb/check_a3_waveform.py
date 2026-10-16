@@ -45,9 +45,11 @@ def main():
     fig, axes = plt.subplots(3, 2, figsize=(12, 8), constrained_layout=True)
     names = ("Upright piano", "Acoustic guitar", "Bianzhong")
     for timbre, samples in tracks.items():
-        if len(samples) != 31200:
+        if timbre != 2 and len(samples) != 31200:
             raise AssertionError(f"timbre {timbre}: expected 31200 samples, got {len(samples)}")
-        if np.any(samples[28800:] != 0):
+        if timbre == 2 and not 290400 <= len(samples) <= 290500:
+            raise AssertionError(f"bell: unexpected natural lifetime {len(samples)}")
+        if np.any(samples[-2400:] != 0):
             raise AssertionError(f"timbre {timbre}: nonzero silent tail")
         if np.max(np.abs(samples)) >= 8388607:
             raise AssertionError(f"timbre {timbre}: clipped PCM")
@@ -85,7 +87,7 @@ def main():
     write_wav(OUT / "a3_timbres_compare.wav",
               np.concatenate([np.concatenate((tracks[t], silence)) for t in range(3)]))
     print(f"PASS: gain-normalized spectral distances {differences}")
-    print("A3 waveform PASS: 93600 samples, 8192-point FFT per timbre, 3 WAVs + comparison + plot")
+    print("A3 waveform PASS: 8192-point FFT per timbre, natural bell tail, 3 WAVs + comparison + plot")
 
 
 if __name__ == "__main__":

@@ -20,10 +20,13 @@ module audio_core #(
     parameter integer SHARE_VOICE_ARITHMETIC = 1,
     parameter integer ENABLE_EXPRESSION = 0,
     parameter integer EVENT_DEPTH = 64,
+    parameter integer RAM_BODY = 1,
     parameter integer ATTACK_SAMPLES = 480,
     parameter integer DECAY_SAMPLES = 2400,
     parameter [15:0] SUSTAIN_LEVEL = 16'd45875,
-    parameter integer RELEASE_SAMPLES = 4800
+    parameter integer RELEASE_SAMPLES = 4800,
+    parameter integer BELL_RING_SAMPLES = 288000,
+    parameter integer ENABLE_GUITAR = 1
 ) (
     input  wire               clk,
     input  wire               rst_n,
@@ -221,8 +224,9 @@ module audio_core #(
             end
             if (sample_tick && (p_pop || p_bypass) &&
                 selected_param_id == `PARAM_INSTRUMENT)
-                instrument <= selected_param_val > 16'd3 ?
-                              2'd0 : selected_param_val[1:0];
+                instrument <= !ENABLE_GUITAR ?
+                    (selected_param_val==16'd2 ? 2'd2 : 2'd0) :
+                    (selected_param_val > 16'd3 ? 2'd0 : selected_param_val[1:0]);
         end
     end
 
@@ -370,15 +374,28 @@ module audio_core #(
             assign shared_release_modulus=0;
         end
         if(SHARED_ARITHMETIC) begin : shared_arithmetic
+            if(ENABLE_GUITAR) begin : guitar_filters
             for(bank=0;bank<(VOICE_COUNT+FILTER_LANES-1)/FILTER_LANES;bank=bank+1) begin : filters
                 localparam integer COUNT=VOICE_COUNT-bank*FILTER_LANES < FILTER_LANES ?
                     VOICE_COUNT-bank*FILTER_LANES : FILTER_LANES;
-                guitar_body_tone_bank #(.LANES(COUNT)) u_body_bank(
-                    .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
-                    .note_on(voice_note_on[bank*FILTER_LANES+:COUNT]),
-                    .string_waves(body_string_waves[bank*FILTER_LANES*16+:COUNT*16]),
-                    .waves(body_waves[bank*FILTER_LANES*16+:COUNT*16])
-                );
+                if(RAM_BODY) begin : ram_body
+                    guitar_body_ram_bank #(.LANES(COUNT)) u_body_bank(
+                        .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                        .note_on(voice_note_on[bank*FILTER_LANES+:COUNT]),
+                        .string_waves(body_string_waves[bank*FILTER_LANES*16+:COUNT*16]),
+                        .waves(body_waves[bank*FILTER_LANES*16+:COUNT*16])
+                    );
+                end else begin : register_body
+                    guitar_body_tone_bank #(.LANES(COUNT)) u_body_bank(
+                        .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
+                        .note_on(voice_note_on[bank*FILTER_LANES+:COUNT]),
+                        .string_waves(body_string_waves[bank*FILTER_LANES*16+:COUNT*16]),
+                        .waves(body_waves[bank*FILTER_LANES*16+:COUNT*16])
+                    );
+                end
+            end
+            end else begin : no_guitar_filters
+                assign body_waves=0;
             end
             for(bank=0;bank<(VOICE_COUNT+BODY_LANES-1)/BODY_LANES;bank=bank+1) begin : bodies
                 localparam integer COUNT=VOICE_COUNT-bank*BODY_LANES < BODY_LANES ?
@@ -387,6 +404,7 @@ module audio_core #(
                     .DYNAMIC_PITCH(ENABLE_EXPRESSION)) u_bell_bank(
                     .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
                     .note_on(bell_note_on[bank*BODY_LANES+:COUNT]),
+                    .velocities(voice_velocity[bank*BODY_LANES*8+:COUNT*8]),
                     .fcs(rendered_fc[bank*BODY_LANES*32+:COUNT*32]),
                     .waves(bell_waves[bank*BODY_LANES*16+:COUNT*16])
                 );
@@ -434,6 +452,7 @@ module audio_core #(
             assign bell_note_on[v]=voice_note_on[v] && voice_instrument[v*2+:2]==2;
             voice #(
                 .ENABLE_TIMBRES(ENABLE_TIMBRES),
+                .ENABLE_GUITAR(ENABLE_GUITAR),
                 .DYNAMIC_PITCH(ENABLE_EXPRESSION),
                 .EXTERNAL_PITCH(1),
                 .SHARED_BODY(SHARED_ARITHMETIC),
@@ -447,7 +466,8 @@ module audio_core #(
                 .ATTACK_SAMPLES(ATTACK_SAMPLES),
                 .DECAY_SAMPLES(DECAY_SAMPLES),
                 .SUSTAIN_LEVEL(SUSTAIN_LEVEL),
-                .RELEASE_SAMPLES(RELEASE_SAMPLES)
+                .RELEASE_SAMPLES(RELEASE_SAMPLES),
+                .BELL_RING_SAMPLES(BELL_RING_SAMPLES)
             ) u_voice (
                 .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
                 .note_on(voice_note_on[v]), .note_off(voice_note_off[v]),

@@ -20,7 +20,9 @@ module voice #(
     parameter integer ATTACK_SAMPLES  = 480,
     parameter integer DECAY_SAMPLES   = 2400,
     parameter [15:0]  SUSTAIN_LEVEL   = 16'd45875,
-    parameter integer RELEASE_SAMPLES = 4800
+    parameter integer RELEASE_SAMPLES = 4800,
+    parameter integer BELL_RING_SAMPLES = 288000,
+    parameter integer ENABLE_GUITAR = 1
 ) (
     input  wire               clk,
     input  wire               rst_n,
@@ -100,9 +102,12 @@ module voice #(
                 piano_body <= 0;
         end
     wire [7:0] safe_velocity = velocity > 8'd127 ? 8'd127 : velocity;
+    wire [7:0] strike_gain;
+    strike_profile u_strike_profile(.velocity(safe_velocity),.instrument(instrument),
+        .gain(strike_gain));
     wire [15:0] transient_brightness;
     wire [7:0] brightness = instrument == 0 ?
-        8'd28 + (transient_brightness >> 8) :
+        8'd16 + (safe_velocity >> 1) + (transient_brightness >> 9) :
         8'd32 + (safe_velocity >> 1);
 
     oscillator #(.ENABLE_TIMBRES(ENABLE_TIMBRES),
@@ -130,7 +135,8 @@ module voice #(
         .ATTACK_SAMPLES  (ATTACK_SAMPLES),
         .DECAY_SAMPLES   (DECAY_SAMPLES),
         .SUSTAIN_LEVEL   (SUSTAIN_LEVEL),
-        .RELEASE_SAMPLES (RELEASE_SAMPLES)
+        .RELEASE_SAMPLES (RELEASE_SAMPLES),
+        .BELL_RING_SAMPLES(BELL_RING_SAMPLES)
     ) u_adsr (
         .clk         (clk),
         .rst_n       (rst_n),
@@ -138,6 +144,7 @@ module voice #(
         .note_on     (note_on),
         .note_off    (note_off),
         .instrument  (instrument),
+        .velocity    (safe_velocity),
         .shared_release_quotient(shared_release_quotient),
         .shared_release_modulus(shared_release_modulus),
         .level       (envelope_level),
@@ -148,7 +155,7 @@ module voice #(
     wire signed [15:0] string_wave;
     wire signed [15:0] acoustic_wave;
     assign body_string_wave=string_wave;
-    generate if (ENABLE_TIMBRES) begin : guitar
+    generate if (ENABLE_TIMBRES && ENABLE_GUITAR) begin : guitar
         wire [47:0] period_q16;
         if(EXTERNAL_PITCH) begin : external_period
             assign period_q16=pitch_period;
@@ -175,7 +182,7 @@ module voice #(
         assign acoustic_wave = 0;
     end endgenerate
     wire signed [15:0] base_rendered_wave =
-        ENABLE_TIMBRES && (instrument == 1 || instrument == 3) && note_id >= 24 ?
+        ENABLE_TIMBRES && ENABLE_GUITAR && (instrument == 1 || instrument == 3) && note_id >= 24 ?
         acoustic_wave : wave;
     wire signed [15:0] bell_wave;
     generate if(SHARED_BELL) begin : external_bell
@@ -184,7 +191,7 @@ module voice #(
     bianzhong #(.DYNAMIC_PITCH(DYNAMIC_PITCH)) u_bell (
         .clk(clk), .rst_n(rst_n), .sample_tick(sample_tick),
         .note_on(note_on && ENABLE_TIMBRES && instrument == 2),
-        .fc(fc), .wave(bell_wave)
+        .fc(fc), .velocity(safe_velocity), .wave(bell_wave)
     );
     end endgenerate
     wire signed [15:0] rendered_wave =
@@ -234,7 +241,7 @@ module voice #(
                 end
                 14: begin
                     operand_a = piano_wave;
-                    operand_b = $signed({1'b0,safe_velocity});
+                    operand_b = $signed({1'b0,strike_gain});
                 end
                 default: begin
                     operand_a = $signed({velocity_product,1'b0});
@@ -274,4 +281,33 @@ module voice #(
         assign audio = active ? (envelope_product >>> 16) : 24'sd0;
     end endgenerate
 
+endmodule
+
+// Lightweight velocity curves; reuse the existing scheduled gain multiplier.
+module strike_profile (
+    input wire [7:0] velocity,
+    input wire [1:0] instrument,
+    output wire [7:0] gain
+);
+    wire [7:0] v=velocity>127 ? 8'd127 : velocity;
+    wire [7:0] top_segment=v-8'd96;
+    wire [7:0] piano_gain=v<=32 ? (v>>1) :
+        v<=96 ? v-8'd16 :
+        8'd80+top_segment+(top_segment>>1);
+    assign gain=v==0 ? 0 : instrument==0 ?
+        (piano_gain==0 ? 8'd1 : piano_gain) : v;
+endmodule
+
+// A harder strike excites upper bell modes more strongly, not at new pitches.
+module bell_strike_level (
+    input wire [7:0] velocity,
+    input wire [2:0] mode,
+    output wire [23:0] level
+);
+    wire [7:0] v=velocity>127 ? 8'd127 : velocity;
+    wire [23:0] rise={v,16'd0};
+    assign level=mode<2 ? 24'hffffff :
+        mode==2 ? 24'h7fffff+rise :
+        mode<5 ? 24'h3fffff+rise+(rise>>1) :
+        24'h0fffff+rise+(rise>>1)+(rise>>2);
 endmodule

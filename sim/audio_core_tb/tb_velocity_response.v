@@ -1,7 +1,11 @@
 `timescale 1ns/1ps
 `include "event_defs.vh"
 
-module tb_velocity_response;
+module tb_velocity_response #(
+    parameter integer SOFT_VELOCITY=32,
+    parameter integer HARD_VELOCITY=120,
+    parameter CAPTURE_FILE="waveforms/velocity_response.csv"
+);
     reg clk=0;
     always #5 clk=~clk;
     reg rst_n=0,tick=0,event_valid=0,param_valid=0;
@@ -52,7 +56,8 @@ module tb_velocity_response;
         begin @(posedge valid);@(negedge clk);end
     endtask
     initial begin
-        trace=$fopen("waveforms/velocity_response.csv","w");
+        trace=$fopen(SOFT_VELOCITY==16 ? "waveforms/velocity_endpoints.csv" :
+            CAPTURE_FILE,"w");
         if(!trace) $fatal(1,"cannot open velocity capture");
         $fdisplay(trace,"instrument,velocity,index,sample");
         for(instrument=0;instrument<3;instrument=instrument+1) begin
@@ -66,7 +71,7 @@ module tb_velocity_response;
                 param_value=instrument;param_valid=1;
                 @(negedge clk);param_valid=0;
                 next_sample;
-                velocity=strike==0 ? 32 : strike==1 ? 80 : 120;
+                velocity=strike==0 ? SOFT_VELOCITY : strike==1 ? 80 : HARD_VELOCITY;
                 event_valid=1;
                 @(negedge clk);event_valid=0;
                 repeat(4) next_sample;

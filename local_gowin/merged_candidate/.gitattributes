@@ -1,0 +1,2 @@
+# Programming images must remain byte-identical across Git checkouts.
+prebuilt/*.fs -text -diff

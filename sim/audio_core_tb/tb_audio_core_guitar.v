@@ -22,14 +22,25 @@ module tb_audio_core_guitar;
     reg seen = 0;
     genvar probe;
     generate for (probe = 0; probe < 4; probe = probe + 1) begin : probes
+        // Shared string arithmetic is valid at the sample edge, not during
+        // idle pick preparation at the later core-valid pulse.
+        always @(posedge clk) begin
+            if (rst_n && sample_tick &&
+                dut.a2.voice_instrument[probe*2 +: 2] == 3 &&
+                dut.a2.voice_active[probe] &&
+                dut.a2.voices[probe].u_voice.guitar.u_string.running &&
+                !dut.a2.voices[probe].u_voice.guitar.u_string.warming &&
+                !dut.a2.voices[probe].u_voice.guitar.u_string.filling &&
+                (dut.a2.voices[probe].u_voice.guitar.u_string.output_sample > 32767 ||
+                 dut.a2.voices[probe].u_voice.guitar.u_string.output_sample < -32768))
+                $fatal(1, "guitar string waveform clipping");
+        end
         always @(negedge clk) begin
             if (rst_n && valid &&
                 dut.a2.voice_instrument[probe*2 +: 2] == 3 &&
                 dut.a2.voice_active[probe]) begin
-                if (dut.a2.voices[probe].u_voice.guitar.u_string.output_sample > 32767 ||
-                    dut.a2.voices[probe].u_voice.guitar.u_string.output_sample < -32768 ||
-                    dut.a2.shared_arithmetic.filters[0].u_body_bank.tone[probe] > 32767 ||
-                    dut.a2.shared_arithmetic.filters[0].u_body_bank.tone[probe] < -32768)
+                if (dut.a2.shared_arithmetic.guitar_filters.filters[0].ram_body.u_body_bank.tone[probe] > 32767 ||
+                    dut.a2.shared_arithmetic.guitar_filters.filters[0].ram_body.u_body_bank.tone[probe] < -32768)
                     $fatal(1, "guitar internal waveform clipping");
             end
         end

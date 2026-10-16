@@ -94,6 +94,25 @@ module tb_audio_core_a3_audition;
             end
             send_event(`EVENT_NOTE_OFF);
             next_sample;
+            if(timbre==2) begin
+                if(dut.a2.envelope_stages!==3'd2 || active!==1)
+                    $fatal(1,"bell NOTE_OFF must preserve natural ringing");
+                i=24000;
+                while(active!==0 && i<288100) begin
+                    record_sample(i);
+                    i=i+1;
+                    next_sample;
+                end
+                if(active!==0 || left!==0)
+                    $fatal(1,"bell natural ring exceeded lifetime cap");
+                for(i=0;i<2400;i=i+1) begin
+                    record_sample(index);
+                    next_sample;
+                    if(active!==0 || left!==0)
+                        $fatal(1,"bell nonzero after natural tail");
+                end
+                $display("[PASS] bell: natural ring after key release and finite silence");
+            end else begin
             if (dut.a2.envelope_stages !== 3'd4)
                 $fatal(1, "audition missing release entry");
             initial_level = dut.a2.envelope_levels;
@@ -119,6 +138,7 @@ module tb_audio_core_a3_audition;
                     $fatal(1, "audition nonzero silent tail");
             end
             $display("[PASS] timbre %0d: 24000 held + 4800 release + 2400 silence", timbre);
+            end
             $fflush(trace);
         end
     endtask

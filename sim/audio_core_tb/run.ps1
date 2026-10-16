@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('A1', 'A2', 'A3', 'Hardware', 'Expression', 'Velocity', 'A3Long', 'Guitar', 'Piano', 'GuitarMelody', 'All')]
+    [ValidateSet('A1', 'A2', 'A3', 'Hardware', 'Expression', 'Velocity', 'VelocityEndpoints', 'Dynamics', 'StringShared', 'BodyRam', 'GuitarHardware', 'A3Long', 'Guitar', 'Piano', 'GuitarMelody', 'All')]
     [string]$Stage = 'A2',
     [switch]$CompileOnly
 )
@@ -14,8 +14,11 @@ if ($Stage -in @('A2', 'All')) {
     $tests += @('tb_adsr', 'tb_mixer', 'tb_voice_allocator', 'tb_voice', 'tb_audio_core_a2')
 }
 if ($Stage -in @('A3', 'All')) { $tests += 'tb_audio_core_a3' }
-if ($Stage -in @('Hardware', 'Expression', 'All')) { $tests += 'tb_core_hardware' }
-if ($Stage -in @('Velocity', 'All')) { $tests += 'tb_velocity_response' }
+if ($Stage -in @('Hardware', 'Expression', 'GuitarHardware', 'All')) { $tests += 'tb_core_hardware' }
+if ($Stage -in @('Velocity', 'VelocityEndpoints', 'All')) { $tests += 'tb_velocity_response' }
+if ($Stage -eq 'Dynamics') { $tests += @('tb_string_math', 'tb_strike_dynamics') }
+if ($Stage -eq 'StringShared') { $tests += 'tb_string_shared_math' }
+if ($Stage -eq 'BodyRam') { $tests += 'tb_body_ram' }
 if ($Stage -eq 'A3Long') {
     $tests += @('tb_audio_core_a3_long', 'tb_audio_core_a3_audition')
 }
@@ -31,8 +34,16 @@ try {
         $defines = @()
         if ($Stage -eq 'Piano') { $defines += '-DPIANO_REFERENCE' }
         if ($test -eq 'tb_audio_core_guitar_melody') { $defines += '-DGUITAR_MELODY' }
-        if ($Stage -eq 'Expression') {
+        if ($Stage -in @('Expression', 'GuitarHardware')) {
             $defines += @('-Ptb_core_hardware.ENABLE_EXPRESSION=1', '-Ptb_core_hardware.TEST_VIBRATO=1')
+        }
+        if ($Stage -eq 'GuitarHardware') {
+            $defines += @('-Ptb_core_hardware.FIRST_INSTRUMENT=1',
+                          '-Ptb_core_hardware.LAST_INSTRUMENT=1')
+        }
+        if ($Stage -eq 'VelocityEndpoints') {
+            $defines += @('-Ptb_velocity_response.SOFT_VELOCITY=16',
+                          '-Ptb_velocity_response.HARD_VELOCITY=127')
         }
         $test_sources = @((Join-Path $PSScriptRoot "$test.v"))
         if ($test -eq 'tb_audio_core_guitar_melody') {
@@ -64,6 +75,10 @@ try {
     if (!$CompileOnly -and $Stage -eq 'GuitarMelody') {
         & python (Join-Path $PSScriptRoot 'check_guitar_melody.py')
         if ($LASTEXITCODE -ne 0) { throw 'Guitar melody waveform analysis failed' }
+    }
+    if (!$CompileOnly -and $Stage -eq 'Dynamics') {
+        & python (Join-Path $PSScriptRoot 'check_strike_dynamics.py')
+        if ($LASTEXITCODE -ne 0) { throw 'Strike dynamics analysis failed' }
     }
 } finally {
     Pop-Location

@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const {frame,Decoder,score,event,midi}=require('./protocol.js');
+assert.deepEqual([...frame(0x90,60,100)],[0xA5,0x90,60,100,0x6D]);
+assert.deepEqual(score('1 2\n0,4 # rest\n24 1'),[[1,2],[0,4],[24,1]]);
+for(const bad of ['6 2','1 0','25 2','1 2 extra','1.5 2','1 33',''])assert.throws(()=>score(bad));
+let replies=[];const d=new Decoder(p=>replies.push(p));
+const p=[0xa6,0xe0,1,84,127,0xe8,3,0,0,0,0];p.push(p.reduce((a,b)=>a^b,0));
+d.feed([85,65,82,84,32,79,75,32,53,...p.slice(0,5)]);assert.equal(replies.length,0);
+d.feed(p.slice(5));assert.equal(replies.length,1);
+assert.deepEqual(event(replies[0]),{type:1,note:84,velocity:127,time_ms:1000,index:0});
+const bad=p.slice();bad[4]^=1;d.feed([...bad,...p]);assert.equal(replies.length,2);
+const file=midi([{type:1,note:60,velocity:100,time_ms:0},{type:2,note:60,velocity:0,time_ms:500}]);
+assert.equal(Buffer.from(file.slice(0,4)).toString(),'MThd');
+assert.deepEqual([...file.slice(29,35)],[0,0x90,60,100,0x83,0x74]);
+assert.throws(()=>midi([{type:1,note:200,velocity:0,time_ms:0}]));
+assert.throws(()=>midi([{type:1,note:-1,velocity:0,time_ms:0}]));
+console.log('PASS: phone binary framing, fragmented/mixed notifications, checksums, score validation, timestamps and MIDI export');

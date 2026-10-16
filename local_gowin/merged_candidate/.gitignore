@@ -1,0 +1,15 @@
+# Gowin outputs and user-specific settings.
+project/**/impl/
+*.gprj.user
+
+# Compiled simulation libraries and generated intermediates.
+sim/*_modelsim/
+sim/audio_core_tb/build/
+*.vvp
+*.vcd
+*.wlf
+*.log
+*.ppm
+
+# Keep the current programming image and selected audition evidence.
+!prebuilt/*.fs

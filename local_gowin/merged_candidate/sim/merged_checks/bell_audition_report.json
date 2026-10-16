@@ -1,0 +1,51 @@
+{
+  "sample_rate": 48000,
+  "source": "Six complete RTL bianzhong_ram_bank + adsr_state_bank stems, offline linear overlap",
+  "excluded": "Production allocator/mixer/FX/I2S; physical DAC and listening acceptance",
+  "melody_strikes": 14,
+  "tail_overwrite": false,
+  "overlap_demo_seconds": 6,
+  "common_wav_gain": 0.9372711670480549,
+  "raw_peak": 31464,
+  "rms_by_seconds_after_strike": {
+    "0.05": 6612.3188415008135,
+    "0.1": 5863.509708996822,
+    "0.25": 4517.042914710169,
+    "0.5": 3195.865423089652,
+    "1.0": 1757.4477643968066,
+    "1.5": 994.0699763681964,
+    "1.9": 628.2185693159137,
+    "2.5": 322.3816417178042,
+    "3.5": 82.82499874232819
+  },
+  "measured_attack_mode_hz": [
+    523.3154296875,
+    1046.630859375,
+    1400.390625,
+    1921.875,
+    2694.580078125,
+    3206.54296875,
+    3682.2509765625,
+    3766.11328125
+  ],
+  "brightness": {
+    "attack": {
+      "power_centroid_hz": 1458.0354376169096,
+      "power_above_1khz_fraction": 0.9648145166564916
+    },
+    "tail": {
+      "power_centroid_hz": 1112.9915114099333,
+      "power_above_1khz_fraction": 0.9813500010441802
+    },
+    "previous_attack": {
+      "power_centroid_hz": 685.9302233079026,
+      "power_above_1khz_fraction": 0.07090571367528861
+    },
+    "previous_tail": {
+      "power_centroid_hz": 548.6580744122995,
+      "power_above_1khz_fraction": 4.574729556059836e-05
+    }
+  },
+  "tap_seconds": 5,
+  "twinkle_seconds": 10
+}

@@ -6,6 +6,7 @@ module bianzhong_ram_bank #(
     input wire clk,rst_n,sample_tick,
     input wire [LANES-1:0] note_on,
     input wire [LANES*32-1:0] fcs,
+    input wire [LANES*8-1:0] velocities,
     output wire [LANES*16-1:0] waves
 );
     localparam integer INDEX_BITS=LANES>1 ? $clog2(LANES) : 1;
@@ -16,6 +17,7 @@ module bianzhong_ram_bank #(
     reg [LANES-1:0] struck;
     reg [7:0] written [0:LANES-1];
     reg [31:0] cached_fc [0:LANES-1];
+    reg [7:0] cached_velocity [0:LANES-1];
     reg signed [15:0] wave [0:LANES-1];
     reg [31:0] phases [0:SLOTS-1];
     reg [23:0] levels [0:SLOTS-1];
@@ -45,8 +47,11 @@ module bianzhong_ram_bank #(
         endcase
     end
     wire [31:0] selected_phase=state_written ? ram_phase : 32'd0;
+    wire [23:0] strike_level;
+    bell_strike_level u_strike(.velocity(cached_velocity[state_lane]),
+        .mode(state_mode),.level(strike_level));
     wire [23:0] selected_level=state_written ? ram_level :
-        (state_struck ? 24'hffffff : 24'd0);
+        (state_struck ? strike_level : 24'd0);
     wire [47:0] increment_product=state_fc*state_ratio;
     wire [31:0] next_phase=selected_phase+increment_product[43:12];
     reg [13:0] loss;
@@ -116,7 +121,7 @@ module bianzhong_ram_bank #(
             read_valid<=0;read_audible<=0;read_lane<=0;read_mode<=0;
             read_level<=0;read_weight<=0;sum<=0;
             for(i=0;i<LANES;i=i+1) begin
-                written[i]<=0;cached_fc[i]<=0;wave[i]<=0;
+                written[i]<=0;cached_fc[i]<=0;cached_velocity[i]<=0;wave[i]<=0;
             end
         end else begin
             cancelled<=sample_tick ? note_on : cancelled|note_on;
@@ -148,6 +153,7 @@ module bianzhong_ram_bank #(
             for(i=0;i<LANES;i=i+1) begin
                 if(note_on[i]) begin
                     written[i]<=0;struck[i]<=1;cached_fc[i]<=fcs[i*32+:32];wave[i]<=0;
+                    cached_velocity[i]<=velocities[i*8+:8];
                 end else begin
                     if(write_state && state_lane==i) written[i][state_mode]<=1;
                     if(read_valid && read_lane==i && read_mode==7 && !cancelled[i] &&

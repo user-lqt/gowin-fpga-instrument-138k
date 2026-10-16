@@ -4,10 +4,18 @@ module bianzhong #(
 ) (
     input wire clk,rst_n,sample_tick,note_on,
     input wire [31:0] fc,
+    input wire [7:0] velocity,
     output reg signed [15:0] wave
 );
     reg [31:0] phases [0:7];
     reg [23:0] levels [0:7];
+    wire [23:0] strike_levels [0:7];
+    genvar strike_mode;
+    generate for(strike_mode=0;strike_mode<8;strike_mode=strike_mode+1) begin : dynamics
+        localparam [2:0] MODE=strike_mode;
+        bell_strike_level u_strike(.velocity(velocity),.mode(MODE),
+            .level(strike_levels[strike_mode]));
+    end endgenerate
     reg [31:0] increments [0:7];
     reg [7:0] audible;
     reg loading;
@@ -121,7 +129,7 @@ module bianzhong #(
             for(m=0;m<8;m=m+1) begin phases[m]<=0; levels[m]<=0; end
         end else if(note_on) begin
             cycle<=0; sum<=0; wave<=0;
-            for(m=0;m<8;m=m+1) begin phases[m]<=0; levels[m]<=24'hffffff; end
+            for(m=0;m<8;m=m+1) begin phases[m]<=0; levels[m]<=strike_levels[m]; end
         end else if(sample_tick) begin
             cycle<=1; sum<=0;
         end else if(cycle!=0) begin
