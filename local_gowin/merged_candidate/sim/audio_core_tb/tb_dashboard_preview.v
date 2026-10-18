@@ -1,6 +1,7 @@
 `timescale 1ns/1ps
 module tb_dashboard_preview;
  parameter ANALYSIS=0;
+ parameter TEST=0;
  reg clk=0,rst=0;always #15 clk=~clk;
  reg [209:0] status=0;
  reg [127:0] spectrum=0;
@@ -25,6 +26,7 @@ module tb_dashboard_preview;
  status[147:124]=24'd1<<9;status[55:32]=24'd1<<9;
  status[209:169]={1'b1,8'h10,12'h127,20'h00100};
  if(ANALYSIS) begin status[149]=1;status[71:70]=1;end
+ if(TEST) begin status[149]=1;status[71:70]=0;status[148]=1;status[78:73]=32;end
  for(i=0;i<16;i=i+1) spectrum[i*8+:8]=(i==5 ? 108 : 16+i*3);
  #100;rst=1;@(posedge ready);@(negedge ready);
  out=$fopen("dashboard_preview.ppm","w");$fwrite(out,"P3\n800 480\n255\n");

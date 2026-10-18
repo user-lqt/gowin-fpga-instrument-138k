@@ -22,6 +22,13 @@ module plucked_string #(
     reg [31:0] fill_phase;
     reg signed [16:0] fill_noise, lag_prior, pick_prior;
     reg [15:0] pick_level;
+    wire [6:0] bounded_velocity=velocity>127 ? 7'd127 : velocity[6:0];
+    wire [6:0] upper_velocity=bounded_velocity-7'd64;
+    // Soft plucks excite less broadband energy; hard plucks retain the
+    // bright attack. Leave the feedback filter and string period unchanged.
+    wire [6:0] excitation_velocity=bounded_velocity<=64 ?
+        (bounded_velocity>>1) :
+        7'd32+upper_velocity+(upper_velocity>>1);
     wire [47:0] corrected_period = period_q16 - 48'd32768;
     reg signed [15:0] ram_read;
     wire signed [16:0] raw = $signed(ram_read);
@@ -158,7 +165,7 @@ module plucked_string #(
             noise <= 16'hace1; lag_noise <= 16'hace1; wave <= 0;
             prior_raw <= 0; prior_fractional <= 0; dc <= 0; fill_phase <= 0;
             fill_noise <= 0; lag_prior <= 0; pick_prior <= 0;
-            pick_level <= {(velocity>127 ? 7'd127 : velocity[6:0]),9'd0};
+            pick_level <= {excitation_velocity,9'd0};
         end else if (warming) begin
             noise <= {noise[14:0], noise[15]^noise[13]^noise[12]^noise[10]};
             if (warm_remaining <= 1) warming <= 0;

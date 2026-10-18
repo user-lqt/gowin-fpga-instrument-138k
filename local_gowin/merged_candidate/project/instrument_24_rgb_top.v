@@ -255,11 +255,12 @@ module instrument_24_rgb_top #(
         .ENABLE_GUITAR(1),.RAM_BODY(1),.SHARE_VOICE_ARITHMETIC(1)) u_audio_core (
         .clk(clk_audio), .rst_n(rst_n), .sample_tick(sample_tick),
         .event_valid(merged_event_valid), .event_type(merged_event_type), .note_id(merged_note), .velocity(merged_velocity),
-        // Gain 1.5x the preceding /8 setting: /8 + /16, no multiplier.
+        // Keep half-scale headroom at full knob travel; the former /8 + /16
+        // mapping capped output at 18.75% and made the instrument too quiet.
         .param_valid(param_valid), .param_id(param_id),
         // UI and engine share instrument IDs: piano=0, guitar=1, bell=2.
         .param_value(param_id == `PARAM_VOLUME ?
-            ({3'd0,param_value[15:3]} + {4'd0,param_value[15:4]}) : param_value),
+            {1'b0,param_value[15:1]} : param_value),
         .audio_core_valid(audio_core_valid), .audio_left(audio_left), .audio_right(audio_right),
         .active_voice_count(active_voice_count), .engine_ready(engine_ready),
         .overload_flag(overload_flag), .event_overflow(event_overflow), .param_overflow(param_overflow)

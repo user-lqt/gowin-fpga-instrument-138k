@@ -17,7 +17,7 @@ function score(text){
  return lines.map((line,i)=>{
  const parts=line.split(/[\s,]+/);if(parts.length!==2)throw Error(`第${i+1}行应为“键号 时值”`);
  const k=Number(parts[0]),d=Number(parts[1]);
- if(!Number.isInteger(k)||k<0||k>24||k===6||!Number.isInteger(d)||d<1||d>32)throw Error(`第${i+1}行超出范围或使用了K6`);
+ if(!Number.isInteger(k)||k<0||k>24||k===6||!Number.isInteger(d)||d<1||d>32)throw Error(`第${i+1}行键号或时值超出范围`);
  return [k,d];
  });
 }

@@ -21,7 +21,8 @@ module keyboard_24_dual #(
     output reg [23:0] key_state,
     output reg [15:0] measured_frames,
     output reg [4:0] measured_key,
-    output reg measured_valid
+    output reg measured_valid,
+    output wire [7:0] measured_velocity
 );
     function integer width_for;
         input integer n;
@@ -41,38 +42,62 @@ module keyboard_24_dual #(
     reg [ABW-1:0] ab_age [0:23];
     reg [23:0] travel_started, strike_measured;
     reg [7:0] strike_velocity [0:23];
-    // Per-key A->B boundaries in complete scan frames. K1..K24 are
-    // 10,18,6,5,20,20,20,20,1,10,3,1,1,30,20,20,10,1,10,3,18,1,30,30 ms.
-    function integer key_threshold;
+    // Four per-key breakpoints: hard median, hard/medium midpoint,
+    // medium median, and medium/soft midpoint (all in scan frames).
+    function [43:0] key_velocity_limits;
         input integer key;
         begin
             case (key)
-                0: key_threshold=50;   1: key_threshold=90;
-                2: key_threshold=30;   3: key_threshold=25;
-                4: key_threshold=100;  5: key_threshold=100;
-                6: key_threshold=100;  7: key_threshold=100;
-                8: key_threshold=5;    9: key_threshold=50;
-                10: key_threshold=15;  11: key_threshold=5;
-                12: key_threshold=5;   13: key_threshold=150;
-                14: key_threshold=100; 15: key_threshold=100;
-                16: key_threshold=50;  17: key_threshold=5;
-                18: key_threshold=50;  19: key_threshold=15;
-                20: key_threshold=90;  21: key_threshold=5;
-                22: key_threshold=150; 23: key_threshold=150;
-                default: key_threshold=5;
+                0: key_velocity_limits={11'd4,11'd16,11'd28,11'd128};
+                1: key_velocity_limits={11'd9,11'd69,11'd130,11'd301};
+                2: key_velocity_limits={11'd4,11'd10,11'd16,11'd36};
+                3: key_velocity_limits={11'd4,11'd12,11'd20,11'd38};
+                4: key_velocity_limits={11'd12,11'd75,11'd139,11'd239};
+                5: key_velocity_limits={11'd19,11'd52,11'd84,11'd381};
+                6: key_velocity_limits={11'd27,11'd79,11'd132,11'd256};
+                7: key_velocity_limits={11'd25,11'd74,11'd124,11'd256};
+                8: key_velocity_limits={11'd4,11'd8,11'd12,11'd19};
+                9: key_velocity_limits={11'd6,11'd29,11'd53,11'd201};
+                10: key_velocity_limits={11'd3,11'd9,11'd16,11'd147};
+                11: key_velocity_limits={11'd3,11'd6,11'd10,11'd59};
+                12: key_velocity_limits={11'd17,11'd71,11'd125,11'd445};
+                13: key_velocity_limits={11'd10,11'd67,11'd124,11'd731};
+                14: key_velocity_limits={11'd11,11'd52,11'd93,11'd239};
+                15: key_velocity_limits={11'd15,11'd49,11'd84,11'd172};
+                16: key_velocity_limits={11'd8,11'd32,11'd57,11'd116};
+                17: key_velocity_limits={11'd1,11'd3,11'd6,11'd59};
+                18: key_velocity_limits={11'd9,11'd24,11'd40,11'd120};
+                19: key_velocity_limits={11'd6,11'd11,11'd17,11'd47};
+                20: key_velocity_limits={11'd13,11'd62,11'd112,11'd251};
+                21: key_velocity_limits={11'd2,11'd3,11'd5,11'd12};
+                22: key_velocity_limits={11'd48,11'd99,11'd151,11'd426};
+                23: key_velocity_limits={11'd26,11'd59,11'd93,11'd222};
+                default: key_velocity_limits={11'd0,11'd0,11'd0,11'd0};
             endcase
         end
     endfunction
 
-    // Inverse travel curve, with an audible minimum for a slow strike.
+    // Five calibrated levels approximate a smooth curve without a divider.
     function [7:0] travel_velocity;
         input integer key;
         input integer frames;
+        reg [43:0] limits;
+        reg [10:0] hard_frame, hard_medium_frame, medium_frame, medium_soft_frame;
         begin
-            if (frames < key_threshold(key)) travel_velocity=127;
-            else travel_velocity=16;
+            limits=key_velocity_limits(key);
+            hard_frame=limits[43:33];
+            hard_medium_frame=limits[32:22];
+            medium_frame=limits[21:11];
+            medium_soft_frame=limits[10:0];
+            if (frames <= hard_frame) travel_velocity=8'd127;
+            else if (frames <= hard_medium_frame) travel_velocity=8'd108;
+            else if (frames <= medium_frame) travel_velocity=8'd88;
+            else if (frames <= medium_soft_frame) travel_velocity=8'd68;
+            else travel_velocity=8'd48;
         end
     endfunction
+    assign measured_velocity = measured_valid ?
+                               travel_velocity(measured_key, measured_frames) : 8'd0;
     reg [23:0] pending_on, pending_off;
     reg [7:0] pending_velocity [0:23];
     reg [5:0] event_cursor;

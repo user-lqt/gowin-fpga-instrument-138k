@@ -1,6 +1,6 @@
 # 本地完整工程状态
 
-最新发布入口为 `project/instrument_fixed_top/instrument_fixed_top.gprj`，顶层配置与用户 20:01 构建的 `prebuilt/instrument_fixed_top.fs` 一并发布。用户已确认可用。以下旧入口不再推荐。
+2026-10-18 最新入口为 `project/instrument_fixed_top/instrument_fixed_top.gprj`，顶层 `instrument_24_rgb_top`。本次为白色界面与独立 TEST 页，详见 [CHANGELOG_20261018.md](CHANGELOG_20261018.md)。本次发布采用用户本地 16:26 构建的烧录文件，助手没有重新构建或上板实测；以下入口和记录均为历史内容。
 
 2026-10-16：在成员 A 的 `d7198b2` 基础上修复音量显示、下载曲谱指引、替换第二曲并提高音量，详见 [FIXES_20261016.md](FIXES_20261016.md)。旧构建报告和 prebuilt 均为历史结果，本次未综合或布局布线。
 

@@ -28,7 +28,7 @@ module tb_master_volume;
   for(timbre=0;timbre<3;timbre=timbre+1) begin
    for(level=0;level<3;level=level+1) begin
     rst_n=0;ev=0;pv=0;repeat(5) @(negedge clk);rst_n=1;wait(ready);
-    parameter_event(`PARAM_VOLUME,level==0 ? 0 : level==1 ? 8191 : 12286);
+    parameter_event(`PARAM_VOLUME,level==0 ? 0 : level==1 ? 12286 : 32767);
     // Production audio ramps the master gain by 64 per sample to avoid clicks.
     // Measure only after that ramp, not while the reset default is fading.
     wait(dut.volume==dut.volume_target);
@@ -50,12 +50,12 @@ module tb_master_volume;
     if(level==1) begin
      if(energy==0) $fatal(1,"silent reference");previous_energy=energy;
     end
-    if(level==2 && (energy*100<previous_energy*145 || energy*100>previous_energy*155))
+    if(level==2 && (energy*100<previous_energy*260 || energy*100>previous_energy*274))
      $fatal(1,"gain ratio timbre=%0d old=%0d new=%0d",timbre,previous_energy,energy);
     $display("volume measurement timbre=%0d level=%0d energy=%0d",timbre,level,energy);
    end
   end
-  $display("PASS: all three timbres, zero volume silence, new maximum PCM amplitude 1.5x previous maximum, single-note no clipping");$finish;
+  $display("PASS: all three timbres, zero volume silence, half-scale maximum is 2.67x the previous maximum, single-note no clipping");$finish;
  end
  initial begin #20000000;$fatal(1,"timeout");end
 endmodule

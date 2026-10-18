@@ -29,32 +29,11 @@ module keyboard_24_input #(
     wire [15:0] measured_frames;
     wire [4:0] measured_key;
     wire measured_valid;
+    wire [7:0] measured_velocity;
     assign strike_frames = measured_frames;
     wire [23:0] measured_ms_product = measured_frames * 24'd200;
     wire [23:0] measured_ms_quotient = measured_ms_product / 16'd1000;
     wire [15:0] measured_ms = measured_ms_quotient[15:0];
-    // Same K1..K24 A->B boundaries as keyboard_24_dual, in scan frames.
-    function integer key_threshold;
-        input integer key;
-        begin
-            case (key)
-                0: key_threshold=50;   1: key_threshold=90;
-                2: key_threshold=30;   3: key_threshold=25;
-                4: key_threshold=100;  5: key_threshold=100;
-                6: key_threshold=100;  7: key_threshold=100;
-                8: key_threshold=5;    9: key_threshold=50;
-                10: key_threshold=15;  11: key_threshold=5;
-                12: key_threshold=5;   13: key_threshold=150;
-                14: key_threshold=100; 15: key_threshold=100;
-                16: key_threshold=50;  17: key_threshold=5;
-                18: key_threshold=50;  19: key_threshold=15;
-                20: key_threshold=90;  21: key_threshold=5;
-                22: key_threshold=150; 23: key_threshold=150;
-                default: key_threshold=5;
-            endcase
-        end
-    endfunction
-    wire [7:0] measured_velocity = measured_frames < key_threshold(measured_key) ? 127 : 16;
     wire [9:0] a_index_wide = (measured_key / 5'd6) * 5'd12 +
         (measured_key % 5'd6);
     wire [5:0] a_index = a_index_wide[5:0];
@@ -73,7 +52,8 @@ module keyboard_24_input #(
         .contact_raw(contact_raw), .event_valid(event_valid),
         .event_type(event_type), .key_id(key_index),
         .velocity(key_velocity), .key_state(key_state),
-        .measured_frames(measured_frames), .measured_key(measured_key), .measured_valid(measured_valid)
+        .measured_frames(measured_frames), .measured_key(measured_key),
+        .measured_valid(measured_valid), .measured_velocity(measured_velocity)
     );
     assign note_id = BASE_NOTE + key_index;
     assign velocity = key_velocity;

@@ -336,8 +336,13 @@ module strike_profile (
     wire [7:0] piano_gain=v<=32 ? (v>>1) :
         v<=96 ? v-8'd16 :
         8'd80+top_segment+(top_segment>>1);
+    // Restore guitar level after body filtering without further waveform
+    // clipping. Hard plucks gain more than soft plucks; tuning is unchanged.
+    wire [7:0] guitar_gain=v<=64 ? v+(v>>2) :
+        8'd80+((v-8'd64)<<1);
     assign gain=v==0 ? 0 : instrument==0 ?
-        (piano_gain==0 ? 8'd1 : piano_gain) : v;
+        (piano_gain==0 ? 8'd1 : piano_gain) :
+        (instrument==1 || instrument==3) ? guitar_gain : v;
 endmodule
 
 // A harder strike excites upper bell modes more strongly, not at new pitches.

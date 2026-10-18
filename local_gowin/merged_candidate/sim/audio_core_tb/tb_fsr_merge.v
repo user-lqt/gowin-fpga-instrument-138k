@@ -6,7 +6,7 @@ module tb_fsr_merge;
  always @(posedge clk) begin
  if(!rst) begin div<=0;tick<=0;end
  else begin div<=div==255 ? 0 : div+1;tick<=div==255;end end
- reg [9:0] pressure=1;reg disconnected=0,miso_bit=0;
+ reg [9:0] pressure=48;reg disconnected=0,miso_bit=0;
  wire cs,sck,mosi;wire miso=disconnected ? 1'b1 : miso_bit;
  integer rises=0;reg [4:0] command=0;
  always @(negedge cs) begin rises=0;command=0;miso_bit=0;end
@@ -27,34 +27,38 @@ module tb_fsr_merge;
  fsr_expression_control fsr(.clk(clk),.rst_n(rst),.sample_valid(sv),.sample_error(se),
  .sample_channel(channel),.ch0_data(raw),.param_valid(fv),.param_id(fid),.param_value(depth),
  .filtered_value(),.modulation_value(),.sensor_ready(ready));
- wire pv,overflow;wire [3:0] pid;wire [15:0] value;
- encoder_param_queue queue(.clk(clk),.rst_n(rst),.sample_tick(tick),
- .a_valid(1'b0),.b_valid(1'b0),.c_valid(fv),.a_id(4'd0),.b_id(4'd0),.c_id(fid),
- .a_value(16'd0),.b_value(16'd0),.c_value(depth),.valid(pv),.id(pid),.value(value),.overflow(overflow));
  wire signed [23:0] pitch;
- pitch_vibrato vibrato(.clk(clk),.rst_n(rst),.sample_tick(tick),.param_valid(pv),
- .param_id(pid),.param_value(value),.pitch_offset(pitch));
- integer last=-1,errors=0;
+ pitch_vibrato vibrato(.clk(clk),.rst_n(rst),.sample_tick(tick),.param_valid(fv),
+ .param_id(fid),.param_value(depth),.pitch_offset(pitch));
+ integer last=-1,errors=0,noise_i;
  always @(posedge clk) begin
- if(pv) last=value;
+ if(fv) last=depth;
  if(se) errors=errors+1;
- if(overflow) $fatal(1,"parameter overflow");end
+ end
  task wait_samples;input integer n;integer i;
  begin for(i=0;i<n;i=i+1) begin @(posedge tick);@(negedge clk);end end endtask
  initial begin
- repeat(4) @(negedge clk);rst=1;
- wait_samples(40);if(raw!=1 || last!=0 || !ready) $fatal(1,"released");
+ rst=1;#1 rst=0;repeat(4) @(negedge clk);rst=1;
+ wait_samples(40);$display("FSR startup raw=%0d filtered=%0d baseline=%0d count=%0d done=%0d ready=%0d last=%0d",
+ raw,fsr.filtered_value,fsr.baseline,fsr.baseline_count,fsr.calibration_done,ready,last);
+ if(raw!=48 || last!=0 || !ready) $fatal(1,"released baseline calibration");
+ for(noise_i=0;noise_i<64;noise_i=noise_i+1) begin
+  pressure=noise_i[0] ? 10'd44 : 10'd52;
+  wait_samples(1);
+  if(last!=0 || pitch!=0) $fatal(1,"resting FSR noise triggered vibrato");
+ end
+ pressure=48;wait_samples(20);
  pressure=450;wait_samples(150);
- if(raw!=450 || last<30000 || last>35000) $fatal(1,"middle pressure %d",last);
+ if(raw!=450 || last<28000 || last>33000) $fatal(1,"middle pressure %d",last);
  pressure=899;wait_samples(150);
  if(raw!=899 || last<65000) $fatal(1,"full pressure");
  wait_samples(512);if(pitch==0) $fatal(1,"no vibrato");
  pressure=1023;wait_samples(60);if(raw!=1023 || last!=65535) $fatal(1,"valid full scale");
  disconnected=1;wait_samples(350);
  if(errors==0 || ready || last!=0 || pitch!=0) $fatal(1,"invalid data did not revoke vibrato");
- disconnected=0;pressure=1;wait_samples(60);
- if(!ready || raw!=1 || last!=0) $fatal(1,"recovery");
- $display("PASS FSR CH0 SPI, pressure mapping, queue to vibrato, invalid data mute and recovery");$finish;
+ disconnected=0;pressure=48;wait_samples(60);
+ if(!ready || raw!=48 || last!=0 || pitch!=0) $fatal(1,"recovery");
+ $display("PASS FSR CH0 SPI, startup baseline/noise rejection, pressure mapping, vibrato, invalid data mute and recovery");$finish;
  end
  initial begin #10000000;$fatal(1,"timeout");end
 endmodule
