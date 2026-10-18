@@ -1,16 +1,14 @@
 # Current Integrated Instrument
 
-## 最新入口（2026-10-16 用户验证可用）
+## 当前版本：2026-10-18 白色界面与独立 TEST 页
 
-- 工程：[`project/instrument_fixed_top/instrument_fixed_top.gprj`](project/instrument_fixed_top/instrument_fixed_top.gprj)。
-- 来源为用户指定并确认可用的 `E:/Gowin/Prj_music/instrument_integrated_fixed_20261016`，完整下载后保持目录结构。
-- 必须保留 `project/instrument_fixed_top/impl/instrument_fixed_top_process_config.json`，其中 `TopModule=instrument_24_rgb_top`。这是工程配置，不能当作构建缓存忽略。
-- 最新烧录文件：`prebuilt/instrument_fixed_top.fs`，来自用户 2026-10-16 20:01 完成的布局布线，校验见 `prebuilt/SHA256SUMS_fixed_top.txt`。
-- 手机网页：`tools/phone/index.html`，版本 20261016a。
-- 修复 VOL 显示、下载曲谱自动指引，第二首替换为避开 K6 的《小星星》，最大音量幅度提高约 50%，FX 不变。
-- 本次上传没有重新综合或布局布线。下面的旧工程入口、旧 prebuilt 与旧构建说明仅供历史参考，不是本次版本。
+正确入口：[`project/instrument_fixed_top/instrument_fixed_top.gprj`](project/instrument_fixed_top/instrument_fixed_top.gprj)，顶层为 `instrument_24_rgb_top`。必须保留该工程 impl 目录下的 `instrument_fixed_top_process_config.json`。
 
-以下为历史交接记录：
+相对上次 GitHub 发布的 `47b28fd`，修改了白底 RGB 屏幕与手机网页、K6 的界面呈现，以及独立 32 复音 TEST 页。完整差异、使用方式、烧录文件来源与验证边界见 [CHANGELOG_20261018.md](CHANGELOG_20261018.md)。手机网页版本为 **20261018a**。
+
+本次由用户执行综合、布局布线；发布使用用户本地 2026-10-18 16:26 生成的 `instrument_fixed_top.fs`，上传时进行 SHA-256 对照。我没有重新综合、布局布线或上板实测。完整音频联合长仿真未跑完，不计为通过。
+
+以下旧入口和旧构建记录仅供历史参考，以本节与更新说明为准。
 
 2026-10-16 B fixes: read [FIXES_20261016.md](FIXES_20261016.md) first.
 The supplied `prebuilt/*.fs` is the unchanged A baseline, NOT the fixed firmware.

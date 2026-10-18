@@ -2,7 +2,9 @@
 
 ## 当前完整整合工程
 
-2026-10-16 用户确认可用的最新修复版：打开 [`instrument_fixed_top.gprj`](local_gowin/merged_candidate/project/instrument_fixed_top/instrument_fixed_top.gprj)，顶层为 `instrument_24_rgb_top`。最新用户构建烧录文件为 [`instrument_fixed_top.fs`](local_gowin/merged_candidate/prebuilt/instrument_fixed_top.fs)。旧 `instrument_velocity_32_two_timbres.gprj` 入口不再推荐。
+2026-10-18 更新：打开 [`instrument_fixed_top.gprj`](local_gowin/merged_candidate/project/instrument_fixed_top/instrument_fixed_top.gprj)，顶层为 `instrument_24_rgb_top`。最新用户构建烧录文件为 [`instrument_fixed_top.fs`](local_gowin/merged_candidate/prebuilt/instrument_fixed_top.fs)，取自用户本地 2026-10-18 16:26 的构建，SHA-256 已对照一致。旧 `instrument_velocity_32_two_timbres.gprj` 入口不再推荐。
+
+相比上次发布 `47b28fd`：屏幕和手机网页改为白色主题，取消 K6 的特殊界面标记，新增独立 TEST 页显示实际声部计数、32 格计数条与混音波形/频谱/单声道延迟 XY。网页版本为 **20261018a**。音频核心、引脚与蓝牙协议不变；频谱仍为16选定频点 DFT，XY 不是双声道相位分析。详见 [本次完整更新说明及验证边界](local_gowin/merged_candidate/CHANGELOG_20261018.md)。本次上传没有由助手重新综合、布局布线或上板实测，音频核心联合长仿真未跑完，不计为通过。
 
 本分支当前完整工程入口为 [`local_gowin/merged_candidate/UPLOAD_README.md`](local_gowin/merged_candidate/UPLOAD_README.md)，包含三音色、32 复音、输入、屏幕、蓝牙、约束、仿真及最新烧录文件。请打开该目录内的 Gowin 工程，不要将仓库根目录的成员 A 独立音频代码误认为完整整合版本。构建报告及验收边界见该入口。
 

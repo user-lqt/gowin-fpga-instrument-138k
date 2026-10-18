@@ -20,6 +20,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  wire [6:0] fx=frame[62:56],glide=frame[69:63];
  wire [2:0] menu={frame[149],frame[71:70]};
  wire analysis_page=menu==5;
+ wire test_page=menu==4;
  wire enabled=frame[72],running=frame[116];
  wire [1:0] song=frame[168:167];
  wire complete=frame[166],unavailable=frame[165];
@@ -148,11 +149,11 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
 8:line="                                  VELOCITY 000    ";
 10:line="                                  STRIKE SOFT     ";
 12:line="                                  GLIDE OFF       ";
-14:line=" SPECTRUM / 16 BINS     XY / 0.5MS  FX 000/127    ";
+14:line=" DFT / 16 BINS         MONO XY     FX 000/127    ";
 16:line="                                  PAGE GLIDE      ";
 18:line="                                  SONG 0 WAIT     ";
 20:line="                                  STEP 000/000    ";
-23:line=" 94HZ   750HZ    18K               TEST OFF       ";
+23:line=" 94HZ   750HZ    18K                             ";
 24:line=" SONG: PHONE SELECT / KNOB PICK / HOLD START      ";
 25:line={" AB ----.-MS K-- V---",{29{8'h20}}};
  default:line=0;
@@ -179,7 +180,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  endcase end
  if(analysis_page) begin
  case(row)
- 2:line=" SPECTRUM / SELECT WITH EC11       XY / MONO DELAY";
+ 2:line=" DFT / SELECT WITH EC11           XY / MONO DELAY";
  4:line="                                                  ";
  6:line="                                                  ";
  8:line="                                                  ";
@@ -190,8 +191,29 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  18:line="                                                  ";
  20:line=" BIN 00  FREQ 00000 HZ  LEVEL 000                 ";
  22:line=" 94HZ          LOG FREQUENCY            18750HZ   ";
- 23:line=" XY: CURRENT AUDIO / DELAY 0.5 MS                 ";
+ 23:line=" MONO DELAY 0.5MS / RELATIVE DFT / NOT FFT        ";
  endcase end
+ if(test_page) begin
+ case(row)
+ 2:line=" MIX WAVE / AUTO SCALE             32 VOICE TEST ";
+ 4:line="                                  ACTIVE 00/32   ";
+ 6:line="                                  NOTES 48-79    ";
+ 8:line="                                  HOLD B: TOGGLE ";
+ 10:line="                                  TEST STOPPED   ";
+ 12:line="                                  MIX OUTPUT     ";
+ 14:line=" MIX SPECTRUM / DFT     MONO XY                   ";
+ 16:line="                                  16 DFT BINS    ";
+ 18:line="                                  RELATIVE LEVEL ";
+ 20:line="                                  NOT CALIBRATED ";
+ 22:line="                                  XY DELAY 0.5MS ";
+ 23:line=" 94HZ   750HZ    18K                              ";
+ 24:line=" ACTIVE VOICE COUNT / 32 SLOTS / NOT FFT         ";
+ 25:line=" SHORT B NEXT PAGE / HOLD B START OR STOP        ";
+ endcase
+ if(row==10 && frame[148]) line=voices==32 ?
+     "                                  32 ACTIVE      " :
+     "                                  TEST RUNNING   ";
+ end
  text_line=line;
  end endfunction
  function [7:0] character;
@@ -231,7 +253,6 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  else if(complete) case(col) 41:character="D";42:character="O";43:character="N";44:character="E";endcase
  else if(running) case(col) 41:character="P";42:character="L";43:character="A";44:character="Y";endcase
  end
- if(row==23 && frame[148]) begin if(col==41) character="N";if(col==42) character=" ";end
  if(row==18 && !running && !complete && col==39) character=digit(b_local_song,0);
  if(row==22 && col>=38 && col<=40) character=digit(b_tempo,40-col);
  if(row==12 && col>=42 && col<=44) character=digit(b_records,44-col);
@@ -261,6 +282,10 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  endcase
  if(col>=30 && col<=32) character=digit(b_level,32-col);
  end end
+ if(test_page && row!=0) begin
+ character=col<50 ? line[399-col*8-:8] : 0;
+ if(row==4 && col>=42 && col<=43) character=digit(b_voices,43-col);
+ end
  end endfunction
  function [34:0] glyph;
  input [7:0] c;
@@ -348,59 +373,63 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  wire [7:0] bar_level=levels[bar_index*8+:8];
  reg [5:0] r,g,b,rp,gp,bp;reg hp,vp,dp;
  always @* begin
- r=3;g=5;b=9;
+ r=63;g=63;b=63;
  // Header and three framed cards.
- if(v<24) begin r=7;g=13;b=20;end
- if(!analysis_page && h>=8 && h<536 && v>=32 && v<216) begin r=5;g=9;b=14;end
- if(!analysis_page && h>=8 && h<536 && v>=224 && v<384) begin r=5;g=9;b=14;end
- if(!analysis_page && h>=544 && h<792 && v>=32 && v<384) begin r=5;g=9;b=14;end
+ if(v<24) begin r=63;g=63;b=63;end
+ if(!analysis_page && h>=8 && h<536 && v>=32 && v<216) begin r=63;g=63;b=63;end
+ if(!analysis_page && h>=8 && h<536 && v>=224 && v<384) begin r=63;g=63;b=63;end
+ if(!analysis_page && h>=544 && h<792 && v>=32 && v<384) begin r=63;g=63;b=63;end
  if(!analysis_page && ((h==8 || h==535) && v>=32 && v<384 ||
     (h==544 || h==791) && v>=32 && v<384 ||
-    (v==32 || v==215 || v==224 || v==383) && h>=8 && h<536)) begin r=10;g=20;b=29;end
+    (v==32 || v==215 || v==224 || v==383) && h>=8 && h<536)) begin r=32;g=34;b=38;end
  if(!analysis_page && h>=16 && h<528 && v>=80 && v<208) begin
- if(v==144 || h[6:0]==16) begin r=9;g=17;b=23;end
- if(wave_ready && v[7:0]>=high_y && v[7:0]<=low_y) begin r=10;g=60;b=44;end
+ if(v==144 || h[6:0]==16) begin r=35;g=37;b=40;end
+ if(wave_ready && v[7:0]>=high_y && v[7:0]<=low_y) begin r=6;g=29;b=60;end
  end
  // 16 selected frequency bins. Gaps between bars, logarithmic magnitude.
  if(!analysis_page && h>=16 && h<272 && v>=248 && v<360) begin
- if(v==359 || v==311 || v==279) begin r=9;g=17;b=23;end
+ if(v==359 || v==311 || v==279) begin r=35;g=37;b=40;end
  if(h[3:0]<12 && bar_level!=0 && v>=360-(bar_level>112 ? 112 : bar_level)) begin
- r=v<300 ? 48 : 10;g=v<300 ? 48 : 50;b=58;
+ r=v<300 ? 6 : 4;g=v<300 ? 34 : 24;b=60;
  end end
  // XY bitmap: x=current mono output; y=24-sample delayed output.
  if(!analysis_page && h>=400 && h<528 && v>=256 && v<384) begin
- if(h==464 || v==320) begin r=9;g=17;b=23;end
- if(xy_ready && xy_hit) begin r=47;g=27;b=63;end
+ if(h==464 || v==320) begin r=35;g=37;b=40;end
+ if(xy_ready && xy_hit) begin r=25;g=15;b=50;end
  end
  // Meters on the parameter card.
- if(!analysis_page && v>=148 && v<152 && h>=552 && h<776) begin
- r=9;g=16;b=22;
- if(h<552+velocity) begin r=10;g=54;b=42;end
+ if(!analysis_page && !test_page && v>=148 && v<152 && h>=552 && h<776) begin
+ r=35;g=37;b=40;
+ if(h<552+velocity) begin r=6;g=38;b=21;end
  end
- if(v>=392 && v<416) begin r=7;g=13;b=20;end
+ if(v>=392 && v<416) begin r=63;g=63;b=63;end
  // 24 full-width physical key tiles, no text underneath.
- if(v>=424 && v<472 && h>=16 && h<784 && key_index<24 && key_x<30) begin
- r=48;g=51;b=55;
- if(key_index==5) begin r=24;g=27;b=31;end
- if(guides[key_index]) begin r=12;g=34;b=63;end
- if(keys[key_index]) begin r=8;g=58;b=36;end
+ if(!test_page && v>=424 && v<472 && h>=16 && h<784 && key_index<24 && key_x<30) begin
+ r=44;g=46;b=50;
+ if(guides[key_index]) begin r=6;g=29;b=60;end
+ if(keys[key_index]) begin r=6;g=38;b=21;end
  if(v==424 || v==471) begin r=r>>1;g=g>>1;b=b>>1;end
+ end
+ // 32 count cells, not per-voice amplitudes or inferred spectral peaks.
+ if(test_page && v>=424 && v<472 && h>=144 && h<656 && h[3:0]<13) begin
+ r=55;g=56;b=58;
+ if(((h-11'd144)>>4)<voices) begin r=6;g=29;b=60;end
  end
  if(text_hit && (analysis_page || (!(h<536 && v>=80 && v<208) &&
     !(h>=16 && h<272 && v>=248 && v<360) &&
-    !(h>=400 && h<528 && v>=256 && v<384)))) begin r=55;g=59;b=63;end
- if(v<24 && errors!=0 && h>=624 && text_hit) begin r=63;g=18;b=12;end
+    !(h>=400 && h<528 && v>=256 && v<384)))) begin r=8;g=10;b=12;end
+ if(v<24 && errors!=0 && h>=624 && text_hit) begin r=55;g=12;b=11;end
  if(v>=392 && v<416 && feature_frame[3] && h<8) begin r=15;g=63;b=42;end
  if(analysis_page && v>=64 && v<320) begin
- r=5;g=9;b=14;
+ r=63;g=63;b=63;
  if(h>=16 && h<400) begin
- if(v==319 || v==255 || v==191 || v==127) begin r=9;g=17;b=23;end
+ if(v==319 || v==255 || v==191 || v==127) begin r=35;g=37;b=40;end
  if(analysis_x<5'd19 && v>=320-bar_level*2) begin
- r=bar_index==inspect_band ? 50 : 10;g=50;b=58;
+ r=bar_index==inspect_band ? 6 : 4;g=29;b=60;
  end end
  if(h>=512 && h<768) begin
- if(h==640 || v==192) begin r=9;g=17;b=23;end
- if(xy_ready && xy_hit) begin r=47;g=27;b=63;end
+ if(h==640 || v==192) begin r=35;g=37;b=40;end
+ if(xy_ready && xy_hit) begin r=25;g=15;b=50;end
  end end
  end
  always @(posedge pixel_clk or negedge rst_n) begin
