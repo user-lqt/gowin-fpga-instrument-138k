@@ -2,6 +2,9 @@
 module tb_dashboard_preview;
  parameter ANALYSIS=0;
  parameter TEST=0;
+ parameter GLIDE_ENABLED=1;
+ parameter GLIDE_VALUE=15;
+ parameter RECORDING=0;
  reg clk=0,rst=0;always #15 clk=~clk;
  reg [209:0] status=0;
  reg [127:0] spectrum=0;
@@ -11,7 +14,7 @@ module tb_dashboard_preview;
  reg hit;
  integer i,out,pixels=0;real a;
  instrument_dashboard dut(.pixel_clk(clk),.rst_n(rst),.status(status),.spectrum(spectrum),
- .features({4'd5,4'd5,10'd12,10'd2,10'd24,2'd2,1'b1,1'b0,1'b0,1'b1,1'b0,1'b1,3'd2}),
+ .features({4'd5,4'd5,10'd12,10'd2,10'd24,2'd2,1'b1,1'b0,RECORDING[0],1'b1,1'b0,1'b1,3'd2}),
  .xy_address(xy),.xy_hit(hit),.xy_ready(1'b1),.wave_address(wa),.wave_min(lo),.wave_max(hi),.wave_ready(1'b1),
  .frame_start(ready),.sc_clk(sc),.sc_hs(hs),.sc_vs(vs),.sc_de(de),.r_out(r),.g_out(g),.b_out(b));
  always @(posedge clk) begin
@@ -21,7 +24,7 @@ module tb_dashboard_preview;
  end
  initial begin
  status[31:16]=64;status[78:73]=4;status[94:87]=127;status[101:95]=69;
- status[106:102]=9;status[71:70]=2;status[69:63]=15;status[72]=1;
+ status[106:102]=9;status[71:70]=2;status[69:63]=GLIDE_VALUE;status[72]=GLIDE_ENABLED;
  status[168:167]=2;status[164:155]=42;status[123:119]=12;status[116]=1;
  status[147:124]=24'd1<<9;status[55:32]=24'd1<<9;
  status[209:169]={1'b1,8'h10,12'h127,20'h00100};

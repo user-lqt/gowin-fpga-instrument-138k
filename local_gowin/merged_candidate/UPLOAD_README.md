@@ -6,7 +6,11 @@ Portamento now starts only when a new note overlaps another held key.
 The first note after all keys are released starts directly at its target pitch;
 release tails do not trigger a glide. See `docs/LEGATO_GLIDE_SEMANTICS.md`.
 ModelSim checks for glide, the 32-voice core and EC11_B controls passed, along
-with PLL-stub top-level elaboration (`tools/verify_legato.ps1`).
+with dashboard regression and PLL-stub top-level elaboration
+(`tools/verify_legato.ps1`). The dashboard now keeps GLIDE on its own line,
+showing ON/OFF and the retained time preset in milliseconds. Recording status
+and count appear on the following line without overwriting GLIDE. Dedicated
+analysis/TEST pages keep their own contents.
 The prebuilt image and resource/timing reports below remain the October 18
 release; they do not contain or validate this source change. Rebuild the
 fixed-top project before testing the new interaction on hardware.

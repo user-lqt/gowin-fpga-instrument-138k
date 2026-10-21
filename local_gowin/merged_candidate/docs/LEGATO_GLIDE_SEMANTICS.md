@@ -13,6 +13,13 @@
 `GLIDE=0` 保持原来的直接起音和复音行为。弯音与颤音仍在音高查表前叠加，
 不改变滑音的起点选择。
 
+## 屏幕显示
+
+普通页面右侧滑音行显示 `GLIDE ON  300MS` 或 `GLIDE OFF 300MS`。
+关闭时仍显示旋钮保留的时间预设；只有 ON 状态且新键与已按住的键重叠时才触发滑音。
+录音状态与计数单独放在下一行，例如 `REC ON  024`，不再覆盖滑音行。
+分析页和 TEST 页按各自布局显示，不叠加普通页面的滑音或录音文字。
+
 ## 实现位置
 
 - `rtl/audio_core/voice_allocator.v` 的 `key_down` 是物理按键保持状态，释放尾音不置位。
@@ -30,6 +37,8 @@ powershell -ExecutionPolicy Bypass -File tools/verify_legato.ps1
 
 2026-10-21 实跑结果：ModelSim 10.1d 的 `tb_glide`、`tb_legato_core`、
 `tb_controls_display` 均 PASS，整机顶层（PLL 仿真桩）展开通过。
+屏幕修复后补跑 `tb_merged_dashboard` 和 `tb_test_dashboard`，连同上述三项回归全部 PASS；
+检查了滑音与录音开关组合、全部 26 档时间预设、关闭后保留时间，以及普通页/分析页/TEST 页隔离。
 `tb_glide` 另在 Icarus 13.0 通过。Icarus 13.0 对现有 `oscillator.v`
 的 `multiply_product` 前向引用报错，整机验证因此使用 ModelSim，未为绕过该错误改动振荡器。
 

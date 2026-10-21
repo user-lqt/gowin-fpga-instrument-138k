@@ -10,7 +10,7 @@ if(-not(Test-Path -LiteralPath $library)) {
 }
 $sources=Get-ChildItem "$root/rtl" -Recurse -Filter *.v |
     Where-Object Name -ne 'clock_gen.v' | Select-Object -ExpandProperty FullName
-$tests=@('tb_glide','tb_legato_core','tb_controls_display')
+$tests=@('tb_glide','tb_legato_core','tb_controls_display','tb_merged_dashboard','tb_test_dashboard')
 $benches=$tests | ForEach-Object {"$root/sim/audio_core_tb/$_.v"}
 Push-Location $checks
 try {

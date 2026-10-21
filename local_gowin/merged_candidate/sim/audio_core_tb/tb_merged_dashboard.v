@@ -7,10 +7,22 @@ module tb_merged_dashboard;
     instrument_dashboard dut(.pixel_clk(clk),.rst_n(rst_n),.status(status),
         .spectrum(128'd0),.features(features),.xy_hit(1'b0),.xy_ready(1'b0),
         .wave_min(16'sd0),.wave_max(16'sd0),.wave_ready(1'b0));
-    integer x,n,gain,expected,field;
+    integer x,n,gain,expected,field,enabled_state,record_state,preset;
     reg [11:0] actual;
+    reg [127:0] expected_glide,expected_record;
+    reg [399:0] expected_line;
     reg [48:0] waveform_features;
     reg [209:0] page_status;
+    task expect_card_text;
+        input [4:0] row;
+        input [127:0] expected_text;
+        integer col;
+        begin
+            for(col=34;col<50;col=col+1)
+                if(dut.character(row,col,dut.text_line(row))!==expected_text[127-(col-34)*8-:8])
+                    $fatal(1,"card row %0d col %0d text mismatch",row,col);
+        end
+    endtask
     initial begin
         #1;repeat(3) @(negedge clk);rst_n=1;
         status[209:169]={1'b1,8'h24,12'h127,20'h00100};
@@ -60,13 +72,14 @@ module tb_merged_dashboard;
         page_status[168:167]=3;page_status[116]=1;
         page_status[154:150]=5'b11111;page_status[123:119]=5'b11110;
         page_status[164:155]=1023;page_status[114:107]=200;
+        page_status[69:63]=25;
         force dut.frame=page_status;
         waveform_features=0;waveform_features[10:9]=3;
         waveform_features[20:11]=512;waveform_features[44:41]=15;
         force dut.feature_frame=waveform_features;
         force dut.levels=128'h78787878787878787878787878787878;
-        repeat(310) @(negedge clk);
-        for(field=0;field<14;field=field+1) begin
+        repeat(330) @(negedge clk);
+        for(field=0;field<15;field=field+1) begin
             case(field)
             0:begin actual=dut.b_volume;expected=127;end
             1:begin actual=dut.b_voices;expected=32;end
@@ -82,10 +95,45 @@ module tb_merged_dashboard;
             11:begin actual=dut.b_records;expected=512;end
             12:begin actual=dut.b_band;expected=16;end
             13:begin actual=dut.b_level;expected=120;end
+            14:begin actual=dut.b_glide;expected=500;end
             endcase
             if(actual!==dut.decimal3(expected))
                 $fatal(1,"serial BCD field %0d actual %h expected %0d",field,actual,expected);
         end
+        // The GLIDE row and REC row must coexist. Exercise both independent
+        // switches, every valid time preset, and retained time while bypassed.
+        page_status=0;waveform_features=0;
+        for(enabled_state=0;enabled_state<2;enabled_state=enabled_state+1)
+            for(record_state=0;record_state<2;record_state=record_state+1)
+                for(preset=0;preset<=25;preset=preset+1) begin
+                    page_status[72]=enabled_state;page_status[69:63]=preset;
+                    waveform_features[6]=record_state;
+                    waveform_features[20:11]=record_state ? 512 : 127;
+                    repeat(330) @(negedge clk);
+                    expected_glide=enabled_state ? "GLIDE ON  000MS " : "GLIDE OFF 000MS ";
+                    expected_glide[47:40]=8'd48+(preset*20)/100;
+                    expected_glide[39:32]=8'd48+((preset*20)/10)%10;
+                    expected_glide[31:24]=8'd48+(preset*20)%10;
+                    expected_record=record_state ? "REC ON  512     " : "REC OFF 127     ";
+                    expect_card_text(12,expected_glide);
+                    expect_card_text(13,expected_record);
+                end
+        // Selecting another normal control page preserves the GLIDE status.
+        for(n=1;n<4;n=n+1) begin
+            page_status[71:70]=n;#1;
+            expect_card_text(12,expected_glide);expect_card_text(13,expected_record);
+        end
+        // Analysis/TEST replace the card; no GLIDE/REC labels or numeric
+        // overlays may leak onto those dedicated pages.
+        page_status[149]=1;
+        page_status[71:70]=1;#1;
+        expect_card_text(12,{16{8'h20}});expect_card_text(13,{16{8'h20}});
+        page_status[71:70]=0;#1;
+        expected_line=dut.text_line(12);
+        for(x=0;x<50;x=x+1)
+            if(dut.character(12,x,expected_line)!==expected_line[399-x*8-:8])
+                $fatal(1,"TEST row overwritten by GLIDE digits");
+        expect_card_text(13,{16{8'h20}});
         for(n=0;n<3;n=n+1) begin
             case(n) 0:expected=0;1:expected=64;2:expected=127;endcase
             page_status[31:16]=expected;
@@ -110,7 +158,7 @@ module tb_merged_dashboard;
             end
             release dut.feature_frame;
         end
-        $display("PASS merged dashboard calibration, guitar label, bar counter, frequency ROM");
+        $display("PASS merged dashboard calibration, labels, BCD, GLIDE/REC separation, all glide times, page isolation, bar counter, frequency ROM");
         $finish;
     end
 endmodule

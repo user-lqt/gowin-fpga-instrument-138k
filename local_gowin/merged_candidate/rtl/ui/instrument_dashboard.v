@@ -66,7 +66,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  decimal3=bcd;
  end endfunction
  reg [11:0] b_volume,b_voices,b_key,b_note,b_velocity,b_fx,b_song;
- reg [11:0] b_position,b_total,b_local_song,b_tempo,b_records,b_band,b_level;
+ reg [11:0] b_position,b_total,b_local_song,b_tempo,b_records,b_band,b_level,b_glide;
  wire [10:0] display_position={1'b0,position}+{10'd0,running};
  reg [3:0] decimal_cursor,decimal_step;
  reg [9:0] decimal_input,decimal_shift;
@@ -80,7 +80,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  end endfunction
  wire [11:0] decimal_adjusted=adjust_decimal(decimal_work);
  wire [11:0] decimal_next={decimal_adjusted[10:0],decimal_shift[9]};
- // Status is frame-held. One 154-clock scan replaces fourteen parallel
+ // Status is frame-held. One 165-clock scan replaces fifteen parallel
  // combinational binary-to-BCD networks without touching pixel coordinates.
  always @* begin
  case(decimal_cursor)
@@ -98,26 +98,27 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  10:decimal_input={2'd0,tempo};
  11:decimal_input=records;
  12:decimal_input={6'd0,inspect_band}+10'd1;
- default:decimal_input={2'd0,levels[inspect_band*8+:8]};
+ 13:decimal_input={2'd0,levels[inspect_band*8+:8]};
+ default:decimal_input=glide_ms;
  endcase
  end
  always @(posedge pixel_clk or negedge rst_n) begin
  if(!rst_n) begin
  decimal_cursor<=0;decimal_step<=0;decimal_shift<=0;decimal_work<=0;
  b_volume<=0;b_voices<=0;b_key<=0;b_note<=0;b_velocity<=0;b_fx<=0;b_song<=0;
- b_position<=0;b_total<=0;b_local_song<=0;b_tempo<=0;b_records<=0;b_band<=0;b_level<=0;
+ b_position<=0;b_total<=0;b_local_song<=0;b_tempo<=0;b_records<=0;b_band<=0;b_level<=0;b_glide<=0;
  end else if(decimal_step==0) begin
  decimal_shift<=decimal_input;decimal_work<=0;decimal_step<=1;
  end else begin
  decimal_shift<={decimal_shift[8:0],1'b0};decimal_work<=decimal_next;
  if(decimal_step==10) begin
- decimal_step<=0;decimal_cursor<=decimal_cursor==4'd13 ? 4'd0 : decimal_cursor+4'd1;
+ decimal_step<=0;decimal_cursor<=decimal_cursor==4'd14 ? 4'd0 : decimal_cursor+4'd1;
  case(decimal_cursor)
  0:b_volume<=decimal_next;1:b_voices<=decimal_next;2:b_key<=decimal_next;
  3:b_note<=decimal_next;4:b_velocity<=decimal_next;5:b_fx<=decimal_next;
  6:b_song<=decimal_next;7:b_position<=decimal_next;8:b_total<=decimal_next;
  9:b_local_song<=decimal_next;10:b_tempo<=decimal_next;11:b_records<=decimal_next;
- 12:b_band<=decimal_next;13:b_level<=decimal_next;
+ 12:b_band<=decimal_next;13:b_level<=decimal_next;14:b_glide<=decimal_next;
  endcase
  end else decimal_step<=decimal_step+1'b1;
  end end
@@ -148,7 +149,8 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
 6:line="                                  NOTE 000        ";
 8:line="                                  VELOCITY 000    ";
 10:line="                                  STRIKE SOFT     ";
-12:line="                                  GLIDE OFF       ";
+12:line=enabled ? "                                  GLIDE ON  000MS " : "                                  GLIDE OFF 000MS ";
+13:line=recording ? "                                  REC ON  000     " : "                                  REC OFF 000     ";
 14:line=" DFT / 16 BINS         MONO XY     FX 000/127    ";
 16:line="                                  PAGE GLIDE      ";
 18:line="                                  SONG 0 WAIT     ";
@@ -165,7 +167,6 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  else if(running && song==1) line=" SONG: JASMINE / FOLLOW THE BLUE KEY              ";
  else if(running && song==2) line=" SONG: TWINKLE STAR / FOLLOW THE BLUE KEY         ";
  end
- if(row==12) line=recording ? "                                  REC ON  000     " : "                                  REC OFF 000     ";
  if(row==18 && !running && !complete) line="                                  PICK 0 HOLD     ";
  if(row==22) line="                                  BPM 000         ";
  if(row==23 && rhythm_enabled) line="                                  RHYTHM ON       ";
@@ -186,6 +187,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  8:line="                                                  ";
  10:line="                                                  ";
  12:line="                                                  ";
+ 13:line="                                                  ";
  14:line="                                                  ";
  16:line="                                                  ";
  18:line="                                                  ";
@@ -201,6 +203,7 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  8:line="                                  HOLD B: TOGGLE ";
  10:line="                                  TEST STOPPED   ";
  12:line="                                  MIX OUTPUT     ";
+ 13:line="                                                  ";
  14:line=" MIX SPECTRUM / DFT     MONO XY                   ";
  16:line="                                  16 DFT BINS    ";
  18:line="                                  RELATIVE LEVEL ";
@@ -255,7 +258,8 @@ module instrument_dashboard(input wire pixel_clk,rst_n,input wire [209:0] status
  end
  if(row==18 && !running && !complete && col==39) character=digit(b_local_song,0);
  if(row==22 && col>=38 && col<=40) character=digit(b_tempo,40-col);
- if(row==12 && col>=42 && col<=44) character=digit(b_records,44-col);
+ if(row==12 && col>=44 && col<=46) character=digit(b_glide,46-col);
+ if(row==13 && col>=42 && col<=44) character=digit(b_records,44-col);
  if(row==25 && frame[209]) begin
  case(col)
  4:character=8'd48+{4'd0,frame[188:185]};
