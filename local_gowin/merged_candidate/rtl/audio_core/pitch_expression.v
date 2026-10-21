@@ -13,6 +13,7 @@ module pitch_expression_bank #(
     input wire [3:0] param_id,
     input wire [15:0] param_value,
     input wire [VOICES-1:0] note_on,
+    input wire [VOICES-1:0] key_down,
     input wire [VOICES*7-1:0] notes,
     input wire [VOICES*32-1:0] base_fcs,
     input wire [VOICES*48-1:0] base_periods,
@@ -32,10 +33,6 @@ module pitch_expression_bank #(
         .pitch_offset(vibrato_pitch)
     );
     reg [15:0] glide_samples;
-    reg last_valid;
-    reg [6:0] last_note;
-    reg [31:0] last_fc;
-    reg [PERIOD_BITS-1:0] last_period;
     reg signed [23:0] pitch [0:VOICES-1];
     reg [6:0] goal [0:VOICES-1];
     reg signed [23:0] slope [0:VOICES-1];
@@ -47,6 +44,9 @@ module pitch_expression_bank #(
     reg [31:0] result_fc [0:VOICES-1];
     reg [PERIOD_BITS-1:0] result_period [0:VOICES-1];
     reg initialized [0:VOICES-1];
+    // A permutation of slot ranks: 0 is the most recent NOTE_ON. Release
+    // tails retain their pitch but cannot become a legato glide source.
+    reg [INDEX_BITS-1:0] recency [0:VOICES-1];
     reg [VOICES-1:0] new_this_frame;
     reg [8:0] cycle;
     reg scanning;
@@ -99,8 +99,42 @@ module pitch_expression_bank #(
     wire starting=|note_on;
     wire [INDEX_BITS-1:0] start_slot=start_index(note_on);
     wire [6:0] triggered_note=notes[start_slot*7+:7];
+    // The allocator already includes the incoming key in key_down. Exclude
+    // NOTE_ON slots so a first key (or a same-slot retrigger) cannot glide
+    // from its own old release tail. The core accepts one event per frame.
+    localparam integer SOURCE_LEAVES=2**$clog2(VOICES);
+    wire [2*SOURCE_LEAVES-1:1] source_valid;
+    wire [INDEX_BITS-1:0] source_rank [1:2*SOURCE_LEAVES-1];
+    wire [INDEX_BITS-1:0] source_index [1:2*SOURCE_LEAVES-1];
+    genvar candidate,node;
+    generate for(candidate=0;candidate<SOURCE_LEAVES;candidate=candidate+1) begin : source_candidates
+        if(candidate<VOICES) begin : real_slot
+            assign source_valid[SOURCE_LEAVES+candidate]=
+                initialized[candidate] && key_down[candidate] && !note_on[candidate];
+            assign source_rank[SOURCE_LEAVES+candidate]=recency[candidate];
+            assign source_index[SOURCE_LEAVES+candidate]=candidate;
+        end else begin : padding
+            assign source_valid[SOURCE_LEAVES+candidate]=1'b0;
+            assign source_rank[SOURCE_LEAVES+candidate]=0;
+            assign source_index[SOURCE_LEAVES+candidate]=0;
+        end
+    end
+    for(node=1;node<SOURCE_LEAVES;node=node+1) begin : source_selection
+        wire choose_left=source_valid[2*node] &&
+            (!source_valid[2*node+1] || source_rank[2*node]<source_rank[2*node+1]);
+        assign source_valid[node]=source_valid[2*node] || source_valid[2*node+1];
+        assign source_rank[node]=choose_left ? source_rank[2*node] : source_rank[2*node+1];
+        assign source_index[node]=choose_left ? source_index[2*node] : source_index[2*node+1];
+    end endgenerate
+    wire start_glide=source_valid[1] && glide_samples!=0;
+    wire [INDEX_BITS-1:0] source_slot=source_index[1];
+    // pitch excludes global bend/vibrato: chained legato continues from the
+    // current sliding pitch, without adding those offsets a second time.
+    wire signed [23:0] source_pitch=pitch[source_slot];
+    wire [31:0] source_fc=result_fc[source_slot];
+    wire [PERIOD_BITS-1:0] source_period=result_period[source_slot];
     wire signed [23:0] delta=$signed({1'b0,triggered_note,16'b0})-
-        $signed({1'b0,last_note,16'b0});
+        source_pitch;
     wire [16:0] error_sum={1'b0,error[slot]}+{1'b0,residue[slot]};
     wire carry_error=error_sum>={1'b0,duration[slot]};
     wire signed [23:0] goal_pitch={1'b0,goal[slot],16'b0};
@@ -132,10 +166,9 @@ module pitch_expression_bank #(
         !new_this_frame[slot] && !note_on[slot];
     wire [INDEX_BITS-1:0] state_write_slot=starting ? start_slot : slot;
     wire signed [23:0] state_write_pitch=starting ?
-        (last_valid && glide_samples!=0 ?
-            {1'b0,last_note,16'b0} : {1'b0,triggered_note,16'b0}) : advanced_pitch;
+        (start_glide ? source_pitch : {1'b0,triggered_note,16'b0}) : advanced_pitch;
     wire [15:0] state_write_remaining=starting ?
-        (last_valid ? glide_samples : 16'd0) :
+        (start_glide ? glide_samples : 16'd0) :
         (glide_samples==0 || remaining[slot]<=1 ? 16'd0 : remaining[slot]-1'b1);
     wire [16:0] state_write_error_wide=starting ? 17'd0 :
         (glide_samples!=0 && remaining[slot]>1 ?
@@ -152,7 +185,7 @@ module pitch_expression_bank #(
         if(starting) begin
             goal[start_slot]<=triggered_note;
             duration[start_slot]<=glide_samples==0 ? 16'd1 : glide_samples;
-            descending[start_slot]<=delta<0;
+            descending[start_slot]<=start_glide && delta<0;
         end
         if(starting || advance) begin
             pitch[state_write_slot]<=state_write_pitch;
@@ -167,19 +200,17 @@ module pitch_expression_bank #(
     assign busy=scanning || dividing;
     genvar v;
     generate for(v=0;v<VOICES;v=v+1) begin : outputs
-        wire start_glide=last_valid && glide_samples!=0;
         assign fcs[v*32+:32]=note_on[v] ?
-            (start_glide ? last_fc : base_fcs[v*32+:32]) :
+            (start_glide ? source_fc : base_fcs[v*32+:32]) :
             STATIC_BASE_PITCH || initialized[v] ? result_fc[v] : base_fcs[v*32+:32];
         assign periods[v*48+:48]=note_on[v] ?
-            (start_glide ? last_period : base_periods[v*48+:48]) :
+            (start_glide ? source_period : base_periods[v*48+:48]) :
             STATIC_BASE_PITCH || initialized[v] ? result_period[v] : base_periods[v*48+:48];
     end endgenerate
     integer j;
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
             bend_target<=0;bend<=0;glide_samples<=0;
-            last_valid<=0;last_note<=0;last_fc<=0;last_period<=0;
             cycle<=0;scanning<=0;slot<=0;step<=0;new_this_frame<=0;
             saved_fc<=0;saved_period<=0;saved_ratio<=65536;saved_reciprocal<=65536;
             dividing<=0;negative<=0;divide_slot<=0;divisor<=1;
@@ -188,6 +219,7 @@ module pitch_expression_bank #(
                 result_fc[j]<=STATIC_BASE_PITCH ? 32'd731558 : 32'd0;
                 result_period[j]<=STATIC_BASE_PITCH ? 48'd384760985 : 48'd0;
                 initialized[j]<=0;
+                recency[j]<=j;
             end
         end else begin
             new_this_frame<=sample_tick ? note_on : new_this_frame|note_on;
@@ -231,10 +263,12 @@ module pitch_expression_bank #(
                 if(bits_left==1) dividing<=0;
             end
             if(starting) begin
-                last_valid<=1;last_note<=triggered_note;
-                last_fc<=base_fcs[start_slot*32+:32];
-                last_period<=base_periods[start_slot*48+:PERIOD_BITS];
-                if(last_valid && glide_samples!=0) begin
+                for(j=0;j<VOICES;j=j+1) begin
+                    if(j==start_slot) recency[j]<=0;
+                    else if(recency[j]<recency[start_slot])
+                        recency[j]<=recency[j]+1'b1;
+                end
+                if(start_glide) begin
                     dividing<=1;negative<=delta<0;divide_slot<=start_slot;
                     divisor<=glide_samples;
                     quotient<=delta<0 ? -delta : delta;
@@ -243,10 +277,8 @@ module pitch_expression_bank #(
             end
             for(j=0;j<VOICES;j=j+1) if(note_on[j]) begin
                 initialized[j]<=1;
-                result_fc[j]<=last_valid && glide_samples!=0 ?
-                    last_fc : base_fcs[j*32+:32];
-                result_period[j]<=last_valid && glide_samples!=0 ?
-                    last_period : base_periods[j*48+:PERIOD_BITS];
+                result_fc[j]<=start_glide ? source_fc : base_fcs[j*32+:32];
+                result_period[j]<=start_glide ? source_period : base_periods[j*48+:PERIOD_BITS];
             end
         end
     end

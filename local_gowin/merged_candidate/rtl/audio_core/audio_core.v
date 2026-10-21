@@ -319,7 +319,7 @@ module audio_core #(
                 .clk(clk),.rst_n(rst_n),.sample_tick(sample_tick),
                 .param_valid(sample_tick && (p_pop || p_bypass)),
                 .param_id(selected_param_id),.param_value(selected_param_val),
-                .note_on(voice_note_on),.notes(voice_note_id),
+                .note_on(voice_note_on),.key_down(key_down),.notes(voice_note_id),
                 .base_fcs(voice_fc),.base_periods(voice_period),
                 .fcs(rendered_fc),.periods(rendered_period),.busy());
         end else begin : fixed_pitch
