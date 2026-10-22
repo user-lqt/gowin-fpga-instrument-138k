@@ -1,5 +1,11 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
+## 当前源码更新：K230 手势接口（2026-10-22）
+
+K230 手掌高度按 5% 分档控制音量，静态手势切换钢琴/吉他/编钟（协议编号 0/1/2）。新增独立 115200 8N1 接收通路，K230 TX 接 J13-35/C20，GND 共地；K230 使用外部 5 V 电源，串口为 3.3 V 信号，原蓝牙接线保留。程序与接线见 [`k230_gesture_test/FPGA_UART_WIRING.md`](k230_gesture_test/FPGA_UART_WIRING.md)，板端运行入口为 `gesture_fpga_control.py`。
+
+FPGA 工程仍为 [`instrument_fixed_top.gprj`](local_gowin/merged_candidate/project/instrument_fixed_top/instrument_fixed_top.gprj)。本次仅交付源码与验证结果，**未运行 Gowin 综合或布局布线，未生成新 `.fs`**。下方及 `prebuilt/` 的 10 月 18 日固件不包含 K230 接口或 10 月 21 日滑音修复，需要后续重新构建。
+
 ## 当前完整整合工程
 
 2026-10-18 更新：打开 [`instrument_fixed_top.gprj`](local_gowin/merged_candidate/project/instrument_fixed_top/instrument_fixed_top.gprj)，顶层为 `instrument_24_rgb_top`。最新用户构建烧录文件为 [`instrument_fixed_top.fs`](local_gowin/merged_candidate/prebuilt/instrument_fixed_top.fs)，取自用户本地 2026-10-18 17:10 的构建，SHA-256 已对照一致。已移除完整工程目录中的旧工程入口及旧烧录文件。本次同时包含 K6/K13 新校准、吉他力度与音量优化、FSR 静止噪声抑制，具体构建证据与验证范围以完整工程入口说明为准。

@@ -11,4 +11,6 @@ set_output_delay -clock dac_bck -min -10.000 [get_ports {o_hp_ws o_hp_din}]
 set_output_delay -clock lcd_clock -max 5.000 [get_ports {lcd_sc_hs lcd_sc_vs lcd_sc_de lcd_r_out[*] lcd_g_out[*] lcd_b_out[*]}]
 set_output_delay -clock lcd_clock -min -1.000 [get_ports {lcd_sc_hs lcd_sc_vs lcd_sc_de lcd_r_out[*] lcd_g_out[*] lcd_b_out[*]}]
 set_false_path -from [get_ports {i_rst_n col_in[*] enc_a enc_b enc_sw_n enc2_a enc2_b enc2_sw_n}]
+# Asynchronous UART pad enters the existing two-stage receiver synchronizer.
+set_false_path -from [get_ports {k230_uart_rx}]
 set_false_path -to [get_ports {o_pa_en o_led o_locked row_out[*]}]

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+backups/
+reference/
+fpga_interface/
+*.zip

@@ -11,7 +11,8 @@ module encoder_control #(
     parameter integer REVERSE_DIR = 0,
     parameter integer INSTRUMENT_COUNT = 4,
     parameter integer FORMAL_CONTROLS = 0,
-    parameter [15:0] DEFAULT_INSTRUMENT = 0
+    parameter [15:0] DEFAULT_INSTRUMENT = 0,
+    parameter integer ENABLE_REMOTE = 0
 ) (
     input wire clk, rst_n,
     input wire enc_a, enc_b, enc_sw_n,
@@ -23,7 +24,10 @@ module encoder_control #(
     output wire [3:0] ui_page,
     output wire [15:0] ui_param_value,
     output wire ui_dirty,
-    output wire diagnostic_step_up, diagnostic_step_down
+    output wire diagnostic_step_up, diagnostic_step_down,
+    input wire remote_valid,
+    input wire [3:0] remote_id,
+    input wire [15:0] remote_value
 );
     wire step_up, step_down, press;
     assign diagnostic_step_up = step_up;
@@ -39,10 +43,11 @@ module encoder_control #(
     parameter_manager #(.ENABLE_INSTRUMENT(1), .INSTRUMENT_COUNT(INSTRUMENT_COUNT),
         .ROTATE_VOLUME_PRESS_TIMBRE(FORMAL_CONTROLS),
         .VOLUME_STEP(FORMAL_CONTROLS ? 16'd4 : 16'd1),
-        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT)) parameters (
+        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT), .ENABLE_REMOTE(ENABLE_REMOTE)) parameters (
         .clk(clk), .rst_n(rst_n), .step_up(step_up), .step_down(step_down),
         .select_press(press), .volume_value(volume_value), .instrument_value(instrument_value),
         .param_valid(param_valid), .param_id(param_id), .param_value(param_value),
-        .ui_page(ui_page), .ui_param_value(ui_param_value), .ui_dirty(ui_dirty)
+        .ui_page(ui_page), .ui_param_value(ui_param_value), .ui_dirty(ui_dirty),
+        .remote_valid(remote_valid), .remote_id(remote_id), .remote_value(remote_value)
     );
 endmodule

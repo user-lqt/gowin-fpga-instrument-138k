@@ -105,6 +105,7 @@ module oscillator #(
         // rather than storing three products and adding them in parallel.
         reg signed [25:0] piano_upper_sum;
         assign bank_upper_operand=piano_upper_sum;
+        wire signed [26:0] multiply_product;
         wire signed [25:0] upper_product=
             $signed({{2{multiply_product[23]}},multiply_product[23:0]});
         wire signed [25:0] updated_upper=SHARED_UPPER_ADD ?
@@ -131,7 +132,6 @@ module oscillator #(
             summed_result;
         reg signed [17:0] multiply_wave;
         reg [7:0] multiply_gain;
-        wire signed [26:0] multiply_product;
         reg signed [15:0] output_wave;
         assign bank_address=harmonic_phase[31:20];
         assign bank_operand=multiply_wave;

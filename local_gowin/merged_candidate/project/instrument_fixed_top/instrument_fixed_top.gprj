@@ -30,6 +30,7 @@
     <File path="../../rtl/audio_core/wavetable.v" type="file.verilog" enable="1" />
     <File path="../../rtl/common/reset_sync.v" type="file.verilog" enable="1" />
     <File path="../../rtl/input/ble_uart_rx.v" type="file.verilog" enable="1" />
+    <File path="../../rtl/input/k230_control_rx.v" type="file.verilog" enable="1" />
     <File path="../../rtl/input/encoder.v" type="file.verilog" enable="1" />
     <File path="../../rtl/input/encoder_b_control.v" type="file.verilog" enable="1" />
     <File path="../../rtl/input/encoder_b_input.v" type="file.verilog" enable="1" />

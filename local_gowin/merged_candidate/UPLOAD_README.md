@@ -1,5 +1,21 @@
 # Current Integrated Instrument
 
+## Local Source Update: October 22, 2026
+
+The K230 now has a dedicated 115200 8N1 UART input on J13-35 / C20,
+independent of the existing BLE pins C18/C19. It sets volume in five-percent
+steps and selects piano/guitar/bell with IDs 0/1/2. The shared parameter
+manager updates audio, LCD state and the encoder's next starting value.
+K230 uses external 5 V power; connect its 3.3 V TX and common GND only.
+
+K230 files and wiring: [`../../k230_gesture_test/FPGA_UART_WIRING.md`](../../k230_gesture_test/FPGA_UART_WIRING.md).
+FPGA details: [`docs/K230_UART.md`](docs/K230_UART.md).
+42 Python checks, the dedicated UART/encoder test, volume mapping,
+three-timbre master-volume and BLE regression passed; the integrated top
+also passed structural compilation with a PLL stub. No physical UART test,
+Gowin synthesis, placement/routing or new programming image was performed.
+The October 18 prebuilt image below does not contain these source changes.
+
 ## Local Source Update: October 21, 2026
 
 Portamento now starts only when a new note overlaps another held key.

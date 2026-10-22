@@ -22,7 +22,8 @@ module parameter_manager #(
     parameter integer ENABLE_INSTRUMENT = 0,
     parameter integer INSTRUMENT_COUNT = 4,
     parameter integer ROTATE_VOLUME_PRESS_TIMBRE = 0,
-    parameter [15:0] DEFAULT_INSTRUMENT = 0
+    parameter [15:0] DEFAULT_INSTRUMENT = 0,
+    parameter integer ENABLE_REMOTE = 0
 ) (
     input wire clk,
     input wire rst_n,
@@ -36,13 +37,23 @@ module parameter_manager #(
     output reg ui_dirty,
     input wire select_press,
     output reg [15:0] instrument_value,
-    output reg [3:0] ui_page
+    output reg [3:0] ui_page,
+    // Absolute UI values from a validated remote command. Default-disabled
+    // so legacy instances with these new ports unconnected remain unchanged.
+    input wire remote_valid,
+    input wire [3:0] remote_id,
+    input wire [15:0] remote_value
 );
     reg initialized;
     reg instrument_pending;
     reg [15:0] next_volume;
     reg [15:0] next_instrument;
     wire [16:0] increased = {1'b0, volume_value} + {1'b0, VOLUME_STEP};
+    wire remote_volume = (ENABLE_REMOTE != 0) && remote_valid
+        && remote_id == `PARAM_VOLUME && remote_value <= MAX_VOLUME;
+    wire remote_instrument = (ENABLE_REMOTE != 0) && remote_valid
+        && remote_id == `PARAM_INSTRUMENT && (ENABLE_INSTRUMENT != 0)
+        && remote_value < INSTRUMENT_COUNT;
     function [15:0] audio_volume;
         input [15:0] ui_volume;
         // 65535*65535 + floor(65535/2) fits unsigned 32 bits.
@@ -101,6 +112,38 @@ module parameter_manager #(
                 param_value <= audio_volume(volume_value);
                 param_valid <= 1;
                 ui_dirty <= 1;
+            end else if (remote_volume) begin
+                // Same-parameter collisions prefer the remote command. A
+                // simultaneous local timbre press is retained for the next clk.
+                if (remote_value != volume_value) begin
+                    volume_value <= remote_value;
+                    param_id <= `PARAM_VOLUME;
+                    param_value <= audio_volume(remote_value);
+                    param_valid <= 1;
+                    ui_dirty <= 1;
+                end
+                if (ROTATE_VOLUME_PRESS_TIMBRE != 0 && select_press
+                        && ENABLE_INSTRUMENT != 0) begin
+                    instrument_value <= (instrument_value >= INSTRUMENT_COUNT-1)
+                        ? 16'd0 : instrument_value + 1'b1;
+                    instrument_pending <= 1;
+                    ui_dirty <= 1;
+                end
+            end else if (remote_instrument) begin
+                instrument_value <= remote_value;
+                ui_dirty <= 1;
+                if (ROTATE_VOLUME_PRESS_TIMBRE != 0 && next_volume != volume_value) begin
+                    volume_value <= next_volume;
+                    param_id <= `PARAM_VOLUME;
+                    param_value <= audio_volume(next_volume);
+                    param_valid <= 1;
+                    instrument_pending <= 1;
+                end else begin
+                    param_id <= `PARAM_INSTRUMENT;
+                    param_value <= remote_value;
+                    param_valid <= 1;
+                    instrument_pending <= 0;
+                end
             end else if (instrument_pending) begin
                 instrument_pending <= 0;
                 param_id <= `PARAM_INSTRUMENT;

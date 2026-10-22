@@ -19,6 +19,7 @@ module instrument_24_rgb_top #(
     input wire enc2_a, enc2_b, enc2_sw_n,
     input wire adc_miso,
     input wire ble_uart_rx,
+    input wire k230_uart_rx,
     output wire ble_uart_tx,
     output wire adc_cs_n,adc_sclk,adc_mosi,
     output wire led_strip_din,
@@ -98,16 +99,26 @@ module instrument_24_rgb_top #(
     wire [3:0] ui_page;
     wire ui_dirty;
     wire diagnostic_step_up, diagnostic_step_down;
+    wire k230_param_valid, k230_frame_error;
+    wire [3:0] k230_param_id;
+    wire [15:0] k230_param_value;
+    k230_control_rx u_k230_control (
+        .clk(clk_audio), .rst_n(rst_n && system_ready), .uart_rx(k230_uart_rx),
+        .param_valid(k230_param_valid), .param_id(k230_param_id),
+        .param_value(k230_param_value), .frame_error(k230_frame_error)
+    );
     encoder_control #(.FILTER_CYCLES(2500), .BUTTON_CYCLES(245760),
         .REVERSE_DIR(0), .INSTRUMENT_COUNT(3), .FORMAL_CONTROLS(FORMAL_CONTROLS),
-        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT)) u_encoder_control (
+        .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT), .ENABLE_REMOTE(1)) u_encoder_control (
         .clk(clk_audio), .rst_n(rst_n && system_ready),
         .enc_a(enc_a), .enc_b(enc_b), .enc_sw_n(enc_sw_n),
         .input_ready(encoder_ready), .volume_value(volume_value),
         .instrument_value(instrument_value), .param_valid(encoder_param_valid),
         .param_id(encoder_param_id), .param_value(encoder_param_value),
         .ui_page(ui_page), .ui_param_value(ui_param_value), .ui_dirty(ui_dirty),
-        .diagnostic_step_up(diagnostic_step_up), .diagnostic_step_down(diagnostic_step_down)
+        .diagnostic_step_up(diagnostic_step_up), .diagnostic_step_down(diagnostic_step_down),
+        .remote_valid(k230_param_valid), .remote_id(k230_param_id),
+        .remote_value(k230_param_value)
     );
     reg [2:0] enc_meta, enc_sync, enc_previous;
     reg [7:0] diagnostic_up, diagnostic_down, diagnostic_edges;
