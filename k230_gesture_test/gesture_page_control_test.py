@@ -150,19 +150,30 @@ def find_music_models():
 
 
 # ---------- 手掌高度调音量、静态手势选页与选音色 ----------
-BUILD_TAG = "PALM HEIGHT V4.4"
+BUILD_TAG = "TOUCH KEYS V4.9 UART3 GPIO32/33"
+TOUCH_POLL_MS = 5
+TOUCH_REDRAW_MS = 50
+CAMERA_HMIRROR = False  # 关闭原有左右镜像；视频与 AI 使用同一传感器方向。
+TOUCH_BUTTONS = ((20, 278, 185, 72), (227, 278, 185, 72), (434, 278, 185, 72))
+TOUCH_SLIDER = (40, 382, 560, 66)
+INPUT_TABS = ((10, 38, 200, 72), (220, 38, 200, 72), (430, 38, 200, 72))
+INPUT_MODES = ("GESTURE", "TOUCH", "KEYS")
+INPUT_LABELS = ("1 手势", "2 调参", "3 琴键")
+KEY_NOTES = (60, 62, 64, 65, 67, 69, 71, 72)
+KEY_LABELS = ("C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5")
+KEY_RECTS = ((16, 268, 140, 76), (172, 268, 140, 76), (328, 268, 140, 76), (484, 268, 140, 76),
+             (16, 358, 140, 76), (172, 358, 140, 76), (328, 358, 140, 76), (484, 358, 140, 76))
 TEXT_SHADOW = False
 PERF_REPORT_MS = 2000
 TIMBRE_NAMES = ("钢琴", "吉他", "编钟")
 PAGES = ("TIMBRE", "VOLUME")
 PAGE_NAMES = ("音色", "音量")
-POSE_LABELS = {"ONE": "单指", "V_SIGN": "剪刀手", "INCREASE": "点赞",
-               "DECREASE": "三指", "PALM": "张掌", "FIST": "握拳",
+POSE_LABELS = {"V_SIGN": "剪刀手", "PALM": "张掌", "FIST": "握拳",
                "OTHER": "未识别", "NONE": "无手"}
 INITIAL_VOLUME = 50
-GESTURE_HOLD_MS = 350
-PAUSE_HOLD_MS = 200
-RELEASE_HOLD_MS = 250
+GESTURE_HOLD_MS = 450
+RELEASE_HOLD_MS = 300
+LOST_RELEASE_MS = 600
 MIN_CONFIRM_FRAMES = 3
 MAX_HOLD_STEP_MS = 150
 MAX_FRAME_GAP_MS = 500
@@ -200,25 +211,12 @@ def pose_kind(points):
     if angles is None:
         return "OTHER"
     thumb, index, middle, ring, pinky = angles
-    # 三指伸直、小指收拢；拇指姿态不限，无需翻转手腕。
-    if index < 49 and middle < 49 and ring < 49 and pinky > 65:
-        return "DECREASE"
+    # 只识别三种轮廓差别较大的手势；中间角度保留为 OTHER。
     if index < 49 and middle < 49 and ring > 65 and pinky > 65:
         return "V_SIGN"
-    if index < 49 and middle > 65 and ring > 65 and pinky > 65:
-        return "ONE"
     if all(angle < 49 for angle in angles[1:]):
         return "PALM"
     if all(angle > 65 for angle in angles[1:]):
-        # 点赞为四指收拢、拇指向画面上方伸直。
-        dx, dy = points[8] - points[4], points[9] - points[5]
-        part1 = math.sqrt((points[6] - points[4]) ** 2 + (points[7] - points[5]) ** 2)
-        part2 = math.sqrt((points[8] - points[6]) ** 2 + (points[9] - points[7]) ** 2)
-        straight = math.sqrt(dx * dx + dy * dy) >= 0.85 * (part1 + part2) and part1 + part2 > 1
-        outside = math.sqrt((points[8] - points[10]) ** 2 + (points[9] - points[11]) ** 2) >= geometry[2] * 0.40
-        vertical = abs(dy) >= max(12.0, geometry[2] * 0.32) and abs(dy) >= abs(dx) * 1.10
-        if thumb < 49 and straight and outside and vertical and dy < 0:
-            return "INCREASE"
         if thumb > 53:
             return "FIST"
     return "OTHER"
@@ -273,25 +271,38 @@ class HeightVolumeFilter:
 
 
 class PageControl:
-    """选页与音色保持确认；仅音量页确认张掌后按高度连续调节。"""
+    """握拳循环选页、剪刀手循环音色、张掌高度音量；离手保持参数。"""
     def __init__(self):
         self.page = self.timbre = 0
         self.volume = INITIAL_VOLUME
-        self.enabled = False
-        self.mode = "PAUSED"
+        self.enabled = True
+        self.mode = "ACTIVE"
         self.pose = "NONE"
         self.candidate = None
         self.candidate_ms = 0.0
         self.candidate_frames = 0
         self.latched = None
         self.release_ms = 0.0
+        self.lost_ms = 0.0
         self.height_filter = HeightVolumeFilter(self.volume)
         self.height_active = False
         self.height_y = None
         self.height_target = None
         self.event_age_ms = 2000.0
-        self.last_event = "单指选音量，剪刀手选音色"
+        self.last_event = "握拳换页，剪刀手换音色"
         self.last_source = None
+        self.tx_count = 0
+        self.link_active = False
+        self.touch_ready = False
+        self.touch_note = None
+        self.input_mode = "GESTURE"
+        self.touch_active = False
+        self.touch_lock = False
+        self.touch_release_ms = 0.0
+
+    def action_available(self, pose):
+        return (pose == "FIST" or pose == "V_SIGN" and PAGES[self.page] == "TIMBRE"
+                or pose == "PALM" and PAGES[self.page] == "VOLUME")
 
     def clear_candidate(self):
         self.candidate = None
@@ -319,10 +330,11 @@ class PageControl:
         return None
 
     def confirm_progress(self):
-        if self.candidate is None or self.candidate == self.latched:
+        if (self.candidate is None or self.latched is not None
+                or not self.action_available(self.candidate)):
             return 0
-        needed = PAUSE_HOLD_MS if self.candidate == "FIST" else GESTURE_HOLD_MS
-        return min(100, int(100 * self.candidate_ms / needed),
+        # 100% 留给实际执行结果；不适用当前页的手势不显示假进度。
+        return min(99, int(100 * self.candidate_ms / GESTURE_HOLD_MS),
                    int(100 * self.candidate_frames / MIN_CONFIRM_FRAMES))
 
     def emit(self, message, source):
@@ -330,39 +342,27 @@ class PageControl:
         self.last_source = source
         self.event_age_ms = 0.0
 
-    def adjust(self, increase):
-        if not self.enabled or PAGES[self.page] != "TIMBRE":
-            return None
-        change = 1 if increase else -1
-        previous = self.timbre
-        self.timbre = max(0, min(len(TIMBRE_NAMES) - 1, self.timbre + change))
-        self.emit(("已是" if previous == self.timbre else "已选") + TIMBRE_NAMES[self.timbre], "STATIC")
-        return "INCREASE" if increase else "DECREASE"
-
     def apply_pose(self, pose):
-        if pose in ("ONE", "V_SIGN"):
+        if pose == "FIST":
             self.stop_height()
-            self.page = 1 if pose == "ONE" else 0
+            self.page = (self.page + 1) % len(PAGES)
             self.enabled = True
             self.mode = "ACTIVE"
             self.emit("已选" + PAGE_NAMES[self.page] + "页", "STATIC")
             return "PAGE"
-        if pose == "PALM":
+        if pose == "PALM" and PAGES[self.page] == "VOLUME":
             self.enabled = True
             self.mode = "ACTIVE"
-            self.height_active = PAGES[self.page] == "VOLUME"
+            self.height_active = True
             self.height_filter.reset(self.volume)
-            message = "张掌上下移动调音量" if self.height_active else "已启用音色控制"
-            self.emit(message, "STATIC")
+            self.emit("张掌上下移动调音量", "STATIC")
             return "RESUME"
-        if pose == "FIST":
-            self.stop_height()
-            self.enabled = False
-            self.mode = "PAUSED"
-            self.emit("已暂停，张掌或选页恢复", "STATIC")
-            return "PAUSE"
-        if pose in ("INCREASE", "DECREASE"):
-            return self.adjust(pose == "INCREASE")
+        if pose == "V_SIGN" and PAGES[self.page] == "TIMBRE":
+            self.enabled = True
+            self.mode = "ACTIVE"
+            self.timbre = (self.timbre + 1) % len(TIMBRE_NAMES)
+            self.emit("已选" + TIMBRE_NAMES[self.timbre], "STATIC")
+            return "TIMBRE"
         return None
 
     def update_pose(self, points, elapsed_ms):
@@ -370,28 +370,56 @@ class PageControl:
         self.pose = pose_kind(points)
         self.event_age_ms += elapsed_ms
         step = min(elapsed_ms, MAX_HOLD_STEP_MS)
-        if self.pose == "NONE" or elapsed_ms > MAX_FRAME_GAP_MS:
-            # 手丢失或长时间断帧立即暂停；重新选页/张掌恢复。
+        if self.touch_lock or self.input_mode != "GESTURE":
+            # 手指触屏期间及离开后禁止手势覆盖；收手 600ms 才恢复手势。
+            self.stop_height()
+            self.clear_candidate()
+            self.latched = None
+            self.release_ms = self.lost_ms = 0.0
+            if not self.touch_active and self.pose == "NONE" and elapsed_ms <= MAX_FRAME_GAP_MS:
+                self.touch_release_ms += step
+                if self.touch_release_ms >= LOST_RELEASE_MS:
+                    self.touch_lock = False
+                    self.touch_release_ms = 0.0
+            else:
+                self.touch_release_ms = 0.0
+            return None
+        if elapsed_ms > MAX_FRAME_GAP_MS:
+            # 长断帧不算手势确认或释放时间，禁止按卡顿前的累计时间执行。
             self.enabled = False
             self.mode = "PAUSED"
             self.stop_height()
             self.clear_candidate()
-            self.latched = None
             self.release_ms = 0.0
+            self.lost_ms = 0.0
             return None
+
+        if self.pose == "NONE":
+            self.enabled = False
+            self.mode = "PAUSED"
+            self.stop_height()
+            self.clear_candidate()
+            self.release_ms = 0.0
+            self.lost_ms += step
+            # 一两帧检测丢失不解除锁定，避免持续握拳反复切页。
+            if self.lost_ms >= LOST_RELEASE_MS:
+                self.latched = None
+            return None
+        self.lost_ms = 0.0
 
         # 任意非张掌帧都立即停止连续调节；恢复须重新保持张掌确认。
         if self.pose != "PALM" or PAGES[self.page] != "VOLUME":
             self.stop_height()
 
-        if self.pose != self.latched:
+        # 离散操作后必须张掌/放松或离手再触发，两个操作手势间误跳不解锁。
+        if self.pose in ("PALM", "OTHER") and self.latched in ("FIST", "V_SIGN"):
             self.release_ms += step
             if self.release_ms >= RELEASE_HOLD_MS:
                 self.latched = None
         else:
             self.release_ms = 0.0
 
-        if self.pose == "OTHER":
+        if not self.action_available(self.pose):
             self.clear_candidate()
             return None
 
@@ -408,25 +436,118 @@ class PageControl:
                 return self.update_height(points, step)
             return None
 
-        needed = PAUSE_HOLD_MS if self.pose == "FIST" else GESTURE_HOLD_MS
-        if self.candidate_ms < needed or self.candidate_frames < MIN_CONFIRM_FRAMES:
+        if self.latched is not None:
             return None
-        # 暂停状态下不接受加减，也不锁存它；选页/张掌能恢复。
-        if not self.enabled and self.pose in ("INCREASE", "DECREASE"):
+        if self.candidate_ms < GESTURE_HOLD_MS or self.candidate_frames < MIN_CONFIRM_FRAMES:
             return None
         self.latched = self.pose
         self.release_ms = 0.0
         return self.apply_pose(self.pose)
 
 
+class TouchControl:
+    """LCD 坐标直接命中；一次触摸锁定一个控件，拖动不会误选音色。"""
+    def __init__(self):
+        self.capture = None
+        self.down = False
+
+    def update(self, control, x=None, y=None, active=False):
+        control.touch_active = active
+        if not active:
+            self.down = False
+            self.capture = None
+            if control.touch_note is not None:
+                control.touch_note = None
+                control.emit("琴键已松开", "TOUCH_KEY")
+                return "NOTE"
+            return None
+        control.touch_lock = True
+        control.touch_release_ms = 0.0
+        control.stop_height()
+        control.clear_candidate()
+        control.latched = None
+        first = not self.down
+        self.down = True
+        if first or self.capture == "KEY":
+            previous_capture = self.capture
+            self.capture = None
+            for index, (bx, by, bw, bh) in enumerate(INPUT_TABS):
+                if bx <= x < bx + bw and by <= y < by + bh:
+                    self.capture = "TAB"
+                    control.input_mode = INPUT_MODES[index]
+                    control.touch_note = None
+                    control.emit("已选" + INPUT_LABELS[index], "TOUCH")
+                    return "INPUT_MODE"
+            self.capture = previous_capture if not first else None
+        if control.input_mode == "KEYS" and self.capture in (None, "KEY"):
+            note = None
+            for index, (bx, by, bw, bh) in enumerate(KEY_RECTS):
+                if bx <= x < bx + bw and by <= y < by + bh:
+                    note = KEY_NOTES[index]
+                    self.capture = "KEY"
+                    break
+            if note != control.touch_note:
+                control.touch_note = note
+                control.emit("琴键已松开" if note is None else "演奏 " + KEY_LABELS[KEY_NOTES.index(note)], "TOUCH_KEY")
+                return "NOTE"
+            return None
+        if first:
+            if control.input_mode != "TOUCH":
+                return None
+            for index, (bx, by, bw, bh) in enumerate(TOUCH_BUTTONS):
+                if bx <= x < bx + bw and by <= y < by + bh:
+                    self.capture = "BUTTON"
+                    control.page = 0
+                    control.timbre = index
+                    control.emit("触摸选音色：" + TIMBRE_NAMES[index], "TOUCH")
+                    return "TOUCH_TIMBRE"
+        acquired_slider = False
+        if control.input_mode == "TOUCH" and self.capture is None:
+            sx, sy, sw, sh = TOUCH_SLIDER
+            # 两端额外留出手指命中余量，数值仍按轨道端点映射。
+            if sx - 20 <= x <= sx + sw + 20 and sy <= y < sy + sh:
+                self.capture = "SLIDER"
+                acquired_slider = True
+        if self.capture == "SLIDER":
+            sx, sy, sw, sh = TOUCH_SLIDER
+            value = volume_level(100.0 * (x - sx) / sw)
+            if acquired_slider or value != control.volume:
+                control.page = 1
+                control.volume = value
+                control.height_filter.reset(value)
+                control.emit("触摸音量: %d%%" % value, "TOUCH")
+                return "TOUCH_VOLUME"
+        return None
+
+
+def poll_touch(device, touch, control):
+    from machine import TOUCH
+    points = device.read(1)
+    if points:
+        point = points[0]
+        if point.event != TOUCH.EVENT_UP and point.event in (0, TOUCH.EVENT_DOWN, TOUCH.EVENT_MOVE):
+            return touch.update(control, point.x, point.y, True)
+    return touch.update(control)
+
+
 def control_status(control):
-    if not control.enabled:
-        return "已暂停：单指或剪刀手选页"
+    if control.input_mode == "KEYS":
+        return "单指演奏：按住发声，松手进入尾音"
+    if control.input_mode == "TOUCH":
+        return "触屏页：手势不会改变参数"
+    if control.touch_lock:
+        return "触摸优先：收手后恢复手势"
+    if control.latched in ("FIST", "V_SIGN"):
+        return "已执行：张掌或收手后再操作"
+    if control.pose == "V_SIGN" and PAGES[control.page] == "VOLUME":
+        return "此页用张掌；握拳切回音色页"
+    if control.pose == "PALM" and PAGES[control.page] == "TIMBRE":
+        return "此页用剪刀手；握拳切到音量页"
     if PAGES[control.page] == "VOLUME":
         if control.height_active:
             return "正在调节：抬手增大，放低减小"
-        return "张掌保持约0.4秒，开始调音量"
-    return "保持手势片刻即可操作"
+        return "张掌保持约0.5秒，开始调音量"
+    return "剪刀手保持约0.5秒，切下一音色"
 
 
 class ScreenPipeline:
@@ -446,7 +567,7 @@ class ScreenPipeline:
     def create(self):
         self.sensor = Sensor()
         self.sensor.reset()
-        self.sensor.set_hmirror(True)
+        self.sensor.set_hmirror(CAMERA_HMIRROR)
         self.sensor.set_framesize(width=DISPLAY_SIZE[0], height=DISPLAY_SIZE[1])
         self.sensor.set_pixformat(PIXEL_FORMAT_YUV_SEMIPLANAR_420)
         self.sensor.set_framesize(width=CAMERA_SIZE[0], height=CAMERA_SIZE[1], chn=CAM_CHN_ID_2)
@@ -513,12 +634,18 @@ def draw_page_frame(pl, box, points, control, fps):
         for x, y in coords:
             canvas.draw_circle(x, y, 3, color=white, fill=True)
 
-    draw_overlay_text(canvas, 8, 4, 22, "K230 高度音量 V4.4", white)
-    draw_overlay_text(canvas, w - 155, 7, 18, "AI FPS: %.1f" % fps, white)
+    draw_overlay_text(canvas, 8, 4, 22, "K230 触摸控制 V4.9", white)
+    draw_overlay_text(canvas, w - 155, 7, 18,
+                      "触摸优先" if control.input_mode != "GESTURE" else "AI FPS: %.1f" % fps, white)
+    for index, (bx, by, bw, bh) in enumerate(INPUT_TABS):
+        color = yellow if control.input_mode == INPUT_MODES[index] else white
+        canvas.draw_rectangle(bx, by, bw, bh, color=color,
+                              thickness=4 if control.input_mode == INPUT_MODES[index] else 2)
+        draw_overlay_text(canvas, bx + 40, by + 20, 32, INPUT_LABELS[index], color)
     text = "%s页 音量%d%% %s %d/%d" % (
         PAGE_NAMES[control.page], control.volume, TIMBRE_NAMES[control.timbre],
         control.timbre + 1, len(TIMBRE_NAMES))
-    draw_overlay_text(canvas, 8, 34, 24, text, yellow)
+    draw_overlay_text(canvas, 8, 118, 24, text, yellow)
     pose_text = "识别: " + POSE_LABELS[control.pose]
     progress = control.confirm_progress()
     if progress > 0:
@@ -526,20 +653,47 @@ def draw_page_frame(pl, box, points, control, fps):
     elif control.height_active:
         pose_text += "  高度控制中"
     elif control.latched == control.pose:
-        pose_text += "  已确认"
-    draw_overlay_text(canvas, 8, 66, 20, pose_text, green)
+        pose_text += "  已执行"
+    if control.input_mode == "GESTURE":
+        draw_overlay_text(canvas, 8, 148, 20, pose_text, green)
+    link_text = "串口已发%d条（无回读）" % control.tx_count if control.link_active else "屏幕演示：串口未启用"
+    draw_overlay_text(canvas, 8, 176, 18, link_text, white)
 
-    draw_overlay_text(canvas, 8, h - 110, 20, control_status(control), yellow)
-    if control.height_active and control.height_y is not None:
-        detail = "掌心Y: %.0f  目标档: %d%%" % (control.height_y, volume_level(control.height_target))
-    elif control.event_age_ms < 1800:
-        detail = control.last_event
-    else:
-        detail = "张掌确认后按高度调音量" if PAGES[control.page] == "VOLUME" else "音色手势保持约0.4秒"
-    draw_overlay_text(canvas, 8, h - 84, 20, detail, white)
-    draw_overlay_text(canvas, 8, h - 58, 20, "单指音量 / 剪刀手音色 / 握拳暂停", white)
-    hint = "张掌抬高增大 / 放低减小 / 收手保持" if PAGES[control.page] == "VOLUME" else "点赞下一音色 / 三指上一音色 / 张掌恢复"
-    draw_overlay_text(canvas, 8, h - 32, 20, hint, white)
+    draw_overlay_text(canvas, 8, 202, 18, control_status(control), yellow)
+    if control.event_age_ms < 1800:
+        draw_overlay_text(canvas, 8, 228, 18, control.last_event, white)
+    if control.input_mode == "KEYS":
+        for index, (bx, by, bw, bh) in enumerate(KEY_RECTS):
+            color = yellow if control.touch_note == KEY_NOTES[index] else white
+            canvas.draw_rectangle(bx, by, bw, bh, color=color,
+                                  thickness=4 if control.touch_note == KEY_NOTES[index] else 2)
+            draw_overlay_text(canvas, bx + 18, by + 22, 28,
+                              "%d %s" % (index + 1, KEY_LABELS[index]), color)
+        draw_overlay_text(canvas, 8, 454, 18, "声音由FPGA输出；音色/音量在第2页设置", white)
+        return
+    if control.input_mode == "GESTURE":
+        draw_overlay_text(canvas, 20, 330, 22, "握拳：切换音色 / 音量模式", white)
+        draw_overlay_text(canvas, 20, 366, 22, "音色模式：剪刀手循环切换音色", white)
+        draw_overlay_text(canvas, 20, 402, 22, "音量模式：张掌抬高增大、放低减小", white)
+        hint = "点击顶部标签进入触屏控制" if control.touch_ready else "触摸未启用：请检查终端错误"
+        draw_overlay_text(canvas, 8, 454, 18, hint, white)
+        return
+    for index, (bx, by, bw, bh) in enumerate(TOUCH_BUTTONS):
+        color = yellow if index == control.timbre else white
+        canvas.draw_rectangle(bx, by, bw, bh, color=color,
+                              thickness=3 if index == control.timbre else 1)
+        draw_overlay_text(canvas, bx + 60, by + 20, 32, TIMBRE_NAMES[index], color)
+    draw_overlay_text(canvas, 20, 354, 24, "音量 %d%%（拖动，每档5%%）" % control.volume, yellow)
+    sx, sy, sw, sh = TOUCH_SLIDER
+    cy = sy + sh // 2
+    canvas.draw_rectangle(sx - 20, sy, sw + 40, sh, color=white, thickness=2)
+    canvas.draw_line(sx, cy, sx + sw, cy, color=white, thickness=8)
+    knob = sx + int(sw * control.volume / 100)
+    if knob > sx:
+        canvas.draw_line(sx, cy, knob, cy, color=yellow, thickness=8)
+    canvas.draw_circle(knob, cy, 20, color=yellow, fill=True)
+    hint = "点击音色 / 拖动音量；手势已暂停" if control.touch_ready else "触摸未启用：请检查终端错误"
+    draw_overlay_text(canvas, 8, 454, 18, hint, white)
 
 
 def main(fpga_link=None):
@@ -549,15 +703,25 @@ def main(fpga_link=None):
         os.exitpoint(os.EXITPOINT_ENABLE)
         paths = find_music_models()
         print(BUILD_TAG, "Models:", paths)
-        print("ONE volume page; hold PALM then raise/lower palm to set volume.")
-        print("V_SIGN timbre page; THUMB UP next; THREE FINGERS previous; FIST pause.")
+        print("FIST cycles pages. V_SIGN cycles piano/guitar/bell on TIMBRE page.")
+        print("PALM height changes volume on VOLUME page. Open/relax or withdraw to rearm.")
         print("Screen simulation only." if fpga_link is None else "FPGA UART parameter control enabled.")
         control = PageControl()
         if fpga_link is not None:
             fpga_link.attach(control)
+            control.link_active = True
         stage = "create camera, LCD and IDE display"
         pl = ScreenPipeline()
         pl.create()
+        touch = TouchControl()
+        touch_device = None
+        try:
+            from machine import TOUCH
+            touch_device = TOUCH(0)
+            control.touch_ready = True
+            print("TOUCH(0) enabled: LCD coordinates 640x480; camera mirror OFF.")
+        except Exception as error:
+            print("Touch init failed; gestures remain available:", error)
         draw_page_frame(pl, None, None, control, 0)
         pl.show_image()
         stage = "load hand detector"
@@ -566,6 +730,8 @@ def main(fpga_link=None):
         stage = "load hand keypoints"
         keypoints = HandKeypoints(paths[1])
         previous_ms = last_report_ms = last_gc_ms = time.ticks_ms()
+        last_draw_ms = previous_ms
+        last_draw_state = None
         timing_totals = [0.0] * 8
         timing_frames = 0
         timing_frame_us = 0
@@ -574,9 +740,13 @@ def main(fpga_link=None):
         while True:
             os.exitpoint()
             t0 = time.ticks_us()
-            frame = pl.get_frame()
+            # 先读触摸再做耗时工作；切到触屏页当轮就停止推理。
+            touch_event = poll_touch(touch_device, touch, control) if touch_device is not None else None
+            run_ai = control.input_mode == "GESTURE" and touch_event != "INPUT_MODE"
+            # VIDEO1 由硬件持续送屏，触屏页不必 snapshot AI 通道。
+            frame = pl.get_frame() if run_ai else None
             t1 = time.ticks_us()
-            box = choose_hand(detector.run(frame))
+            box = choose_hand(detector.run(frame)) if run_ai else None
             t2 = time.ticks_us()
             points = None
             t3 = t4 = t2
@@ -586,24 +756,43 @@ def main(fpga_link=None):
                 points = keypoints.run(frame)
                 t4 = time.ticks_us()
             now_ms = time.ticks_ms()
-            event = control.update_pose(points, time.ticks_diff(now_ms, previous_ms))
+            gesture_event = control.update_pose(points, time.ticks_diff(now_ms, previous_ms))
+            event = touch_event if touch_event is not None else gesture_event
             previous_ms = now_ms
             if fpga_link is not None:
-                fpga_link.publish(control, event)
+                if fpga_link.publish(control, event):
+                    if event not in ("NOTE", "INPUT_MODE"):
+                        control.emit("已发音量%d%%" % control.volume if event in ("VOLUME", "TOUCH_VOLUME")
+                                     else "已发音色：" + TIMBRE_NAMES[control.timbre], "UART_TX")
+                fpga_link.keepalive(now_ms)
+                control.tx_count = fpga_link.sent_commands
             # 连续音量不逐帧打印，统一在每两秒摘要中报告。
-            if event is not None and event != "VOLUME":
+            if event is not None and event not in ("VOLUME", "TOUCH_VOLUME"):
                 print("CONTROL EVENT:", event, "source", control.last_source,
                       "page", PAGES[control.page], "timbre", control.timbre + 1, "volume", control.volume)
             t5 = time.ticks_us()
-            draw_page_frame(pl, box, points, control, measured_fps)
+            # 触摸采样与 UI 更新分开：值变化才重画，滑动最多每 50ms 重画一次。
+            # 待显示状态每轮重算，即使松手也会补画最后一档，命令不等重画。
+            draw_state = (control.input_mode, control.page, control.timbre, control.volume,
+                          control.tx_count, control.touch_note, control.last_event if control.event_age_ms < 1800 else None)
+            redraw = (control.input_mode == "GESTURE" or event in ("INPUT_MODE", "TOUCH_TIMBRE", "NOTE")
+                      or draw_state != last_draw_state
+                      and time.ticks_diff(now_ms, last_draw_ms) >= TOUCH_REDRAW_MS)
+            if redraw:
+                draw_page_frame(pl, box, points, control, measured_fps)
             t6 = time.ticks_us()
-            pl.show_image()
+            if redraw:
+                pl.show_image()
+                last_draw_state = draw_state
+                last_draw_ms = now_ms
             t7 = time.ticks_us()
             del frame
-            if time.ticks_diff(now_ms, last_gc_ms) >= 500:
+            gc_interval = 2000 if control.input_mode != "GESTURE" else 500
+            gc_age = time.ticks_diff(now_ms, last_gc_ms)
+            if gc_age >= gc_interval and (not control.touch_active or gc_age >= 5000):
                 gc.collect()
                 last_gc_ms = now_ms
-            time.sleep_ms(1)
+            time.sleep_ms(TOUCH_POLL_MS if control.input_mode != "GESTURE" else 1)
             t8 = time.ticks_us()
             boundaries = (t0, t1, t2, t3, t4, t5, t6, t7, t8)
             for index in range(8):
@@ -616,7 +805,7 @@ def main(fpga_link=None):
                 measured_fps = timing_frames * 1000.0 / window_ms
                 divisor = timing_frames * 1000.0
                 average = tuple(value / divisor for value in timing_totals)
-                print("PERF AI FPS: %.1f; avg ms cam %.1f det %.1f crop %.1f kp %.1f ctrl %.1f draw %.1f show %.1f gc+wait %.1f" % ((measured_fps,) + average))
+                print("PERF loop Hz: %.1f; avg ms cam %.1f det %.1f crop %.1f kp %.1f ctrl %.1f draw %.1f show %.1f gc+wait %.1f" % ((measured_fps,) + average))
                 print("STATE pose", control.pose, "page", PAGES[control.page],
                       "volume", control.volume, "timbre", control.timbre + 1,
                       "height_active", control.height_active, "palm_y", control.height_y,

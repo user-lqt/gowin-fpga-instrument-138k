@@ -102,11 +102,22 @@ module instrument_24_rgb_top #(
     wire k230_param_valid, k230_frame_error;
     wire [3:0] k230_param_id;
     wire [15:0] k230_param_value;
+    wire k230_event_valid, remote_event_valid, remote_merge_overflow;
+    wire [1:0] k230_event_type, remote_event_type;
+    wire [6:0] k230_note, remote_note;
+    wire [7:0] k230_velocity, remote_velocity;
     k230_control_rx u_k230_control (
         .clk(clk_audio), .rst_n(rst_n && system_ready), .uart_rx(k230_uart_rx),
         .param_valid(k230_param_valid), .param_id(k230_param_id),
-        .param_value(k230_param_value), .frame_error(k230_frame_error)
+        .param_value(k230_param_value), .frame_error(k230_frame_error),
+        .event_valid(k230_event_valid), .event_type(k230_event_type),
+        .note_id(k230_note), .velocity(k230_velocity)
     );
+    performance_event_merge u_remote_merge(.clk(clk_audio), .rst_n(rst_n && system_ready),
+        .a_valid(ble_event_valid), .a_type(ble_event_type), .a_note(ble_note_id), .a_velocity(ble_velocity),
+        .b_valid(k230_event_valid), .b_type(k230_event_type), .b_note(k230_note), .b_velocity(k230_velocity),
+        .valid(remote_event_valid), .kind(remote_event_type), .note(remote_note),
+        .velocity(remote_velocity), .overflow(remote_merge_overflow));
     encoder_control #(.FILTER_CYCLES(2500), .BUTTON_CYCLES(245760),
         .REVERSE_DIR(0), .INSTRUMENT_COUNT(3), .FORMAL_CONTROLS(FORMAL_CONTROLS),
         .DEFAULT_INSTRUMENT(DEFAULT_INSTRUMENT), .ENABLE_REMOTE(1)) u_encoder_control (
@@ -256,7 +267,7 @@ module instrument_24_rgb_top #(
         .record_overflow(record_overflow),.dumping(dumping),.reply_overflow(reply_overflow),.tx(ble_uart_tx));
     performance_event_merge u_event_merge(.clk(clk_audio),.rst_n(rst_n && system_ready),
         .a_valid(test_event_valid),.a_type(test_event_type),.a_note(test_note),.a_velocity(test_velocity),
-        .b_valid(ble_event_valid),.b_type(ble_event_type),.b_note(ble_note_id),.b_velocity(ble_velocity),
+        .b_valid(remote_event_valid),.b_type(remote_event_type),.b_note(remote_note),.b_velocity(remote_velocity),
         .valid(merged_event_valid),.kind(merged_event_type),.note(merged_note),.velocity(merged_velocity),.overflow(merge_overflow));
     polyphony_test u_test(.clk(clk_audio),.rst_n(rst_n && system_ready),
         .sample_tick(sample_tick),.toggle(test_toggle),.keys(key_state),
@@ -299,7 +310,7 @@ module instrument_24_rgb_top #(
         if(mapped_valid && mapped_type==`EVENT_NOTE_ON) last_note<=mapped_note;
         end
     end
-    wire [7:0] display_errors=system_error | {reply_overflow,record_overflow,merge_overflow,1'b0,overload_flag,control_overflow,param_overflow,event_overflow};
+    wire [7:0] display_errors=system_error | {reply_overflow,record_overflow,(merge_overflow | remote_merge_overflow),1'b0,overload_flag,control_overflow,param_overflow,event_overflow};
     wire [40:0] strike_display;
     strike_display_formatter #(.ROW_CYCLES(ROW_CYCLES)) u_strike_display (
         .clk(clk_audio),.rst_n(rst_n),.debug_value(strike_debug),

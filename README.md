@@ -1,6 +1,14 @@
 # 高云 FPGA 实时多音色合成电子乐器引擎
 
-## 当前源码更新：K230 手势接口（2026-10-22）
+## 当前源码更新：K230 三页面与虚拟琴键（2026-10-25）
+
+K230 单文件入口为 [`k230_gesture_test/main.py`](k230_gesture_test/main.py)，版本 **V4.9**，包含手势控制、触屏调音色/音量、8 键虚拟琴键三个页面。使用亚博 12 针 GPIO 排针 **第 5 脚 IO32 / UART3 TX** 接 FPGA J13-35/C20，第 4 或第 7 脚 GND 共地。UART3 回环和音量/音色指令已由用户上板确认可用；第三页琴键及新的触摸交互仍待上板验证。
+
+虚拟琴键通过 NOTE_ON/OFF 发声，并以 250ms 保活、FPGA 1 秒超时释放防止挂音。**必须重新构建配套 FPGA 工程才能使用琴键，仓库已有 `.fs` 不包含本次功能。** FPGA 入口仍为 [`instrument_fixed_top.gprj`](local_gowin/merged_candidate/project/instrument_fixed_top/instrument_fixed_top.gprj)。本次未运行综合或布局布线，交付源码与测试。
+
+部署、琴键音高、操作方式和限制见 [`SINGLE_FILE.md`](k230_gesture_test/SINGLE_FILE.md)，协议与 FPGA 接线见 [`K230_UART.md`](local_gowin/merged_candidate/docs/K230_UART.md)。56 项 Python 检查、相关 RTL 仿真和顶层结构编译通过。
+
+## 历史源码更新：K230 手势接口（2026-10-22）
 
 K230 手掌高度按 5% 分档控制音量，静态手势切换钢琴/吉他/编钟（协议编号 0/1/2）。新增独立 115200 8N1 接收通路，K230 TX 接 J13-35/C20，GND 共地；K230 使用外部 5 V 电源，串口为 3.3 V 信号，原蓝牙接线保留。程序与接线见 [`k230_gesture_test/FPGA_UART_WIRING.md`](k230_gesture_test/FPGA_UART_WIRING.md)，板端运行入口为 `gesture_fpga_control.py`。
 

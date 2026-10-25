@@ -93,14 +93,13 @@ class FpgaUartTests(unittest.TestCase):
         control = logic["PageControl"]()
         self.link.attach(control)
         self.assertEqual(logic["TIMBRE_NAMES"], ("钢琴", "吉他", "编钟"))
-        for kind in ("V_SIGN", "INCREASE", "OTHER", "INCREASE",
-                     "DECREASE", "OTHER", "DECREASE"):
+        for kind in ("V_SIGN", "PALM", "V_SIGN", "PALM", "V_SIGN", "PALM", "V_SIGN"):
             for _ in range(6):
                 # Release with a neutral valid pose between same-direction steps.
                 points = pose(kind) if kind != "OTHER" else pose("PALM")
                 event = control.update_pose(points, 100)
                 self.link.publish(control, event)
-        self.assertEqual([frame[2] for frame in self.transport.frames], [1, 2, 1, 0])
+        self.assertEqual([frame[2] for frame in self.transport.frames], [1, 2, 0, 1])
         self.assertTrue(all(frame[1] == CMD_TIMBRE for frame in self.transport.frames))
 
 

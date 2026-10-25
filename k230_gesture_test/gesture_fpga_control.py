@@ -16,7 +16,7 @@ from gesture_page_control_test import main
 def run():
     link = FpgaLink()
     try:
-        print("K230 FPGA UART: 115200 8N1; external TX -> FPGA J13-35 / C20")
+        print("K230 UART3: 115200 8N1; 12-pin header pin 5 IO32 TX -> FPGA J13-35/C20")
         print("No startup overwrite. Only confirmed volume/timbre changes transmit.")
         print("Transmit only; the K230 display does not confirm FPGA reception.")
         main(fpga_link=link)

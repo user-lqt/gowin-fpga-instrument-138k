@@ -1,5 +1,25 @@
 # Current Integrated Instrument
 
+## Source Update: October 25, 2026 — K230 V4.9
+
+Run [`../../k230_gesture_test/main.py`](../../k230_gesture_test/main.py) on K230.
+It provides gesture, touch parameter and eight-note virtual keyboard pages.
+The actual Yahboom header uses UART3: physical pin 5 / IO32 TX to FPGA
+J13-35 / C20, physical pin 4 or 7 GND to FPGA GND. UART3 loopback and
+parameter control have been confirmed on hardware by the user.
+
+This source update routes K230 note events into the performance event queue.
+Held touch notes use a 250ms heartbeat and a one-second FPGA release timeout.
+Rebuild `project/instrument_fixed_top/instrument_fixed_top.gprj` and program
+the newly generated bitstream before testing virtual keys. **No new `.fs`
+was generated; existing prebuilt images do not implement these changes.**
+
+56 Python tests and UART/note lease/parameter/audio-volume/BLE simulations
+passed, as did top-level structural compilation with the PLL simulation stub.
+Touch keyboard sound, screen interaction and post-route timing remain unverified.
+See [`SINGLE_FILE.md`](../../k230_gesture_test/SINGLE_FILE.md) for deployment
+and the limitation when multiple input sources play the same pitch.
+
 ## Local Source Update: October 22, 2026
 
 The K230 now has a dedicated 115200 8N1 UART input on J13-35 / C20,

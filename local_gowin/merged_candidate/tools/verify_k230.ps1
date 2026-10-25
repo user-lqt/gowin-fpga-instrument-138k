@@ -8,7 +8,7 @@ $taskSources=Get-ChildItem "$taskRoot/rtl" -Recurse -Filter *.v |
     Where-Object {$_.Name -ne 'clock_gen.v'} | Select-Object -ExpandProperty FullName
 Push-Location $taskBuild
 try {
-    foreach($taskTest in @('tb_k230_control','tb_volume_mapping','tb_master_volume','tb_ble_song_uart')) {
+    foreach($taskTest in @('tb_k230_control','tb_k230_notes','tb_volume_mapping','tb_master_volume','tb_ble_song_uart')) {
         & "$IcarusBin/iverilog.exe" -g2012 -s $taskTest -I "$taskRoot/rtl/common" -I "$taskRoot/rtl/input" `
             -o "$taskTest.vvp" @taskSources "$taskRoot/sim/audio_core_tb/$taskTest.v"
         if($LASTEXITCODE -ne 0){throw "$taskTest compile failed"}

@@ -66,7 +66,7 @@ module tb_k230_control;
         send_frame(8'hB4, 25, 1, 0); // reserved argument
         send_frame(8'hB5, 3, 0, 0); // unknown timbre
         send_frame(8'h90, 60, 100, 0); // note commands cannot enter parameter path
-        if(updates != before_updates || volume != 127 || instrument != 0 || errors < 6)
+        if(updates != before_updates || volume != 127 || instrument != 0 || errors < 5)
             $fatal(1,"invalid frames changed state");
         // A truncated frame times out, then the next frame must recover.
         send_byte(8'hA5); send_byte(8'hB4);
