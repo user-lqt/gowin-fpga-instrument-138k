@@ -8,6 +8,16 @@ ESP32-C3 GPIO21 TX接FPGA C18，GPIO20 RX接FPGA C19，共地；串口115200/8N1
 
 ESP使用ESP-IDF与NimBLE，工程见 [esp32c3](../companion/esp32c3/)。K230使用另一条UART，部署见[说明](../final/k230/README.md)。
 
+## 网页部署
+
+仓库已包含 `.github/workflows/pages.yml`，仅发布 `companion/phone/`。
+
+1. 仓库所有者打开 Settings → Pages，将 Build and deployment 的 Source 设为 GitHub Actions。
+2. 在 Actions 中打开 Bluetooth web page，选择 Run workflow → main。
+3. 部署成功后使用任务给出的网页地址；默认地址为 `https://user-lqt.github.io/gowin-fpga-instrument-138k/`。
+
+后续更新网页会自动部署。私有仓库需账号套餐支持GitHub Pages；网页发布的访问范围按Pages设置确认。上述地址在部署成功前不可用。
+
 ## BLE与命令
 
 | 项目 | UUID |
