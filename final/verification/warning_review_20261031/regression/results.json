@@ -1,0 +1,15 @@
+{
+  "top64_PLL_stub": "PASS",
+  "tb_wave_response_64_compile": "PASS",
+  "tb_wave_response_64": "PASS",
+  "tb_debounce15_64_compile": "PASS",
+  "tb_debounce15_64": "PASS",
+  "tb_scan_debounce15_64_compile": "PASS",
+  "tb_scan_debounce15_64": "PASS",
+  "tb_acceptance_sweep_64_compile": "PASS",
+  "tb_acceptance_sweep_64": "PASS",
+  "tb_acceptance_default_timing_64_compile": "PASS",
+  "tb_acceptance_default_timing_64": "PASS",
+  "tb_oscillator_state_bank_64_compile": "PASS",
+  "tb_oscillator_state_bank_64": "PASS"
+}

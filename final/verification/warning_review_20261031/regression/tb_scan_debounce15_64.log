@@ -1,0 +1,2 @@
+PASS physical8x6 scanner307 cycles/row2456 cycles/frame,15/64 qualification,NOTE_ON60 and NOTE_OFF
+C:\Users\lenovo\Desktop\FPGA\FPGA_Instrument_20261031\verification\tb_scan_debounce15.v:54: $finish called at 5280450000 (1ps)

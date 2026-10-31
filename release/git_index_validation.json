@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "staged_files": 516,
+  "exact_final_and_companion_blobs": 397,
+  "original_main_files_preserved": 88,
+  "files_over_github_100MiB_limit": [],
+  "selected_bitstream_sha256": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
+  "no_build_or_programming_performed": true
+}

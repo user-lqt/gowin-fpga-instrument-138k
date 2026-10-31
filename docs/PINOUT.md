@@ -1,0 +1,64 @@
+# 最终工程完整引脚表
+
+本表从最终工程CST提取，球位丝印优先于旧文档中的排针序号。方向由顶层端口定义确认。
+
+| 顶层端口 | FPGA球位 | CST IO属性 |
+| --- | --- | --- |
+| `i_clk_in` | **V22** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3` |
+| `o_hp_bck` | **A19** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `o_hp_ws` | **E16** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `o_hp_din` | **E17** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `o_pa_en` | **AB16** | `IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3` |
+| `i_rst_n` | **F4** | `IO_TYPE=LVCMOS15 PULL_MODE=NONE BANK_VCCIO=1.5` |
+| `o_led` | **W21** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `o_locked` | **W22** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `row_out[0]` | **E14** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[1]` | **E13** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[2]` | **C15** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[3]` | **C14** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[4]` | **B13** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[5]` | **C13** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[6]` | **A14** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `row_out[7]` | **A13** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `col_in[0]` | **B16** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `col_in[1]` | **B15** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `col_in[2]` | **A16** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `col_in[3]` | **A15** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `col_in[4]` | **A20** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `col_in[5]` | **B20** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `enc_a` | **A21** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `enc_b` | **B21** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `enc_sw_n` | **B18** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `enc2_a` | **C17** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `enc2_b` | **D17** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `enc2_sw_n` | **E19** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `lcd_sc_de` | **L14** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_sc_vs` | **L15** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_sc_hs` | **N20** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_sc_clk` | **L19** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_b_out[5]` | **M20** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_b_out[4]` | **L16** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_b_out[3]` | **K16** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_b_out[2]` | **N18** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_b_out[1]` | **N19** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_b_out[0]` | **M18** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_g_out[5]` | **L18** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_g_out[4]` | **N22** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_g_out[3]` | **M22** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_g_out[2]` | **M21** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_g_out[1]` | **L21** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_g_out[0]` | **K18** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_r_out[5]` | **K21** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_r_out[4]` | **K22** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_r_out[3]` | **J22** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_r_out[2]` | **H22** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_r_out[1]` | **G17** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `lcd_r_out[0]` | **G18** | `IO_TYPE=LVCMOS33 DRIVE=24 BANK_VCCIO=3.3` |
+| `led_strip_din` | **B17** | `IO_TYPE=LVCMOS33 PULL_MODE=DOWN DRIVE=8 BANK_VCCIO=3.3` |
+| `ble_uart_rx` | **C18** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `ble_uart_tx` | **C19** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `k230_uart_rx` | **C20** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |
+| `adc_cs_n` | **A18** | `IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3` |
+| `adc_sclk` | **D15** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `adc_mosi` | **D14** | `IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3` |
+| `adc_miso` | **D16** | `IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3` |

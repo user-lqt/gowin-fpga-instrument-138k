@@ -1,0 +1,2 @@
+PASS default 6400-frame startup/exit waits and held-key restore
+C:\Users\lenovo\Desktop\FPGA\FPGA_Instrument_20261031\verification\tb_acceptance_default_timing.v:37: $finish called at 395175000 (1ps)

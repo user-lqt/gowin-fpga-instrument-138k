@@ -1,68 +1,9 @@
-# 高云 FPGA / 云源软件（Gowin EDA）
-project/impl/
-project/prj/
-*.fs
-*.ipc
-*.log
-*.gao
-*.bak
-*.tmp
-.temp/
-*_bak/
+__pycache__/
+*.pyc
+*.vvp
 *.gprj.user
-
-# bitstream 与固化文件（单独归档，不进仓库）
-*.bit
-*.bin
-*.fs
-
-# 仿真产物
-*.vcd
-*.wlf
-*.sav
-*.dsn
-*.stx
-obj_dir/
-xsim.dir/
-simv
-simv.daidir
-csrc/
-*.jou
-*.pbw
-
-# 办公 / 压缩 / 大二进制
-*.doc
-*.docx
-*.pdf
-*.rar
-*.zip
-*.7z
-*.exe
-*.msi
-*.iso
-
-# Only the three current plan exports are shared; older Word drafts stay local.
-!docs/finished_hardware/项目总计划书_详细执行版.docx
-!docs/finished_hardware/阶段三四成员任务书_详细执行版.docx
-!docs/finished_hardware/赛题二要求完成情况_详细执行版.docx
-~$*
-docs/finished_hardware/local_archive/
-docs/finished_hardware/*preview/
-docs/finished_hardware/rendered_*/
-# Superseded MPR121 proposal assets remain on disk, not in the current plan.
-evidence/mpr121/
-tools/make_mpr121_word.py
-
-# 操作系统与编辑器
-Thumbs.db
-Desktop.ini
-.DS_Store
-*~
-*.swp
-.vscode/
-.idea/
-
-# 敏感信息
-*.license
-*.lic
-license*.txt
+/final/builds/
+/final/measurements/
+/companion/esp32c3/build/
+/companion/esp32c3/managed_components/
+/release/check-output/

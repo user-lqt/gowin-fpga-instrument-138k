@@ -1,0 +1,2 @@
+PASS 64 voices: ALL, every GROUP and every MUTE, rapid selection, stop (686 events)
+C:\Users\lenovo\Desktop\FPGA\FPGA_Instrument_20261031\verification\tb_acceptance_sweep.v:56: $finish called at 114040000 (1ps)

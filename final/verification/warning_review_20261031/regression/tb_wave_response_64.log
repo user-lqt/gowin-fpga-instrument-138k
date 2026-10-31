@@ -1,0 +1,2 @@
+PASS waveform first-capture visibility, four-window recovery, stable scale, min/max, noise floor and fullscale
+C:\Users\lenovo\Desktop\FPGA\FPGA_Instrument_20261031\verification\tb_wave_response.v:59: $finish called at 736288000 (1ps)

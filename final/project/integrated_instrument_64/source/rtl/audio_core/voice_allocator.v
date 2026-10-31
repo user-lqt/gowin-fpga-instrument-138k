@@ -1,0 +1,311 @@
+`include "event_defs.vh"
+
+module voice_allocator #(
+    parameter integer VOICES = 4,
+    parameter integer STEAL_ON_FULL = 0,
+    parameter integer SHARED_AGE = 0,
+    parameter integer SERIAL_RANK = 0,
+    parameter integer RAM_AGE = 0,
+    parameter integer LOCAL_ALLOCATE = 0,
+    parameter integer BROADCAST_BASE_PITCH = 0
+) (
+    input  wire                  clk,
+    input  wire                  rst_n,
+    input  wire                  sample_tick,
+    input  wire                  event_valid,
+    input  wire [1:0]            event_type,
+    input  wire [6:0]            note_id,
+    input  wire [7:0]            velocity,
+    input  wire [1:0]            instrument,
+    input  wire [31:0]           note_fc,
+    input  wire [47:0]           note_period,
+    input  wire [VOICES-1:0]     voice_active,
+    input  wire [VOICES*16-1:0]  envelope_levels,
+    output reg  [VOICES-1:0]     voice_note_on,
+    output reg  [VOICES-1:0]     voice_note_off,
+    output reg  [VOICES-1:0]     key_down,
+    output reg  [VOICES*7-1:0]   voice_note_id,
+    output reg  [VOICES*8-1:0]   voice_velocity,
+    output reg  [VOICES*2-1:0]   voice_instrument,
+    output reg  [VOICES*32-1:0]  voice_fc,
+    output reg  [VOICES*48-1:0]  voice_period,
+    output reg                   full_pulse
+);
+    // event_valid is the one-cycle dequeue pulse from audio_core's event FIFO.
+    // This block must not queue the raw B input a second time.
+
+    integer matching;
+    integer available;
+    integer steal;
+    integer target;
+    integer k;
+    integer j;
+    reg [31:0] age [0:VOICES-1];
+    localparam integer LEAVES = 1 << $clog2(VOICES);
+    localparam integer INDEX_BITS = VOICES > 1 ? $clog2(VOICES) : 1;
+    wire [INDEX_BITS-1:0] rank_age_slot;
+    wire [31:0] rank_age_value;
+    wire [2*LEAVES-1:0] candidate_valid, candidate_key;
+    wire [15:0] candidate_level [0:2*LEAVES-1];
+    wire [31:0] candidate_age [0:2*LEAVES-1];
+    wire [INDEX_BITS-1:0] candidate_index [0:2*LEAVES-1];
+    genvar leaf,node;
+    generate
+    if(SERIAL_RANK) begin : serial_rank
+        // Envelopes settle one clock after tick and the age scan takes VOICES
+        // clocks. Rank settled state afterwards, before the following tick.
+        localparam integer WAIT_BITS=$clog2(VOICES+3);
+        reg [WAIT_BITS-1:0] wait_count;
+        reg scanning;
+        reg [INDEX_BITS-1:0] slot,winner;
+        reg winner_key;
+        reg [15:0] winner_level;
+        reg [31:0] winner_age;
+        wire slot_key=key_down[slot];
+        wire [15:0] slot_level=envelope_levels[slot*16+:16];
+        assign rank_age_slot=slot;
+        wire [31:0] slot_age=RAM_AGE && SHARED_AGE ? rank_age_value : age[slot];
+        wire replace_winner=slot==0 ||
+            (!slot_key && winner_key) ||
+            (slot_key==winner_key &&
+                (slot_level<winner_level ||
+                    (slot_level==winner_level && slot_age>winner_age)));
+        assign candidate_index[1]=winner;
+        always @(posedge clk or negedge rst_n) begin
+            if(!rst_n) begin
+                wait_count<=0;scanning<=0;slot<=0;winner<=0;
+                winner_key<=0;winner_level<=0;winner_age<=0;
+            end else if(sample_tick) begin
+                wait_count<=VOICES+2;scanning<=0;slot<=0;
+            end else if(wait_count!=0) begin
+                wait_count<=wait_count-1'b1;
+                if(wait_count==1) scanning<=1;
+            end else if(scanning) begin
+                if(replace_winner) begin
+                    winner<=slot;winner_key<=slot_key;
+                    winner_level<=slot_level;winner_age<=slot_age;
+                end
+                if(slot==VOICES-1) scanning<=0;
+                else slot<=slot+1'b1;
+            end
+        end
+    end else begin : parallel_rank
+        assign rank_age_slot=0;
+        for(leaf=0;leaf<LEAVES;leaf=leaf+1) begin : candidate
+            if(leaf<VOICES) begin : real_slot
+                assign candidate_valid[LEAVES+leaf]=1;
+                assign candidate_key[LEAVES+leaf]=key_down[leaf];
+                assign candidate_level[LEAVES+leaf]=envelope_levels[leaf*16+:16];
+                assign candidate_age[LEAVES+leaf]=age[leaf];
+                assign candidate_index[LEAVES+leaf]=leaf;
+            end else begin : padding
+                assign candidate_valid[LEAVES+leaf]=0;
+                assign candidate_key[LEAVES+leaf]=0;
+                assign candidate_level[LEAVES+leaf]=0;
+                assign candidate_age[LEAVES+leaf]=0;
+                assign candidate_index[LEAVES+leaf]=0;
+            end
+        end
+        // Same lexicographic winner, but five comparator levels for 32 slots.
+        for(node=1;node<LEAVES;node=node+1) begin : tournament
+            wire take_right=candidate_valid[2*node+1] &&
+                (!candidate_valid[2*node] ||
+                 (!candidate_key[2*node+1] && candidate_key[2*node]) ||
+                 (candidate_key[2*node+1]==candidate_key[2*node] &&
+                  (candidate_level[2*node+1]<candidate_level[2*node] ||
+                   (candidate_level[2*node+1]==candidate_level[2*node] &&
+                    candidate_age[2*node+1]>candidate_age[2*node]))));
+            assign candidate_valid[node]=candidate_valid[2*node] || candidate_valid[2*node+1];
+            assign candidate_key[node]=take_right ? candidate_key[2*node+1] : candidate_key[2*node];
+            assign candidate_level[node]=take_right ? candidate_level[2*node+1] : candidate_level[2*node];
+            assign candidate_age[node]=take_right ? candidate_age[2*node+1] : candidate_age[2*node];
+            assign candidate_index[node]=take_right ? candidate_index[2*node+1] : candidate_index[2*node];
+        end
+    end
+    endgenerate
+
+    generate if(LOCAL_ALLOCATE) begin : local_allocation
+        wire [2*LEAVES-1:0] match_valid,free_slots;
+        wire [INDEX_BITS-1:0] match_index[0:2*LEAVES-1];
+        wire [INDEX_BITS-1:0] free_index[0:2*LEAVES-1];
+        genvar a,b;
+        for(a=0;a<LEAVES;a=a+1) begin : leaves
+            if(a<VOICES) begin : real_slot
+                assign match_valid[LEAVES+a]=key_down[a] &&
+                    voice_note_id[a*7+:7]==note_id;
+                assign free_slots[LEAVES+a]=!voice_active[a] && !key_down[a];
+            end else begin : padding
+                assign match_valid[LEAVES+a]=0;
+                assign free_slots[LEAVES+a]=0;
+            end
+            assign match_index[LEAVES+a]=a;
+            assign free_index[LEAVES+a]=a;
+        end
+        for(b=1;b<LEAVES;b=b+1) begin : nodes
+            assign match_valid[b]=match_valid[2*b] || match_valid[2*b+1];
+            assign free_slots[b]=free_slots[2*b] || free_slots[2*b+1];
+            assign match_index[b]=match_valid[2*b] ? match_index[2*b] : match_index[2*b+1];
+            assign free_index[b]=free_slots[2*b] ? free_index[2*b] : free_index[2*b+1];
+        end
+        always @* begin
+            matching=match_valid[1] ? $signed({1'b0,match_index[1]}) : -1;
+            available=free_slots[1] ? $signed({1'b0,free_index[1]}) : -1;
+            steal=candidate_index[1];
+            target=match_valid[1] ? match_index[1] :
+                free_slots[1] ? free_index[1] : candidate_index[1];
+        end
+    end else begin : linear_allocation
+    always @(*) begin
+        matching = -1;
+        available = -1;
+        steal = candidate_index[1];
+        for (k = 0; k < VOICES; k = k + 1) begin
+            if (matching == -1 && key_down[k] &&
+                voice_note_id[k*7 +: 7] == note_id)
+                matching = k;
+            if (available == -1 && !voice_active[k] && !key_down[k])
+                available = k;
+        end
+        target = matching != -1 ? matching : available != -1 ? available : steal;
+    end
+    end endgenerate
+
+    wire age_reset = sample_tick && event_valid &&
+        event_type == `EVENT_NOTE_ON && velocity != 0 &&
+        (matching != -1 || available != -1 || STEAL_ON_FULL);
+    wire [INDEX_BITS-1:0] allocation_slot=target[INDEX_BITS-1:0];
+    generate if(SHARED_AGE) begin : serial_age
+        reg busy,skip_valid;
+        reg [INDEX_BITS-1:0] slot,skip_slot;
+        wire [31:0] selected_age;
+        wire [31:0] next_age=selected_age==32'hffffffff ?
+            selected_age : selected_age+1'b1;
+        if(RAM_AGE && SERIAL_RANK) begin : ram_age
+            reg [31:0] memory[0:VOICES-1] /* synthesis syn_ramstyle="distributed_ram" */;
+            reg [VOICES-1:0] valid;
+            // Increment and ranking scans do not overlap. Share one read port.
+            wire [INDEX_BITS-1:0] read_slot=busy ? slot : rank_age_slot;
+            wire [31:0] read_value=valid[read_slot] ? memory[read_slot] : 32'd0;
+            assign selected_age=read_value;
+            assign rank_age_value=read_value;
+            always @(posedge clk or negedge rst_n)
+                if(!rst_n) valid<=0;
+                else if(sample_tick && age_reset) valid[allocation_slot]<=1;
+                else if(!sample_tick && busy && !(skip_valid && skip_slot==slot))
+                    valid[slot]<=1;
+            always @(posedge clk) if(rst_n) begin
+                if(sample_tick && age_reset) memory[allocation_slot]<=0;
+                else if(!sample_tick && busy && !(skip_valid && skip_slot==slot))
+                    memory[slot]<=next_age;
+            end
+        end else begin : registered_age
+            integer b;
+            assign selected_age=slot<VOICES ? age[slot] : 32'd0;
+            assign rank_age_value=0;
+            always @(posedge clk or negedge rst_n) begin
+                if(!rst_n)
+                    for(b=0;b<VOICES;b=b+1) age[b]<=0;
+                else if(sample_tick) begin
+                    for(b=0;b<VOICES;b=b+1)
+                        if(age_reset && target==b) age[b]<=0;
+                end else if(busy) begin
+                    for(b=0;b<VOICES;b=b+1)
+                        if(slot==b && !(skip_valid && skip_slot==b))
+                            age[b]<=next_age;
+                end
+            end
+        end
+        // Age is consulted only at sample_tick. Finish all slots before it.
+        always @(posedge clk or negedge rst_n) begin
+            if(!rst_n) begin
+                busy<=0; slot<=0; skip_valid<=0; skip_slot<=0;
+            end else if(sample_tick) begin
+                busy<=1; slot<=0; skip_valid<=age_reset;
+                skip_slot<=allocation_slot;
+            end else if(busy) begin
+                if(slot==VOICES-1) busy<=0;
+                else slot<=slot+1'b1;
+            end
+        end
+    end else begin : parallel_age
+        assign rank_age_value=0;
+        integer a;
+        always @(posedge clk or negedge rst_n) begin
+            if(!rst_n)
+                for(a=0;a<VOICES;a=a+1) age[a]<=0;
+            else begin
+                if(sample_tick)
+                    for(a=0;a<VOICES;a=a+1)
+                        if(age[a]!=32'hffffffff) age[a]<=age[a]+1'b1;
+                if(age_reset) age[target]<=0;
+            end
+        end
+    end endgenerate
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            voice_note_on    <= {VOICES{1'b0}};
+            voice_note_off   <= {VOICES{1'b0}};
+            key_down         <= {VOICES{1'b0}};
+            voice_note_id    <= {(VOICES*7){1'b0}};
+            voice_velocity   <= {(VOICES*8){1'b0}};
+            voice_instrument <= {(VOICES*2){1'b0}};
+            if(!BROADCAST_BASE_PITCH) begin
+                voice_fc <= {VOICES{32'd731558}};
+                voice_period <= {VOICES{48'd384760985}};
+            end
+            full_pulse       <= 1'b0;
+        end else begin
+            voice_note_on  <= {VOICES{1'b0}};
+            voice_note_off <= {VOICES{1'b0}};
+            full_pulse     <= 1'b0;
+            if (sample_tick && event_valid) begin
+                case (event_type)
+                    `EVENT_NOTE_ON: begin
+                        if (velocity != 0 && matching == -1 && available == -1)
+                            full_pulse <= 1'b1;
+                        // Constant slices infer a local enable per slot, not
+                        // a variable write shifter over the packed pitch bus.
+                        for (j = 0; j < VOICES; j = j + 1)
+                            if (velocity != 0 && target == j &&
+                                (matching != -1 || available != -1 || STEAL_ON_FULL)) begin
+                                voice_note_on[j] <= 1'b1;
+                                voice_velocity[j*8 +: 8] <= velocity;
+                                voice_instrument[j*2 +: 2] <= instrument;
+                                key_down[j] <= 1'b1;
+                                if (matching == -1) begin
+                                    voice_note_id[j*7 +: 7] <= note_id;
+                                    if(!BROADCAST_BASE_PITCH) begin
+                                        voice_fc[j*32 +: 32] <= note_fc;
+                                        voice_period[j*48 +: 48] <= note_period;
+                                    end
+                                end
+                            end
+                    end
+                    `EVENT_NOTE_OFF: begin
+                        for (j = 0; j < VOICES; j = j + 1)
+                            if (matching == j) begin
+                                voice_note_off[j] <= 1'b1;
+                                key_down[j] <= 1'b0;
+                            end
+                    end
+                    default: ;
+                endcase
+            end
+        end
+    end
+    // Expression mode consumes base pitch only alongside NOTE_ON; its own
+    // per-voice results retain the sustained pitch. One 80-bit event latch
+    // replaces 32 redundant 80-bit caches without changing the event edge.
+    generate if(BROADCAST_BASE_PITCH) begin : event_pitch
+        always @(posedge clk or negedge rst_n) begin
+            if(!rst_n) begin
+                voice_fc<={VOICES{32'd731558}};
+                voice_period<={VOICES{48'd384760985}};
+            end else if(age_reset) begin
+                voice_fc<={VOICES{note_fc}};
+                voice_period<={VOICES{note_period}};
+            end
+        end
+    end endgenerate
+endmodule

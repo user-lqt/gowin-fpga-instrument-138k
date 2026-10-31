@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-31T20:56:15.247849+08:00",
+  "limit_seconds": 120,
+  "status": "PASS",
+  "exit_code": 0,
+  "power_events": [],
+  "seconds": 5.933,
+  "finished": "2026-10-31T20:56:21.180506+08:00",
+  "completion_guard": true,
+  "tool_errors": false
+}
