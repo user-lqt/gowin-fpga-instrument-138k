@@ -1,0 +1,10 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW5AST-138C" pn="GW5AST-LV138PG484AC1/I0">gw5ast138c-007</Device>
+    <FileList>
+        <File path="C:/Users/lenovo/Desktop/FPGA/FPGA_Instrument_20261031/verification/warning_review_20261031/probe/warning_probe_top.v" type="file.verilog" enable="1"/>
+    </FileList>
+</Project>

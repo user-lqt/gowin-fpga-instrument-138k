@@ -1,0 +1,38 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FPGA 电子琴控制</title>
+<style>
+:root{color-scheme:light;--bg:#fff;--card:#fff;--line:#ccd0d5;--text:#1c1e21;--muted:#65676b;--blue:#1877f2;--blue-hover:#166fe5;--green:#2e8b22}
+*{box-sizing:border-box}body{font:16px system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:var(--text);max-width:760px;margin:auto;padding:20px;line-height:1.45}
+h1{font-size:24px;margin:0 0 4px;border-top:3px solid var(--blue);padding-top:12px}h2{font-size:18px;margin:0 0 10px}p{margin:8px 0}section{background:var(--card);border:1px solid var(--line);padding:16px;border-radius:8px;margin:14px 0;box-shadow:0 1px 2px #0008}
+button,input,select,textarea{font:inherit;padding:10px;border-radius:6px;border:1px solid var(--line);margin:4px 0;background:#fff;color:var(--text)}button{background:var(--blue);border-color:var(--blue);color:#fff;cursor:pointer;font-weight:600}button:hover{background:var(--blue-hover)}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #8ab4f8;outline-offset:1px}button:disabled{opacity:.45;cursor:not-allowed}textarea{width:100%;background:#fff;height:150px}pre{white-space:pre-wrap;max-height:220px;overflow:auto;background:#f0f2f5;border:1px solid var(--line);padding:10px;border-radius:6px;color:var(--text)}small{color:var(--muted)}.row{display:flex;gap:10px;flex-wrap:wrap}input{width:85px}#state{color:var(--green);font-weight:600}
+</style>
+<h1>FPGA 电子琴 · 手机控制</h1><p>网页版本：20261018a</p><p id="state">未连接</p><button id="connect">连接蓝牙 / 重连</button>
+<p><small>Android Chrome：通过 HTTPS 打开此页，开启蓝牙。iPhone Safari 不支持 Web Bluetooth，可继续使用 BLE 调试器按协议发送。先开启开发板，再连接。</small></p>
+<section><h2>选曲和节奏</h2><p>开发板须先进入 SONG。脱机时旋转 EC11_B 选曲，长按启动。</p>
+<select id="song"><option value="1">茉莉花</option><option value="2">小星星</option><option value="3">下载曲谱</option></select>
+<button id="play">开始 / 重练</button><br>
+<select id="rhythm"><option value="0">自由练习</option><option value="1">节奏练习</option></select>
+<input id="tempo" type="number" min="40" max="200" value="80"><button id="settings">设置模式和 BPM</button>
+<p><small>开始时会自动应用当前模式和BPM。切换自由/节奏模式会从头重练；节奏练习包含四拍预备。</small></p></section>
+<section><h2>下载曲谱到第三曲槽</h2><p>每行：物理键号、时值。0 是休止；时值单位为八分音符（1～32），最多128项。</p>
+<textarea id="score">1 2
+1 2
+8 2
+8 2
+10 2
+10 2
+8 4</textarea>
+<input id="scorefile" type="file" accept=".txt,.csv"><button id="upload">下载并开始指引</button>
+<p><small>先进入 SONG。下载会停止当前指引，成功后自动从新曲谱第一项开始；非 SONG 时只保存，进入 SONG 后点开始 / 重练。</small></p>
+<p><input id="scoreurl" style="width:80%" placeholder="HTTPS曲谱txt/csv地址"><button id="fetchscore">读取在线曲谱</button></p>
+<p><small>曲谱存于 FPGA RAM，掉电或复位后清除。请保留手机上的源文件。</small></p></section>
+<section><h2>键位自定义</h2><label>琴键 <input id="key" type="number" min="1" max="24" value="1"></label>
+<label>MIDI音符 <input id="note" type="number" min="0" max="127" value="60"></label>
+<button id="map">修改</button><button id="resetmap">恢复默认</button>
+<p><small>先松开所有键；音符不可与其他键重复。例：K1→84。输入框记录本网页已确认的修改；设备单独复位后请点恢复默认同步。LED仍按物理键号指引。</small></p></section>
+<section><h2>演奏记录</h2><button id="record">开始录制</button><button id="stop">停止</button><button id="dump">取回记录</button>
+<p id="recordstate">录制的是音符、力度和时间，最多512事件；不是声音文件。</p>
+<button id="json">保存 JSON</button><button id="midi">保存 MIDI</button><button id="replay">回放到开发板</button><button id="cancel">停止回放</button>
+<input id="recordfile" type="file" accept=".json"></section>
+<section><h2>通信状态</h2><button id="query">读取 FPGA 状态</button><pre id="log"></pre></section>
+<script src="protocol.js?v=20261018a"></script><script src="app.js?v=20261018a"></script></html>

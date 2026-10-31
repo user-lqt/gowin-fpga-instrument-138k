@@ -1,143 +1,85 @@
-# 高云 FPGA 实时多音色合成电子乐器引擎
+# 高云 FPGA 多维交互电子乐器
 
-> 全国大学生嵌入式芯片与系统设计竞赛 2026 · FPGA 创新设计赛道 · **高云半导体 选题二**
-> 平台：**Sipeed Tang Mega 138K Dock** · 芯片 **GW5AST-LV138PG484AC1/I0**
+全国大学生嵌入式芯片与系统设计竞赛 2026 · 高云半导体赛题二
 
-这是一台**由演奏动作驱动、由 FPGA 硬件逻辑逐样本生成声音**的实时电子乐器。
+基于 **Sipeed Tang Mega 138K** 的实时电子乐器。24个双触点实体琴键产生音符与力度事件，FPGA完成64声部合成、表情控制、立体声混音和延迟效果，通过I2S送至PCM5102A。配套800×480 RGB屏、LED曲目指引、ESP32-C3蓝牙交互与K230视觉控制。
 
-系统的核心属性（也是评分依据）：
+## 最终版本入口
 
-- 音频通路的每一个样本都由 FPGA 在硬件逻辑层实时计算，**不是预录 PCM 播放**
-- 演奏动作 → 事件 → 声部 / 振荡器 → 混音 → I2S → DAC，端到端延迟 **≤ 10 ms**（冲刺 ≤ 5 ms）
-- 基础目标：**≥ 4 复音**、**≥ 2 个独立演奏维度**、独立 ADSR、实时变调
-- 冲奖目标：**≥ 32 独立振荡器**、**≥ 3 维表情**、**≥ 2 种音色**、硬件音效、可视化反馈
+**本仓库以用户提供的 `E:\Gowin\Final\FPGA_Instrument_20261031` 为最终工程基线，归档日期为2026年11月1日。** 本次只整理仓库与文档，未修改最终工程的源码、约束、ROM表、工程配置或烧录文件，未运行综合、布局布线或烧录。
 
----
+| 用途 | 唯一入口 |
+| --- | --- |
+| 打开最终工程 | [integrated_instrument_64.gprj](final/project/integrated_instrument_64/integrated_instrument_64.gprj) |
+| 下载最终烧录文件 | [integrated_instrument_64.fs](final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.fs) |
+| FPGA顶层 | [instrument_64_top.v](final/project/integrated_instrument_64/source/project/instrument_64_top.v)，实例化64声部 |
+| 器件与工具 | GW5AST-LV138PG484AC1/I0 · Gowin V1.9.12 |
+| 原有本轮PNR报告 | [引脚报告](final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.pin.html) · [资源报告](final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.rpt.txt) · [时序报告](final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.tr.html) |
 
-## 一、团队成员与任务的唯一入口
+最终 `.fs` 大小为 **42,340,871字节**，SHA256：
 
-**每个人只读自己那一份任务书，不要读别人的。** 任务书是你在本仓库中的权限边界说明书。
-
-| 成员 | 任务书 | 负责目录 | 独立工程 | 分支 | Git 账号 |
-|---|---|---|---|---|---|
-| **A** 音频合成与音质优化 | [`docs/成员A_音频合成与音质优化任务书.md`](docs/成员A_音频合成与音质优化任务书.md) | `rtl/audio_core/`、`sim/audio_core_tb/` | `audio_core_sim.gprj` | `dev-audio` | TODO 填写 |
-| **B** 演奏输入与参数界面 | [`docs/成员B_演奏输入与参数界面任务书.md`](docs/成员B_演奏输入与参数界面任务书.md) | `rtl/input/`、`rtl/ui/`、`sim/input_ui_tb/` | `input_ui_sim.gprj` | `dev-input` | TODO 填写 |
-| **C** 音频输出与 FPGA 系统平台 | [`docs/成员C_音频输出与FPGA系统平台任务书.md`](docs/成员C_音频输出与FPGA系统平台任务书.md) | `rtl/system/`、`rtl/common/`、`project/`、`constraint/`、`tb/` | `audio_system_sim.gprj`、`synth_top.gprj` | `dev-system` | TODO 填写 |
-
-先读 [`docs/高云FPGA电子乐器项目总计划书_最终版.md`](docs/高云FPGA电子乐器项目总计划书_最终版.md)（总控与作战手册），再读自己的任务书，最后只浏览另外两人的"接口与边界"章节。
-
-**开工前必须先读的三份文件**
-
-1. [`docs/PLATFORM_TANG_MEGA_138K.md`](docs/PLATFORM_TANG_MEGA_138K.md) —— 板卡与器件、IDE 版本、管脚、安全红线
-2. [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) —— 接口冻结卡、采样率/位宽/定点、延迟预算
-3. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md) —— 分支、提交、合并、评审规则
-
-**成员 C 另需先读**：[`docs/C_官方例程与板载音频通路分析.md`](docs/C_官方例程与板载音频通路分析.md) —— 已核实板载 DAC/功放通路与实机 I2S 管脚，是 C1 出声的第一步依据。
-
----
-
-## 二、仓库结构
-
-```
-gowin-fpga-instrument-138k/
-├─ README.md                     本文件
-├─ rtl/
-│  ├─ common/                    ★ C 维护，A/B/C 共用（改动必须通知全员）
-│  │  ├─ event_defs.vh           事件/参数/音频的唯一契约
-│  │  ├─ status_defs.vh          状态与错误码
-│  │  └─ reset_sync.v            复位同步器
-│  ├─ audio_core/                A 独占：DDS、波表、FM、ADSR、声部、混音
-│  ├─ input/                     B 独占：键盘、编码器、触摸、力度、滤波
-│  ├─ ui/                        B 独占：参数管理、页面状态与内容
-│  └─ system/                    C 独占：时钟、采样节拍、I2S、音效、状态
-├─ sim/
-│  ├─ audio_core_tb/             A：tb_audio_core.v + audio_core_sim.gprj
-│  └─ input_ui_tb/               B：tb_input / tb_encoder / tb_sensor / tb_ui
-├─ tb/                           C：系统级 testbench（如 tb_top_integration.v）
-├─ project/                      C 独占：synth_top.v、各 *.gprj
-├─ constraint/                   C 独占：tang_mega138k.cst / .sdc
-├─ docs/                         任务书、计划书、平台卡、接口冻结、采购清单
-├─ tools/                        仿真与综合辅助脚本
-├─ waveforms/                    保存的仿真波形配置与截图
-└─ evidence/                     验收证据：综合报告、时序、延迟、频谱
+```text
+2A1C5EA9A07E9421049F5E1623558A684046DF6744FAAC9D5258CDDCDEC18EF8
 ```
 
-`tools/`、`waveforms/`、`evidence/` 三个目录共用，命名规则见 `docs/GIT_WORKFLOW.md`。
+这份文件来自用户明确指定的 `project/integrated_instrument_64/impl/pnr/`。原目录中 `bitstream/` 的两份旧备份不是本次最终固件，未作为发布固件收录。`final/README.md`、`final/package_manifest.json` 和早期报告保留原字节以便追溯，其中旧的固件入口与校验结论应以本页及[发布说明](docs/RELEASE.md)为准。
 
----
+## 从哪里开始阅读
 
-## 三、三条铁律
+| 想了解什么 | 文档 |
+| --- | --- |
+| 打开工程、选固件、首次检查 | [快速上手](docs/QUICKSTART.md) |
+| 系统方案与音频算法结构 | [系统架构](docs/ARCHITECTURE.md) |
+| 元件、双触点矩阵、DAC、蓝牙、ADC与灯带接线 | [硬件说明](docs/HARDWARE.md) · [58个端口完整引脚表](docs/PINOUT.md) |
+| 双EC11、六页界面、力度与曲目指引 | [操作说明](docs/USER_GUIDE.md) |
+| 手机网页、ESP程序、UART命令与回传 | [蓝牙与手机](docs/BLUETOOTH.md) |
+| 已有报告、仿真、示波器与64复音验收 | [验证说明](docs/VALIDATION.md) |
+| 三位成员的工作如何形成当前工程 | [源码与成员资料导航](docs/SOURCE_MAP.md) |
+| 最终文件来源、旧版本区别、打包范围 | [发布说明](docs/RELEASE.md) · [SHA256清单](release/manifest.json) |
 
-1. **只改自己的目录。** 需要改别人的东西 → 先提接口变更说明，不要直接改。
-2. **接口以 `rtl/common/event_defs.vh` 为唯一真相。** 字段/位宽/编码不一致时，以该文件为准。
-3. **不进版本库的东西：** Gowin 的 `impl/`、`*.fs`、`*.ipc`、`*.log`、`.temp/`、bitstream、PDF 手册、仿真缓存 —— 见 `.gitignore`。
+![系统总体框图](docs/figures/system_architecture.png)
 
----
+## 主要功能
 
-## 四、常用 Git 命令（三分钟上手）
+- **24键双触点力度输入**：8行×6列、48触点，逐键时间参数映射到力度，影响音量、音色与起音。
+- **64个独立声部状态**：独立音高、相位、力度与包络，分组时分复用运算资源；包含钢琴、吉他、编钟三音色。
+- **演奏表情与效果**：滑音、摇杆弯音、FSR颤音、双声道延迟效果。
+- **标准I2S**：24位有符号PCM、每声道32位槽、64 BCK/立体声帧，外置PCM5102A线路输出。
+- **实时反馈**：波形、16384点FFT、同步左右声道XY图、演奏与曲目状态。
+- **练习与手机联动**：脱机曲目、节奏提示、LED目标键、蓝牙曲谱传输、键位映射、演奏事件记录及回传。
+- **64复音验收模式**：ALL64、GROUP16、MUTE63；配套PC模拟输出采集分析工具。
+- **K230交互**：手势调参与8个虚拟琴键，独立UART输入。
 
-```bash
-# 第一次：克隆
-git clone https://github.com/user-lqt/gowin-fpga-instrument-138k.git
-cd gowin-fpga-instrument-138k
-git config user.name  "你的名字"
-git config user.email "你的邮箱@example.com"
+48kHz为设计采样率目标。端到端延迟、实际LRCK频率与DAC模拟频谱需使用对应固件的现场测量记录；本次仓库整理不将历史仿真或目标值改写为最终实测结果。
 
-# 切到自己的开发分支
-git checkout dev-audio      # A 用
-git checkout dev-input      # B 用
-git checkout dev-system     # C 用
+## 目录
 
-# 日常：改代码 → 提交 → 推送
-git status
-git add rtl/audio_core/phase_acc.v
-git commit -m "feat(audio): 实现 32 位相位累加器与波表寻址"
-git push
-
-# 开始新工作前，先同步主干（避免长期偏离）
-git fetch origin
-git merge origin/main       # 或 git rebase origin/main
-
-# 功能做完 → 发 Pull Request 合并到 main
-gh pr create --base main --head dev-audio --title "stage1: 单音 DDS 通路" --body "见 testbench 结果"
+```text
+final/                 最终工程原文件及用户指定的唯一发布固件
+  project/integrated_instrument_64/
+    integrated_instrument_64.gprj
+    source/            RTL、CST、SDC、ROM和第三方FFT
+    impl/pnr/          最终.fs及已有报告，不含大型实现数据库
+  k230/                最终包内K230板端程序
+  tools/               最终包内PC采集分析和历史开发工具
+  verification/        原有仿真源码、记录和日志
+docs/                  本次统一整理的当前方案、接线和使用说明
+companion/             原有手机网页与ESP桥接配套源码，标明来源
+release/               精确文件哈希、来源与整理检查结果
+tools/                 只读发布校验工具
+archive/               主干旧内容、任务书和成员历史说明
 ```
 
-完整规则（分支命名、提交信息规范、PR 检查单、冲突处理、阶段标签）见
-[`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md)。
+只需演示或烧录时使用上方最终入口；阅读旧资料时从[历史资料导航](archive/README.md)进入。旧开发分支和全部提交历史保留，未强推覆盖。
 
----
+## 文件校验
 
-## 五、阶段与 Git 标签
+在仓库根目录执行，无需安装第三方库，也不会调用Gowin：
 
-| 阶段 | 目标 | 通过后打的标签 |
-|---|---|---|
-| **阶段 0** | 三个独立工程可打开、三个 testbench 可运行、接口冻结 | `stage0-freeze` |
-| **阶段 1** | 三条独立最小链路（单音合成 / 键盘输入 / I2S 出声） | `stage1-minimal` |
-| **阶段 2** | 基础可提交版本：≥4 复音、2 维交互、≤10 ms | `stage2-baseline` |
-| **阶段 3** | 冲奖扩展：32 振荡器、3 维表情、音色、音效、≤5 ms | `stage3-award` |
-| **阶段 4** | 成品化与比赛现场冻结 | `stage4-final` |
+```powershell
+python -B tools/verify_release.py
+```
 
-**`stage2-baseline` 是保底线。** 冲奖开发一旦破坏它，立即回退到该标签版本，删掉风险最高的功能。
+## 许可与来源
 
----
-
-## 六、当前状态
-
-- [x] 官方赛题与宣讲材料归档
-- [x] 团队总计划书与三份个人任务书归档
-- [x] 硬件采购清单归档
-- [x] 平台与器件信息核实（Tang Mega 138K）
-- [x] 仓库骨架 + 接口文件冻结草案
-- [ ] **阶段 0**：三个 Gowin 工程建立、三个 testbench 跑通、接口正式冻结
-- [ ] **阶段 1**：单音 DAC 出声
-- [ ] **阶段 2**：基础可提交版本
-
-阶段 0 的验收清单见 [`docs/INTERFACE_FREEZE.md`](docs/INTERFACE_FREEZE.md) 最后一节。
-
----
-
-## 七、免责与合规
-
-- 所有输出音频均由 FPGA 依据实时演奏指令逐音、逐样本生成；**严禁**播放预录 PCM、预置推流或整段录音触发。
-- 外接 GPIO **只允许 3.3 V 电平**；任何 5 V 输出必须分压或电平转换后才能接入 FPGA。
-- 功放为 BTL 差分输出，扬声器负端**不得接地**，左右声道负端不得互连。
+第三方FFT保留[原MIT许可证](final/project/integrated_instrument_64/source/vendor/r22sdf/LICENSE)与作者声明；参见[第三方说明](final/THIRD_PARTY_NOTICES.md)。Gowin工具/IP及K230运行库、模型按提供方授权使用。仓库未擅自为全部团队与第三方内容追加统一开源许可证。

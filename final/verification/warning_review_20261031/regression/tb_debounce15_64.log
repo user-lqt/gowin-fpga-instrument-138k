@@ -1,0 +1,2 @@
+PASS exact15/64 debounce,14-frame glitch,release bounce,hold/repress,24-key events,unchanged raw-travel velocities vs40
+C:\Users\lenovo\Desktop\FPGA\FPGA_Instrument_20261031\verification\tb_debounce15.v:72: $finish called at 27526920000 (1ps)

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.vvp
+builds/
+measurements/
+verification/results/
+verification/generated_font/
+project/*/impl/gwsynthesis/
+project/*/impl/pnr/
+project/*/transcript
+project/*/*.gprj.user

@@ -1,0 +1,3803 @@
+{
+  "release": "final-20261101",
+  "source_folder": "E:\\Gowin\\Final\\FPGA_Instrument_20261031",
+  "selected_bitstream": "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.fs",
+  "selected_bitstream_sha256": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
+  "policy": "All included final files byte-for-byte unchanged; only generated caches and superseded bitstreams omitted. No synthesis, place-and-route or programming performed.",
+  "files": {
+    "final/.gitignore": "28c124d7a87ed3e8256b2cb3ab7df1445bf4a0884a1c636865928ced3e091840",
+    "final/docs/ARCHITECTURE.md": "5ba866ea2367e5075ec273d1f3e6e539889cf2ad33b3c43472b2b0f6a08ce990",
+    "final/docs/FUNCTIONS.md": "f2bbe1963d02a01191da92fb12a63ad13d3dfd805f4187b6678353975853f940",
+    "final/docs/PROGRAMMING.md": "76d9ba2770b82fef2eab4de91d1f1da930316196ee24304b003f467431c72b8b",
+    "final/docs/ROW_PULLUP_TEST.md": "5f889684407d96bee448176e072b52674272008b9d586b8909fe74a40b994c30",
+    "final/docs/simulation/page_0.png": "6239c4fd574d38b317ca440e30f4e4cbf9c7a549b27e59e8d3f90a2fb964f636",
+    "final/docs/simulation/page_4.png": "2aee42356b15d5425b0202f9a2addd179a4977f8e8ac376a23a6be60870032bd",
+    "final/docs/simulation/page_5.png": "1caec47c9d7a0ca5a6e0368f0e574db1d9ea5f0f9da9abfed84e34ac2f10f48f",
+    "final/docs/simulation/six_pages.gif": "8e1ae3064d8f35812f57ac75d95ea7a75a6a9df16c7b1fd331cde391bd69c616",
+    "final/k230/build_single_file.py": "1d7f38c32528226bfc979b748ae14d2ae0e3084aa27c4b4f6a21acf63bebfb95",
+    "final/k230/camera_lcd_test.py": "e25e8386a9b293bc14bc146112c736ae2a0cc01c2cc1969ad6cce91e1fd25627",
+    "final/k230/gesture_fpga_control.py": "395a77b2d1aaad959f6d1c686806fcca48b1055b1ce6932737874eab274a480e",
+    "final/k230/gesture_music_control_test.py": "7b7bfa7b5b1d146c70f3ee209432e9fb9c5790ec07fcdc5d28feb3b62edf4809",
+    "final/k230/gesture_page_control_test.py": "75a1b4ca6ced730da19d04c9d037a0a3e02d326c98b6a2aa9695ef03947e45f4",
+    "final/k230/gesture_screen_test.py": "d9280a3e4a1225c35597f46227d1a95fe4a61dc329a5590f403d748dcf5b8e26",
+    "final/k230/k230_fpga_uart.py": "d6cee4b9a76d9617112fe543e2af67825737f171a6f4230ad72ac966510ff45c",
+    "final/k230/main.py": "c0ff596f8a2a75863e7565f338b299336c79e79c5b0f409670b3ebe75f3e69e8",
+    "final/k230/pinch_screen_test.py": "a127399b2130cb5c8d1270e2c1aed25aed8af90725ec5fff31dbe1ed270a9ab7",
+    "final/k230/README.md": "3468a8e94a36bbbe98e1fe121bf0130da98053d259db36fc6ef1bb8c6d5f9ceb",
+    "final/k230/test_control_logic.py": "4fdb217e307005bf7f457cb931c42780e0b634fa49314f0e0b70c89eb9e6dc7b",
+    "final/k230/test_fpga_uart.py": "35e95ffb9b4b8ea9242fb57c26292e0bc87df168cce4744496689c53133cc417",
+    "final/k230/test_interaction_logic.py": "a59c304619eb17a3dff60cb4238eaee3b6a9c4ba1cf862f179a5ed080c35f93e",
+    "final/k230/test_page_control_logic.py": "a59c304619eb17a3dff60cb4238eaee3b6a9c4ba1cf862f179a5ed080c35f93e",
+    "final/k230/test_preprocess_cache.py": "9b2941eec1f8a0e3f54c3e79114f48157df9be93df9a16c8c4dd137c32d8e3c8",
+    "final/k230/test_single_file.py": "3fc1e90d40f1e8a0a370e61ec27d4a41ef3b56137c2fe242672b94b4ae5ca2c5",
+    "final/k230/test_static_control_logic.py": "4130808ce67415b0aaf90c2b6dc7ef0e1346e7ffb3fda4a463154375ab3ed5d8",
+    "final/k230/test_touch_control.py": "81c2e4233eadbc808e35d7b915e6a32aebf5018e0969add99d39c80fe5d569b0",
+    "final/k230/test_uart_header.py": "bd9387566f8293c7b67268e276bb9fa5fb88c24b535c83fb675fd063a33e5449",
+    "final/k230/uart_link_diagnostic.py": "0bd9b9c6af19f66a1c240514b0f5172a28692e562f8b7a5c6d85f0360d356dc5",
+    "final/k230/uart_loopback_test.py": "46b00b9bdc13c17225c543591fcab8d1ae777f26bd17cf87f2b820129b343e1a",
+    "final/k230/uart_parameter_smoke_test.py": "0fc9f0e65cc8c4b23bda38e6033942a3256e288d1a4758f6d30da2b03e00376b",
+    "final/package_manifest.json": "62c5bfca3e2f5162043f6487f1fe26def7aa7ba0ca6c9721be24dc458a25ee65",
+    "final/project/integrated_instrument_64/build.tcl": "0fb80320484cdb1ebf607c20eac2786eb9015276dd65a1844feb83bfe6a786dd",
+    "final/project/integrated_instrument_64/build_stage.tcl": "ed202409bbf26d8e801277b78983129e40c0a219061d938a582a411babe77458",
+    "final/project/integrated_instrument_64/check_physical_result.tcl": "837bcd48f45521caef4851282992592fedef30032687a42b15290e0a67f4b2a1",
+    "final/project/integrated_instrument_64/impl/integrated_instrument_64_process_config.json": "e15f048ccc1f20fe0e756fd0a121124b565c75cb2bc6df16170c24c2fecc74c3",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.fs": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.log": "dd9a170eff2a2ed0a3b7072b21d96c03b635ac58b8fa7a2b648cfdb117b68da8",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.pin.html": "6e0b61bdff01d30a40c22fa3d71e28e82b670715a212e244018ed5625526ee81",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.power.html": "9f4923061df52d7c5214ca0e68e5790985726d25d8d950010c67d2e2978d010f",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.rpt.html": "df6463064c86f6155cbad658b16441bc36c9dc74cd12def84524629b175cae5f",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.rpt.txt": "0a60463790811ba8138602a0ec21ee1a79d8cde85424b5e29a381b3f8e18b91a",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.timing_paths": "3ebe49e5b5daf5a8a3a132cb67b5336505f1476bbbb1b2bc7fe307ec9f61788a",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.tr.html": "2b6bbe1334e85841441acf8e4955974a74a8757d47ff7c7227cfa1b8629a2029",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64_tr_cata.html": "629a8f0ee6abe107b24fd83fe780236e572d800f3cffac0f1dc834cffc89f7ee",
+    "final/project/integrated_instrument_64/impl/pnr/integrated_instrument_64_tr_content.html": "39fb2cc7550bb7ac024e9e59540539b19acb46cdf11b6ef1398b5570d454061f",
+    "final/project/integrated_instrument_64/integrated_instrument_64.gprj": "313d4f1a27546207a2831c355fd2a93bc6b4a82fc6045a5133779596be84d9f3",
+    "final/project/integrated_instrument_64/keyboard_build_guard.tcl": "492a21df0cfd470a0027b6be09d33fe52d3bbb4aaf25937815f8a2244bdd72cf",
+    "final/project/integrated_instrument_64/source/constraint/instrument_24_rgb_mega138k.cst": "2c2ef92bf1ff2b66a2ee4bbdbfbd2629b66e39d35058af5dae47660cafa71f59",
+    "final/project/integrated_instrument_64/source/constraint/instrument_64.sdc": "13ec4334d19ee234781a5a824821077596185efbb2dd70486da00a0753a3f845",
+    "final/project/integrated_instrument_64/source/project/instrument_24_rgb_top.v": "55bf94c196a912021eb48635209c7917c136f86c90af39b1804b646d04c6062e",
+    "final/project/integrated_instrument_64/source/project/instrument_64_top.v": "ea516a5d7442c838979ecfb9ba9405cad2cfae4a614bb4c9dea0df6632baf2f2",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/adsr.v": "4fa40315455e0caabd98bb7739160aebafdf85b69a39f0c8248512825b4b0491",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/adsr_state_bank.v": "ab12dbde25d36f20bf85ac435306ef16ac626716b450fc29363fc5f412469fb4",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/audio_core.v": "098ed18d8dce40f24595bedb64b20ea4c879344cf69b93d101eb5f9d3459ef6f",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/bell_mode_profile.v": "258343b782599137e2d89dc950049a459258ca3d719b1f8c928277133bb7e1dc",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/bianzhong.v": "497096477850431d4f186b2a3f384d4480156c03cc9c5d04d862246aa962bdc9",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/bianzhong_ram_bank.v": "bfaa90cd0b4b0dd5ab39c2497848c9cf5870bf473db1fa9c24d45834601c8d2a",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/fm_operator.v": "5128920e28af2f8e31e5da2854c3eec271e280f24deb94d674886660336120fd",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/guitar_body.v": "c9038ddfa8f9528ab008ab5f4723db3f0effda0d2e8f4a855c0ba3333a9d4d71",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/guitar_body_ram_bank.v": "3276866ae238582505d72559fc89c4f6307f253b79474dd5874bca5f7e1ce81d",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/guitar_body_tone_bank.v": "7a702b54df9608b5748ba9010e3fcce773989cc7bc96ed07e497f2dfa0627b8b",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/mixer.v": "9ad6fc5d46a6470567b66b8cd3b29676e2d6d8929699239ee1a92efe55a9fa84",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/note_to_fc.v": "787ca65fb5504cce8ccf6d2443144d670240d6cd95178cd2d4c361a235772f25",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/note_to_period.v": "67ae0bc3f11125fdfe55b51012d9c1784fc497e918a12e989e86b2ce95fa55bd",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/oscillator.v": "e10dc3c0ab3dec82c3115a0ef62024c080d5b03f7ca7700816f438f3e3bb7b5a",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/oscillator_state_bank.v": "33a4974cbaf9bd7f577d7ddceb1a5bfc9176df350d2dcd5e622273a415788feb",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/phase_acc.v": "a197f68db87a48553f3078f4b5f50f396d1bd971b7a6d7b87aeb6a4f8d5ad2f2",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/pitch_expression.v": "5158e83a0905f3c9ab34c75f4e8e8bb06a703de21aa4153bfb732102319bd776",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/pitch_fraction_rom.v": "cc34038da62dc15a8eaed3627abac3180115edd8d531d4a3eac28d5e44b2f01e",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/pitch_lookup_sync.v": "00093d050fadc9d24743cdf0c1ee78a1e9eef6952eb46f0d245eca7ddd05e446",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/plucked_string.v": "796c8e5ce4179028f47820bbec17ecc4d4242b44f4772a501e5da314200fcf31",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/plucked_string_bank.v": "d831dae85034b0dfa1c43bfcd474abf37cff4ea5a237a3c4e44b69853a3b2d52",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/voice.v": "c593b126b33511e7ed8f0a557fa203dbbf1574b802d52993e6eeb04576a98589",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/voice_allocator.v": "1402d6dbd1428f1a983ba46119d7f01780ddf6dac088da4d60e23853fe41ac89",
+    "final/project/integrated_instrument_64/source/rtl/audio_core/wavetable.v": "a50227cc7ffbb94adeb203b0402826e9a2a0c4dbc356832327edc81ea874344c",
+    "final/project/integrated_instrument_64/source/rtl/common/event_defs.vh": "a2709ebf383c24b01602acee2ad28401284196772614a8db92360f9a6cbad2f2",
+    "final/project/integrated_instrument_64/source/rtl/common/note_functions.vh": "2fbb51d2a3a8b5bb509f6124ae4d11f7a937a55af93284084c98648deae066a3",
+    "final/project/integrated_instrument_64/source/rtl/common/reset_sync.v": "e94a4f5238f8b636080824ec290945e3a6e41f8613c8ff3e2d1c7eb109b4f1c8",
+    "final/project/integrated_instrument_64/source/rtl/common/status_defs.vh": "2f2192570aea0fbb51d422c2a1bfa841c87cde470a09df0fa68046cdf7165044",
+    "final/project/integrated_instrument_64/source/rtl/input/ble_uart_rx.v": "f09dd9552eb9758557f6f07875bb365982f21bdc92910f921280b25af0ec25b8",
+    "final/project/integrated_instrument_64/source/rtl/input/encoder.v": "bf8f6126aa0e3bef6093a789ff9d243be4c104181862ce30b4fd2a74631696a3",
+    "final/project/integrated_instrument_64/source/rtl/input/encoder_b_control.v": "344d480f54dfae905be034afe45d4a8481d01608e1af45ac200392229d4fc669",
+    "final/project/integrated_instrument_64/source/rtl/input/encoder_b_input.v": "0580979ccd983104ace7fe6a5ad07df0b478bbc95c9df67bd77084072040a46b",
+    "final/project/integrated_instrument_64/source/rtl/input/encoder_control.v": "0846f4a46f88f3a47d553b946d3efef3cdc51601336ded825450f10566cb75c0",
+    "final/project/integrated_instrument_64/source/rtl/input/encoder_param_queue.v": "921edf7f33760fb680295fa355e0967b28ec2359b47cc07a117d56bf64de5c08",
+    "final/project/integrated_instrument_64/source/rtl/input/expression_mapper.v": "c1eadca627070f3df4d1c220835a92554dc2b4bfeeb0f16744e4cec0a12f33b7",
+    "final/project/integrated_instrument_64/source/rtl/input/fsr_expression_control.v": "389c7549a550a35098a2fd89b47c6d09c2273b4daed6bba6873720d65d1812f1",
+    "final/project/integrated_instrument_64/source/rtl/input/input_defs.vh": "287f2de114590fd9225f2e43af3538263d8f5cd8ce91e5a24568118012bf9ed7",
+    "final/project/integrated_instrument_64/source/rtl/input/instrument_link.v": "0e29a6c8f10c5bc198d0f9efdb3430d303219c390cde5d8b286aee616f5ea49c",
+    "final/project/integrated_instrument_64/source/rtl/input/joystick_control.v": "9487b8ff3d92feccb7a46e45aedece933835db814e8b752916cf1b85bde9521e",
+    "final/project/integrated_instrument_64/source/rtl/input/k230_control_rx.v": "ffd8a8c3b594fc18d8f10616663939e04df5da462d13091b5edd6a1408ad668f",
+    "final/project/integrated_instrument_64/source/rtl/input/key_debounce.v": "51b8145a08911595e8412975c7fc93f95325cb4f3ab74a87c3de4eba8085b72b",
+    "final/project/integrated_instrument_64/source/rtl/input/keyboard_24_dual.v": "bd6c6be51ff8970914e053becbae0a209d09ce50c5318086cb995140c11a9ec7",
+    "final/project/integrated_instrument_64/source/rtl/input/keyboard_24_input.v": "15092d94f66985fb0fb3447ed61c6f514fe6150f7e37fa730ad08115671e63cd",
+    "final/project/integrated_instrument_64/source/rtl/input/matrix_scan_8x6.v": "e7092e95cf98b9f3884dab46c415e88036fc30b51b1e56390e56e1cf2b9491c4",
+    "final/project/integrated_instrument_64/source/rtl/input/mcp3008_sampler.v": "81816490ba92f332ac6431cb113da796abcf072f30cd969742631327fbd66e3e",
+    "final/project/integrated_instrument_64/source/rtl/input/mcp3008_spi.v": "7788ba35a0d5c00c9e9257d18e04d5ae1e6a56b3c5a4a507cbc8900a2ec2d94b",
+    "final/project/integrated_instrument_64/source/rtl/input/performance_event_merge.v": "b7bfec1220457217407e4afdb05344a22132f26613cd1ef2a7d8489ac26cb048",
+    "final/project/integrated_instrument_64/source/rtl/system/audio_delay_fx.v": "f7570e48f5a3e16e511dd15630f8dcae5848670930c6c47cee103828afceae2a",
+    "final/project/integrated_instrument_64/source/rtl/system/clock_gen.v": "34ff48a23b2882f81845d8e0524af657fb9600ad75904b5059700a172b614011",
+    "final/project/integrated_instrument_64/source/rtl/system/i2s_tx_pcm5102a.v": "d23b5d72ab53a171cb543ef241373074b02678556fd1694110fb662ade65ab7d",
+    "final/project/integrated_instrument_64/source/rtl/system/keyboard_led_strip.v": "417c4a4099ee623ffcb0ea06ac53efc58b35c790a4ac1de9e99ec941634a3d96",
+    "final/project/integrated_instrument_64/source/rtl/system/lesson_guide.v": "c974c8b503af396e73e1b1bf531a841da9c86d2611e097c977b036d42bce6d85",
+    "final/project/integrated_instrument_64/source/rtl/system/polyphony_test.v": "f122c3c32dc4c531aca7c93b7043431203fc36aa9430995e6d7a0f7398b44fb5",
+    "final/project/integrated_instrument_64/source/rtl/system/sample_scheduler.v": "4942125e2ed9ff5bb9c800892b760a75d1ab3e4c11664892db3ebd9db432e722",
+    "final/project/integrated_instrument_64/source/rtl/system/system_status.v": "c2cdff2ef2547df1f906c661f0976753afa8113f48ae6df9b5a5a662db006290",
+    "final/project/integrated_instrument_64/source/rtl/ui/audio_visualizer.v": "bd62e5f4b5d13a8418397bb1d11a6ed2f73802ae516eba20907f2c90ddd59da1",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/DelayBuffer.v": "28780f268d2aae2601fe3b618b1ec21c1326949d6ead76e6d662c6e5f2cddeaf",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_band_compact.v": "00bb969935193ea94db7d3ee2b2357be5eb115786d6fda17c569f7993ae830c3",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_band_rom.v": "8ac563f3989ba46972c7ddd32e799ca65122ce240ef471c83ccb804d53fa7a3f",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_fft16384.v": "ac3eea445ab0ca373070fc027ac1bfc165f60bb31dd3380758092f13406f2f6e",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_frequency_rom.v": "19766133cdd9d4cbe668f30d72001953919fef4808bb6bb56479e87c436bb1e0",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_hann_rom.v": "a7bd10d0404b4a03b4fb756899b585f04b42753ff54a1bba3d6ad41b4a59320f",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_trace_compact.v": "45eb3ba951bf65bcd73ee1a8cbcd23eec209d8c95f51b6448c7d1eed033f3a31",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_trace_rom.v": "b4c2a02c189777019c50f51be345062690b751231d0aa16a15ae95931349fb47",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_twiddle_rom.v": "4eea3f2619c03edf1d47297abf04992f358e332fcd1bedf9096661dca250c601",
+    "final/project/integrated_instrument_64/source/rtl/ui/fft16384/Twiddle.v": "5a8e343aa6fa2a64400de9b0956c896de0fa51e9ba3e8485c6206f1b80374d23",
+    "final/project/integrated_instrument_64/source/rtl/ui/lcd_status_bridge.v": "2670f708804012a73cada4346b529f93010b74a40d9a9628fbbb53cd89768101",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/display_targets.vh": "d76f9222759dd6db4764a4cbed2ccecf0df1b016ca468ea989a17d87802f48de",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/glyph_tiles.hex": "907d271efa9052a36b4c4b4eb51c9c7dc6eaf732ee2deab0962cf7ec9cf1cfb1",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_cells.hex": "d90891509d67470fc3a104b86154818c75e4eda17dea9450eb952ac092a02121",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_compact_cells.hex": "ec1f95b0806defa35deb54fea75eb1f362e23ec49a2a138f7458e257755b05c5",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_descriptors.hex": "b3c2d375fce62bd5fdb2eb524a1513b81d98e99f370f22a6398dc17c2ebca465",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_glyphs.hex": "2079619502f671cb328d5629f7070ce9c7cdd8e19d1f13adb836912ab298a5ca",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_group_cells.hex": "9c8da6f98792c8c6a34b6d1a13a4bc4e2a7821d355ff18b1a36d812379587996",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_groups.hex": "057a9d1b640c76c59dcc6ed679be221db59162fd8c3c5420b84201cc02380830",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_labels.hex": "ddf3762026e0d6afe217e817730b2485ef852b0dd4b09e1c2c49c5b043735851",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_rows.hex": "c864f0647783a6b231b4f19c56f8a052801db38b174d42e9250ea5a2e959bca3",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/label_tiles.hex": "dcc81f2df65751eedff8ebee0acb53d99dff2a7289a82e5db4749c36c2ce86fe",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/new_screen_dashboard.v": "9c3c3080ec44a2c3d181ed09cb804f57c56a45613a6a9701b9b6db98a7f233b1",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/new_screen_font_defs.vh": "405e24c92e2aeb49cf824754f00e2b4da2ec56ac4a1e72b8a151c31fbb476a32",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/screen_fft_store.v": "023fdfb72c223a3a2f3966eff9909cf9302a7a20a41bf9b4ca9d2de760db06e7",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/text_map.hex": "c5c8b1db1f046784a7616983bb1ad01bc80e92ac2d43695b892bd066b48ecf9a",
+    "final/project/integrated_instrument_64/source/rtl/ui/new_screen/zoom_plot_map.hex": "59d664d4b23b08572d940435efb520ff90abb8570e0e34d52a8a0010fe7b46a2",
+    "final/project/integrated_instrument_64/source/rtl/ui/parameter_manager.v": "734b090b171612a5c121e9777a48de353c0b819d4f8d8a29b655938c1c095561",
+    "final/project/integrated_instrument_64/source/rtl/ui/rgb_lcd_800x480.v": "d7d70d73746c9c2306dc64f4b83c632d1ecc051ac4fce2411a932592d9b77a66",
+    "final/project/integrated_instrument_64/source/rtl/ui/spectral/spectral_analyzer.v": "e8a6cefbce76869944bcc041598358a4f32461255c4cb084865862897e191605",
+    "final/project/integrated_instrument_64/source/rtl/ui/strike_display_formatter.v": "692ba9c5ff083d6e126cfb4f1604d52cbf7e4e13ddb9fdd17c905c8122b79560",
+    "final/project/integrated_instrument_64/source/rtl/ui/waveform_buffer.v": "e2e4cb9062cc5a858dab5f37a2458dbe3c0b79d57fd4ccb492866d0359fe2fc2",
+    "final/project/integrated_instrument_64/source/vendor/r22sdf/LICENSE": "5ac7f1eb8175b547bd391278244b9197b76fd513f2a8daac4bf70a0dd484ef05",
+    "final/project/integrated_instrument_64/source/vendor/r22sdf/verilog/Butterfly.v": "cc9aa6e8966e6d3dc37440ebbeaf39fe38ac4e2e3e84e7f826c02703769d373e",
+    "final/project/integrated_instrument_64/source/vendor/r22sdf/verilog/Multiply.v": "ce27257962968067c68605d81c1ef9b8d7aa31200c55da54b290425cb795bd3c",
+    "final/project/integrated_instrument_64/source/vendor/r22sdf/verilog/SdfUnit_TC.v": "aa2b81ca96e0a1f49a0c5f52fb471747d1956480d73c7a7a901d502f432c32af",
+    "final/project/integrated_instrument_64/source/vendor/r22sdf/verilog/TwiddleConvert4.v": "a559529b36cb861dc97495099da56f6f456f7731e0a3e11bc0cc204fa66644bc",
+    "final/project/integrated_instrument_64/source/vendor/r22sdf/verilog/TwiddleConvert8.v": "1bd41121289612cd329822062b5363a7e70813a968b265da58db0d9ad9c0936d",
+    "final/project/integrated_instrument_64/verification/clock_gen_stub.v": "bb0c092910b5af70d36c1ea752bd365a9fa1519ce1a74b29848e71306d055bc0",
+    "final/README.md": "d15de89109226e5eac6e47f822f9992f1362e5208180477c383af879046abadb",
+    "final/reports/build_result.json": "3bc7319b673581ec862614d35653eb2b2116541b35458bfa09847b8bf2dc5fe8",
+    "final/reports/implementation_resources.txt": "39341b109b29f716bdd520b7f02cdeaf077101ee26146d41fa39772f856c86c3",
+    "final/reports/implementation_timing.html": "d2d8ac4cd5ef57f9f1c904629f0bcd9deba7115c43cc972431ad07f2046ec764",
+    "final/reports/migration_audit.json": "cda5bcc1e435123803100473976f7edd575b4c971e1ea8eefa49ac9dbbe35931",
+    "final/reports/package_validation.json": "b4319b869c4c99a6307cb1f632554807a57d387cbedc3f7c8234bf0692a02feb",
+    "final/reports/pinout.html": "d8298868a4b02343c1ce07e22816ce4273f97b410a362be61fccb5770a459f78",
+    "final/reports/report_provenance.json": "483dc36cb19cf74bc661ab60a60ff2ca52da58fa5ae5eca7d05f225704deb7f5",
+    "final/reports/row_pullup_source_before.cst": "54bb8c6078f5764715fd6232f5ed370fc415f838b29fb9101472c25567e6a8fc",
+    "final/requirements-dev.txt": "dbc95b74d18fc3770c157fa58d61f7cc94feb5c8b3c6bf1883eaed48fc31b07d",
+    "final/requirements.txt": "6d4cdf924e8b6fe2cf827f647ca740148e2e8b4c44ea31578dbea46cbd403417",
+    "final/THIRD_PARTY_NOTICES.md": "5cce00828e1c56fff0afdf4dd3b3369c87c6635a345eea5dfb3cfe0a8c52cd07",
+    "final/tools/acceptance_gui.py": "cc6fab2fd3170548ce2926b332e9f6825cfd7ba9885aa04c35aeeadd97a9a8bc",
+    "final/tools/acceptance_reports.py": "615a1de58138bb87a8f8a9eb69a0d16ad73656ebf4efa4cc6915f6c54ae50e85",
+    "final/tools/acceptance_scope.py": "b36244fbef896f60561fb78c6e18532f3db5bda391f9686ae80fcd62018aa190",
+    "final/tools/build_project.py": "e913e1584f9feb1c589c966054fa9103f66b929d6010720161d5bdfac56c31ba",
+    "final/tools/build_row_pullup.py": "4456486625291cb27d07ee20843fd3196e58ac0512800b60c887448801b0d18f",
+    "final/tools/build_runtime.py": "d5cdfb2cbca0ab4337ae0cc7bcab091a83af36aca51b0f2ae379723f19b3a850",
+    "final/tools/start_acceptance.cmd": "4824b092718a88326b9f8aacb35c8fa390ce269d9e3780f39cbe0e84dd3cac75",
+    "final/tools/start_acceptance.ps1": "aa8768c94dbd99f1f4361ee818e551418ca39056f85d203bf1094b1317c3b36f",
+    "final/tools/verify_package.py": "56cf0b8ee5969deb5fb7c12165c0b6994b586794bcfb47f0ab792a527cff6fc4",
+    "final/verification/acceptance_gui_chinese.png": "66a84fef49a68268346393dcca5c1d24db10f70c07da422041dd5544e91f3709",
+    "final/verification/latency_determinism_001/audio/audio_000.log": "b962e6fb234f53517bc78bf899684fba596337e0177dec600a7264eade8d8eac",
+    "final/verification/latency_determinism_001/audio/audio_001.log": "0443434015fd6a49cd5067dbace66e18f992e7a4d5af7a99997d463896006c5d",
+    "final/verification/latency_determinism_001/audio/audio_002.log": "f6ea512846b63a0c9d2497cfa4f3d1d39e199d2e645681812d7161876e9303ae",
+    "final/verification/latency_determinism_001/audio/audio_003.log": "c4d7b531f514c80ed634fc81f7f0d3cc69673dbcbf529c31cdeb4d0243df1d32",
+    "final/verification/latency_determinism_001/audio/audio_004.log": "f76e989db7f87d83c05b4336582faa46eef3db2c65aebc5615c3bea7f323a2a8",
+    "final/verification/latency_determinism_001/audio/audio_005.log": "e5e4e44041f9f70664556aec9905355e2a10d6a4a9b1716c6afbd1f85d742e1f",
+    "final/verification/latency_determinism_001/audio/audio_006.log": "600b7e962e09017ab5b607083665d168f5fd706348b6be213b1d0761f8ffc944",
+    "final/verification/latency_determinism_001/audio/audio_007.log": "95238299aec090f109a71cbef420eb5fc0bfe2ee79ef3fab9e87cde849b2d36c",
+    "final/verification/latency_determinism_001/audio/audio_008.log": "2fab564ef25a2db16176c5bf997e22065086aec20548236ac14fbecdce4551a6",
+    "final/verification/latency_determinism_001/audio/audio_009.log": "df563e3a3d248210d3cc0e1dabeb4f346f723bd7d3fb0908168ec2d61e628788",
+    "final/verification/latency_determinism_001/audio/audio_010.log": "1ba6ba006582bd0af0cfc078162b9bbb62cad984cc1933fbcf181df4d47d873f",
+    "final/verification/latency_determinism_001/audio/audio_011.log": "c63d2ddc85cbc19bd1cecdf1d3949ff2378ecf1ffac62bb2d521d873602350e8",
+    "final/verification/latency_determinism_001/audio/audio_012.log": "b20848a4d2d51f4ccf8d1c02fe90a97af87d5fcddebb191e529c4229cb7fbd3d",
+    "final/verification/latency_determinism_001/audio/audio_013.log": "5b90c6cbebf9298707b384a779baf97c7caac231c75a03de65ad533bc98ea051",
+    "final/verification/latency_determinism_001/audio/audio_014.log": "b87f58485027e2dbf79e588f30ccb7098f1b494db364003cf79cdcc8d4eef9cc",
+    "final/verification/latency_determinism_001/audio/audio_015.log": "bad17b1000221c94bfe21a23917c88c7466ba5507ddf9c52c9d280c84c8ed1ce",
+    "final/verification/latency_determinism_001/audio/audio_016.log": "228ff9d6ce444d0571bbf911b00ca442a97bce4741dbc36707fd108efd3d2eac",
+    "final/verification/latency_determinism_001/audio/audio_017.log": "7314511cb6e7c0231aab9f39db1ba08464e5bcb044ba43d97794492230c6f866",
+    "final/verification/latency_determinism_001/audio/audio_018.log": "6b1655f093486e67ab1de7c7cf2d0da732f9d6b1ad6157df57536c3d87cb7cae",
+    "final/verification/latency_determinism_001/audio/audio_019.log": "e84978cf9071f19517fa98f0eca609dc00172f69549516128e819c7c9b7ae11d",
+    "final/verification/latency_determinism_001/audio/audio_020.log": "5c4191f66979a6eadafbfabd38455d3ebbd34bdc3063de476bd7a28127c389fa",
+    "final/verification/latency_determinism_001/audio/audio_021.log": "b962e6fb234f53517bc78bf899684fba596337e0177dec600a7264eade8d8eac",
+    "final/verification/latency_determinism_001/audio/audio_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/latency_determinism_001/audio/audio_queue.csv": "e50d7fdcf14a06432fbba76a6e232367bbcfae696da1fd9037d42e4ecb87c764",
+    "final/verification/latency_determinism_001/audio/audio_timing.csv": "9e4b3936defea84ede99ef8044f8194f09afce1eb04cb1be3894cecea9bfec70",
+    "final/verification/latency_determinism_001/audio/result.json": "f2981d4713cce05369b7ec4c674187d0cebcdb88c2da5c4cff64164d4151d72b",
+    "final/verification/latency_determinism_001/audio/tb_audio_timing.v": "e3250bc8eb61d113dd0fe4cd63ef2a1cfc50a75237d9c3f342a4de5f214fb9ee",
+    "final/verification/latency_determinism_001/audio_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/latency_determinism_001/audio_stdout.log": "0cea34bfc9e022658abf7ce468af1c2dfb36c5714dfe6edd7ccd844fffc43302",
+    "final/verification/latency_determinism_001/keyboard/key_000.log": "076a97591d164188ba8b9fa260e11a1fd481b7e7478961c7fbac2dea64e4e180",
+    "final/verification/latency_determinism_001/keyboard/key_001.log": "dbd6b58c26adee725590ae4ba1facac61b2f0df81abf43795fe1dc5972eb4738",
+    "final/verification/latency_determinism_001/keyboard/key_002.log": "cc209f96d0b2a244c1fdf32407b19bf3eee2fe2fa22dfb38787751e72bd76987",
+    "final/verification/latency_determinism_001/keyboard/key_003.log": "2761d444d52bc3a01c0ce9bdf21af0b34d2d9e4174484223246fd6a28507aabc",
+    "final/verification/latency_determinism_001/keyboard/key_004.log": "88b951422917b31d7e8372f44b3959269e03c265cd050c830be2e498dc4a38c0",
+    "final/verification/latency_determinism_001/keyboard/key_005.log": "83f244591614451820c8f13717d0133a2c5516c5756af1815dfe20a8ea65d455",
+    "final/verification/latency_determinism_001/keyboard/key_006.log": "f8cfdf4bac17247310fe947f5003530b5b669ce9788afa6bfc74b07e1c285dd4",
+    "final/verification/latency_determinism_001/keyboard/key_007.log": "85cbe9a24da952617760e2f040d71d1a194fba163ec4d059cdd04d31166eb7ea",
+    "final/verification/latency_determinism_001/keyboard/key_008.log": "a6288dfd39dfccfc0f66a2d96912aa789bf393afa4f9fa5d1516a58f0ffbff5b",
+    "final/verification/latency_determinism_001/keyboard/key_009.log": "7a1297ade77256fe8b06cf0d6cb3b4d04957cf06abd30868904b1f8cf3d4d5c1",
+    "final/verification/latency_determinism_001/keyboard/key_010.log": "ad27eb063ffdd6b5f986c1823e1d4c4fd2507891ef325f3f033cbf5a8ea77c1f",
+    "final/verification/latency_determinism_001/keyboard/key_011.log": "16adeb9e6dbc498299575b9b02f61f1070f820d34fb00852e544ab97ae443e44",
+    "final/verification/latency_determinism_001/keyboard/key_012.log": "4cae2e172cb874320cb976a564e6dbcd2b0e84f4b52abcd68d184f03a9ea25e0",
+    "final/verification/latency_determinism_001/keyboard/key_013.log": "0b777bc2c48564891e667e128b9eb567fca65a560ff707858c9658e319a81006",
+    "final/verification/latency_determinism_001/keyboard/key_014.log": "076bd66a97ce771ecc89725713885217f82801501bbe98ecf7d67156c59d92a3",
+    "final/verification/latency_determinism_001/keyboard/key_015.log": "b4bbd25b4bebf1b607d0a37414f84bdd4ecdb26d5b8492755d6d4d262b0f3d99",
+    "final/verification/latency_determinism_001/keyboard/key_016.log": "0cb2ae622ffd768d7be5dcf743da48fbc50030ac04c8fbc4212b715a766c35a2",
+    "final/verification/latency_determinism_001/keyboard/key_017.log": "b6ddc7482c26d6ed03a63904bdf0d72821c693c94003b8e0f92a19212485d523",
+    "final/verification/latency_determinism_001/keyboard/key_018.log": "75fd2101dcfca6e26564c038da4b0203a4713e8ad2b6fe66e9e158607969cd4b",
+    "final/verification/latency_determinism_001/keyboard/key_019.log": "1a784bda7d7948d250bf68f77f4189edd6bcff193e44945ce40f9b5186f5c5f4",
+    "final/verification/latency_determinism_001/keyboard/key_020.log": "cd000980926523e7268b1dac918ca650ae7d137653cf30c59ee7e4d3967219bd",
+    "final/verification/latency_determinism_001/keyboard/key_021.log": "b5055c14c039c107177055d74cd0e46dd7daa96a0a6d6e0200611c0bee659d06",
+    "final/verification/latency_determinism_001/keyboard/key_022.log": "2ae054f7e3117c6a2803cbdb0cab4f5901b3e49ab2a984d3f63bd580d3f14cf0",
+    "final/verification/latency_determinism_001/keyboard/key_023.log": "967216a6f61ba191a2b140e9d7358285762a9af60c875a7a0fd239debe0b3cae",
+    "final/verification/latency_determinism_001/keyboard/key_024.log": "509a938bb9e4234881fbe653fb74f7d4a8bd9ba7c3a1c70b6e33c9c35f632aad",
+    "final/verification/latency_determinism_001/keyboard/key_025.log": "764583aa53b5a8058dd61704eedd2d9b7ab5cee105fcd3697164508968e45b5c",
+    "final/verification/latency_determinism_001/keyboard/key_026.log": "ef090396be3d58561b40fa432cb5a105ae26fd1d7e8db012e6a93f17d8fedb6f",
+    "final/verification/latency_determinism_001/keyboard/key_027.log": "f800fb786945faf2521c134ed7c7a5872d1244e04e206828afcb7cda0b65a0b0",
+    "final/verification/latency_determinism_001/keyboard/key_028.log": "cc7cf5135533f13538c0d93edf1b23f35ea9bf30feb2314349bd7bf70210dcf4",
+    "final/verification/latency_determinism_001/keyboard/key_029.log": "952704377b351fdc28f32e9845d6a6e1d07816a0c66e05ffff1cebe023f503fd",
+    "final/verification/latency_determinism_001/keyboard/key_030.log": "33695fd14e74e2f5e4c52c587c61e32a2e435ff9f65844968e5d6e836b95a83a",
+    "final/verification/latency_determinism_001/keyboard/key_031.log": "3f289882e069521b446cc6ee18d5b8de20c350130e956cc1e7119213dec49cbe",
+    "final/verification/latency_determinism_001/keyboard/key_032.log": "3203b6dd9b913503e67a94bcc0bfd4431995aeb747d9d66c3358400329fd67c1",
+    "final/verification/latency_determinism_001/keyboard/key_033.log": "ffde7ed798e6e0bfb3c0d4a939a9e0171a5f0fc5b1de28ebedf42afec878a650",
+    "final/verification/latency_determinism_001/keyboard/key_034.log": "192bdefd39e24d0b4bd3c147a30833f5cdf7b1805316b7ad8f67b77e80bdfacf",
+    "final/verification/latency_determinism_001/keyboard/key_035.log": "821123938a3551b32cc07f41d0e4ca82d00dbc4e3aa36928cddef976e74d4da0",
+    "final/verification/latency_determinism_001/keyboard/key_036.log": "cf3f95cce53b5da4ac778aceb2a8d9753eb101b019767a630523e07c9b3169ca",
+    "final/verification/latency_determinism_001/keyboard/key_037.log": "1e0439d1bf41748c85c8c124966984b5cf56011a6347e3468233a7c633efb6b8",
+    "final/verification/latency_determinism_001/keyboard/key_038.log": "99e015c92900cd55169dd04deae106667318ecc94799d66f5885113a9de962ff",
+    "final/verification/latency_determinism_001/keyboard/key_039.log": "1c422791e888fee5de4c95716978390aa5d089e218028d9af3e26f40dbf52d1b",
+    "final/verification/latency_determinism_001/keyboard/key_040.log": "11d3e2cdda4ef79bcddbd38d13b07ff74f1875276d25f6ed9361a1556782eba1",
+    "final/verification/latency_determinism_001/keyboard/key_041.log": "d07919aa0f2598551803b6019073a4fc25ec2d6b91fb5ef00c0e87adc7893026",
+    "final/verification/latency_determinism_001/keyboard/key_042.log": "2817223f6e12bf0dc6e2db7fdb149cf25a6101c11627bb83942fadf6b3063f81",
+    "final/verification/latency_determinism_001/keyboard/key_043.log": "cecb3979fe9704a0887d5f213852a6a1229d9d614458876c9a4f5e46bc4eb058",
+    "final/verification/latency_determinism_001/keyboard/key_044.log": "463a8903e6eb6d279263657379d03ec9804733af266498c7f13fe28488e174fe",
+    "final/verification/latency_determinism_001/keyboard/key_045.log": "bdd3a26edee486ac8cb580de438f27b070710b979eaa581091d238466855ad2b",
+    "final/verification/latency_determinism_001/keyboard/key_046.log": "813537503d2c46f28df584cf65ad15dab5c4637184d3a3971cfc009a8ab557cc",
+    "final/verification/latency_determinism_001/keyboard/key_047.log": "58f9287682e538ddac54c19f6e6b70d5f1c52689a1e33d59dcae8dc0bab47408",
+    "final/verification/latency_determinism_001/keyboard/key_048.log": "3768a1496a0a2db89231b804f4d6269cc8a276bf6b8a357dd903ce9c6f63d259",
+    "final/verification/latency_determinism_001/keyboard/key_049.log": "a8da1b5ed365dc12af1cb475a9d78765403beb5d673083a07a00f2f5e03b3a57",
+    "final/verification/latency_determinism_001/keyboard/key_050.log": "6e585d1bf1bc491167ed9e4c9f5c7ed00cea0bb609420a2b9e8e28c4cc4e434c",
+    "final/verification/latency_determinism_001/keyboard/key_051.log": "2f1b7ad5111d53001ce163529393dab49e695725532fcc545270f46336ad8604",
+    "final/verification/latency_determinism_001/keyboard/key_052.log": "7fe824179997f6585d9791a4f2ea4754fb359b54170f099a778c3ba4a65d5083",
+    "final/verification/latency_determinism_001/keyboard/key_053.log": "703ab6bae2d346d9896a6120563b50c4e1d39ec8c6d27b780cad4cf11792d390",
+    "final/verification/latency_determinism_001/keyboard/key_054.log": "a4bc171e3746e60d9d593a3d06b8e6a53f8e74d03b6c3cfb6bd3ac239ead5a5c",
+    "final/verification/latency_determinism_001/keyboard/key_055.log": "4f0d99e3aa44301b429b08a99a3bb04d9fc3d34678409a646ad76d6d0e0a3859",
+    "final/verification/latency_determinism_001/keyboard/key_056.log": "104026f8ed33eccd48af67e633ab94a7ec0b37b29c2db591ab6e402102f45de2",
+    "final/verification/latency_determinism_001/keyboard/key_057.log": "6b78d2acbe4d27ad76c55539624fd7ab23726eb9d3d2ef77c633067ca7ad36c5",
+    "final/verification/latency_determinism_001/keyboard/key_058.log": "4bbee4ce976fc425a9ba8311806b655ec1f856a525ac3b964e35da2ef7ac133a",
+    "final/verification/latency_determinism_001/keyboard/key_059.log": "02beb289a09ec5dd7cada9e04bcface54eda551f15016e0c31622193f13c5d1b",
+    "final/verification/latency_determinism_001/keyboard/key_060.log": "99817ef4c144fd579110dc6d5091a084ffed2ef1ab4c00155fcd4a7a21219f04",
+    "final/verification/latency_determinism_001/keyboard/key_061.log": "74d5d3dca7ee143a6d2604b18e8cd679ecda9afdf69eb3042752a6b40511d6c2",
+    "final/verification/latency_determinism_001/keyboard/key_062.log": "8bde0b91c19d05614ed5c5defc2009a5b979df2ac61e1120037bc90f7344ca3b",
+    "final/verification/latency_determinism_001/keyboard/key_063.log": "96de4b7c57b8c181d20310e0b6b9913871b834f493622f1ad0f061a6b7640e01",
+    "final/verification/latency_determinism_001/keyboard/key_064.log": "639d70c4d6d9ff02091dcf02721534faad48edac6e566d5fcf5d1bda452b407c",
+    "final/verification/latency_determinism_001/keyboard/key_065.log": "47b0efd1608a06787627c3199298f36a8d43598de12fdde25fd7328b99973a76",
+    "final/verification/latency_determinism_001/keyboard/key_066.log": "48769270e157be02c885e74fc76f81920959e947ed09fe4af86618ccf66fc316",
+    "final/verification/latency_determinism_001/keyboard/key_067.log": "6dcab618bb9183424c68be44d74bc46e1e02f43664784c723531eaededa01d1c",
+    "final/verification/latency_determinism_001/keyboard/key_068.log": "92c5905be175731b41ab742336acad4efb8f92a2579efd95f6782f3d0ce5a98f",
+    "final/verification/latency_determinism_001/keyboard/key_069.log": "722fb78425023db5a772ef052212c3b6467ddf92f00dc2c1b6211c6587e7bf00",
+    "final/verification/latency_determinism_001/keyboard/key_070.log": "788bdcac563c55c87cce177369184895c0e14312127ee9466efa01723d061941",
+    "final/verification/latency_determinism_001/keyboard/key_071.log": "11f616b085993ea8920300fdab4017cd384d1821ac6c486d668a16532780fcb2",
+    "final/verification/latency_determinism_001/keyboard/key_072.log": "55840bc96880d65344bb0b4f6af586eb9f8b628d432bcc424b531389125d68f9",
+    "final/verification/latency_determinism_001/keyboard/key_073.log": "69ab1bc4528f430ecc04139bde7db7bc8e359ed8a28b9647b82dbf93a7398701",
+    "final/verification/latency_determinism_001/keyboard/key_074.log": "a1feed180c896116d6ac2413bf5a06dc4c6985aa1980b3e19cdcc0e2d1779c9f",
+    "final/verification/latency_determinism_001/keyboard/key_075.log": "3e2d515b533f2db6f7082a023eb107317736f3185a5a5259dff4b1e3b5072a6c",
+    "final/verification/latency_determinism_001/keyboard/key_076.log": "95ccf9bf468606387651bd784704f5ff43667b8857fa0ef8fdf99fce84f2cd32",
+    "final/verification/latency_determinism_001/keyboard/key_077.log": "7dec662d0f22605560746ffd73ef52f5238796a5ceee494c40c1a64d23581fc9",
+    "final/verification/latency_determinism_001/keyboard/key_078.log": "a4de065738d7d24d5ef852c89fc9419e53a20b6972dcebac58db961d85fe6059",
+    "final/verification/latency_determinism_001/keyboard/key_079.log": "26b8cbe7a18a32695dd1dba5b65d89e80f4d9507b593d0e7a94f8c06608441b1",
+    "final/verification/latency_determinism_001/keyboard/key_080.log": "11cb8c303bcadc2c08003ac759511c232c12594dbab6ddcfead47e0ce8a13733",
+    "final/verification/latency_determinism_001/keyboard/key_081.log": "925d2cb1100715477086c7c22b7ff6b79de10b6ce06da61097b9eaf7d896064c",
+    "final/verification/latency_determinism_001/keyboard/key_082.log": "cb3b1efa4a166314972fa187670830c669af2503be554717800242717205e8b9",
+    "final/verification/latency_determinism_001/keyboard/key_083.log": "0bf644a19fd9493c94dc341141a6b387cc682fef20912d5ce5e4b54ac35be044",
+    "final/verification/latency_determinism_001/keyboard/key_084.log": "afee032cfce8ccc9f250a81acf12c9ac2ab431ef8cf2eb4f327cba5e1b36840a",
+    "final/verification/latency_determinism_001/keyboard/key_085.log": "6d986bd2b4addfa038af6ad09e85caeb5d194874097fff4fc62265f5ff11d4ae",
+    "final/verification/latency_determinism_001/keyboard/key_086.log": "7a040eb307155731ee2a69e1cc65cbf99a3631a083c36b2b9706551b5ef6f92d",
+    "final/verification/latency_determinism_001/keyboard/key_087.log": "6aeaa6e3401faebf7655667b0e5b9b703cf66763c49a2a0f71310ffffe885472",
+    "final/verification/latency_determinism_001/keyboard/key_088.log": "dd6aa7d83e0be75b8e37ccdce1ea62a812e13bd969be540e3bc71f6bd435440a",
+    "final/verification/latency_determinism_001/keyboard/key_089.log": "3070179e3d0e7a3d0bffe47a1ac69b8fc6fed0812c50bdb121885e7a5c0dbfca",
+    "final/verification/latency_determinism_001/keyboard/key_090.log": "20c78c88d31c62f889e0f7a1bde63929e642f5fd02ca1c197d96522703964afb",
+    "final/verification/latency_determinism_001/keyboard/key_091.log": "c48458abf2648ed685db7a5feb90b5dfc5454c9b1f030698322ecbcd29352681",
+    "final/verification/latency_determinism_001/keyboard/key_092.log": "a1db32919ed49eca05edbfc0dd97a2f2fa0608a3f29bf0f7a3a9fbe26395b42a",
+    "final/verification/latency_determinism_001/keyboard/key_093.log": "0ab435dc55109f841cf997d79ad4c49f0ab943cf4a0e14f3e22e87de2545f5d5",
+    "final/verification/latency_determinism_001/keyboard/key_094.log": "5052cfda14d7771a1a3df9ccdf89a9e19bd07dcea30aafc924b346f34076d4ff",
+    "final/verification/latency_determinism_001/keyboard/key_095.log": "bf851347d97dc6c50261d458ecc49edaf5a72828edbbeade40af735191393a77",
+    "final/verification/latency_determinism_001/keyboard/key_096.log": "d12ee9578697ab6d0348cab09d2b1963a73fbb9eb70c3dce659c5064b19193ca",
+    "final/verification/latency_determinism_001/keyboard/key_097.log": "da5b2c680fd59cf4288a0841a2b2d201ae791a034a7ccf52ba805c32623d4c38",
+    "final/verification/latency_determinism_001/keyboard/key_098.log": "3e042e959c636bbda0e975b78304503f42ddc139ab21ba1d19c1f7ef5e22e6cc",
+    "final/verification/latency_determinism_001/keyboard/key_099.log": "d9aeb6e2b8063cc8018e759ede184cc31f7d6f977014d88f11781450396c594c",
+    "final/verification/latency_determinism_001/keyboard/key_100.log": "170073b3721daa2ed4f05e4edbf1f799a06807dac60f45af7fe994982d56f62e",
+    "final/verification/latency_determinism_001/keyboard/key_101.log": "23f74623eb993f8fc9cf491c17afe8d4054607763a5bb611a171348c4e8e3ebc",
+    "final/verification/latency_determinism_001/keyboard/key_102.log": "267f3e779d5e02e789b201f1775be1c60b93d4575fec0632010ec373b4990827",
+    "final/verification/latency_determinism_001/keyboard/key_103.log": "cff1b4e61ef26a8c58a46a9b0c48821fde557f406bbc597fd4855088d9852093",
+    "final/verification/latency_determinism_001/keyboard/key_104.log": "b138d6cbf983f729fe146b61adf3f6d8835ecce741252da43a909feb74228373",
+    "final/verification/latency_determinism_001/keyboard/key_105.log": "332fee8c82c7baf0bf6b73f170eae24330857ea061b7741067074f11de18a591",
+    "final/verification/latency_determinism_001/keyboard/key_106.log": "9bfb46d2622c4d00d08ab04cc780b824f6094b42898c9b855326e723f953a324",
+    "final/verification/latency_determinism_001/keyboard/key_107.log": "653919e1e832109487e91ce8e660fb6729a93a6966c703f58088d76769939480",
+    "final/verification/latency_determinism_001/keyboard/key_108.log": "16658338f0d2c8b6bf291daca9a05727c70037103bfcae2425ff7c215afd439e",
+    "final/verification/latency_determinism_001/keyboard/key_109.log": "2c192e64ca48965c4f73fc656fd11467693bbf38888129673366c1f19cb66466",
+    "final/verification/latency_determinism_001/keyboard/key_110.log": "47e77ad11074ff8fdc2208603170408741611922c6043cb84a43d0b8c6fe35f3",
+    "final/verification/latency_determinism_001/keyboard/key_111.log": "00e5defc5f8f8757228d75d10757eb8decb0e51e1fc6194c4306f2c518d80ee1",
+    "final/verification/latency_determinism_001/keyboard/key_112.log": "25cf4bccca684bc8aedccb80c68600f6ef279423cf25fb97538379239ce69b1c",
+    "final/verification/latency_determinism_001/keyboard/key_113.log": "9ec1182fed8908d84cbe5c3e6213b382aff53f5a0007760e20c3074aef374419",
+    "final/verification/latency_determinism_001/keyboard/key_114.log": "5ef399afe73511c32409ff6a326acae7035ecf3740af761c8c2708125be6e6ef",
+    "final/verification/latency_determinism_001/keyboard/key_115.log": "0a4f6cae661445c76a59a947e590a5b2c41f086fe7ef62d84a486f2e7ff6bd7b",
+    "final/verification/latency_determinism_001/keyboard/key_116.log": "05937c5934747f02562345cc99869aa383aa25318742f4cf66d8c3431c4e2f35",
+    "final/verification/latency_determinism_001/keyboard/key_117.log": "877620830fdae9a3915e1e2235ba9581cf64c403a7982ae61ec9ac39e9743863",
+    "final/verification/latency_determinism_001/keyboard/key_118.log": "fc9060d9f6c12a9b6b029b48645727ea83e1fd8eddae8622e3d3181c57e93d91",
+    "final/verification/latency_determinism_001/keyboard/key_119.log": "e236b7829c87d66150952446cb798e606e1340e62cb859c026a8b6a6fc8a6fbb",
+    "final/verification/latency_determinism_001/keyboard/key_120.log": "d2318c06d0083f874e6a69e824d7729ae860ec291d749222a3bf629bc7919cb6",
+    "final/verification/latency_determinism_001/keyboard/key_121.log": "2e9bcd17488d0fa052571ee83d9bb88df63da4e7f072b3073b1222a4945c2d9a",
+    "final/verification/latency_determinism_001/keyboard/key_122.log": "da13a98a6902d2232305fb9cca3c121e4f52d6d3226298ffd9b1b7ee9e91777b",
+    "final/verification/latency_determinism_001/keyboard/key_123.log": "e4d05b4fca4bb86cf0aa1fa4c8f9cfe47d08396236721b9392dd5a93b08af522",
+    "final/verification/latency_determinism_001/keyboard/keyboard_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/latency_determinism_001/keyboard/keyboard_timing.csv": "f4f45cf10c6d685416dd4b2f9db3de20554cc6f8c9e8bcf32968faec9a9eecb5",
+    "final/verification/latency_determinism_001/keyboard/result.json": "fa58887bbc8039ed1ec0d1f851ad718b1a91a1fc7b8e82055fe63348c14888ee",
+    "final/verification/latency_determinism_001/keyboard/tb_keyboard_timing.v": "26a0d20fa7cc8bcb9ba6ec980a7533a4953c90be867b562cd6e7919f9d274f8f",
+    "final/verification/latency_determinism_001/keyboard_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/latency_determinism_001/keyboard_stdout.log": "de93b0570431672c30d75f52bb7bc6e3c0e37d861488ecd43bcea44f6334246e",
+    "final/verification/latency_determinism_001/report.md": "195a02d6b7c9ce9520c9ec89af2a9bc4932520775c87eea7b7b4b93e9bea924e",
+    "final/verification/latency_determinism_001/smoke/audio_000.log": "b962e6fb234f53517bc78bf899684fba596337e0177dec600a7264eade8d8eac",
+    "final/verification/latency_determinism_001/smoke/audio_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/latency_determinism_001/smoke/audio_queue.csv": "46493b6a1667c24e7439ed120df8f5af8e6a8b747b0ad50f2a3bd925e75626b6",
+    "final/verification/latency_determinism_001/smoke/audio_timing.csv": "8d90edefd0e7c0a38517a6478ff7a31877f2d8d7a0d31bc45063f9bfbb78156e",
+    "final/verification/latency_determinism_001/smoke/key_000.log": "076a97591d164188ba8b9fa260e11a1fd481b7e7478961c7fbac2dea64e4e180",
+    "final/verification/latency_determinism_001/smoke/keyboard_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/latency_determinism_001/smoke/keyboard_timing.csv": "30ef6be6a5bacfc14430001af846be696155be6bed93b766c9cb82bced58808e",
+    "final/verification/latency_determinism_001/smoke/result.json": "8f8e8302c436a6b142fb8fcb4efeed084f9c6c6d0ca1eb4cbb81dbb37346cf7b",
+    "final/verification/latency_determinism_001/smoke/tb_audio_timing.v": "e3250bc8eb61d113dd0fe4cd63ef2a1cfc50a75237d9c3f342a4de5f214fb9ee",
+    "final/verification/latency_determinism_001/smoke/tb_keyboard_timing.v": "26a0d20fa7cc8bcb9ba6ec980a7533a4953c90be867b562cd6e7919f9d274f8f",
+    "final/verification/latency_determinism_001/summary.json": "5806ef8092f0da2a9cf8ca4609c62ee44363eedfe0e9200a26a44bac9a8a049c",
+    "final/verification/tb_acceptance_default_timing.v": "f0366ffb7a0de8cbd61987200f2583dc875e2139621b3ed0de21e1949d49d6cc",
+    "final/verification/tb_acceptance_sweep.v": "0b011a6adc9a8f6c5712b89809b477156647bcf4b2bd6b106761bf04a9d1a837",
+    "final/verification/tb_debounce15.v": "6d5b4d071865cef395012273b603401a3cd8cefa7fe4718481998349c28d64a6",
+    "final/verification/tb_oscillator_state_bank.v": "314274626128f171a638da005ec4a527e2fc3bb371f9d34c201a0f93f2d64a32",
+    "final/verification/tb_scan_debounce15.v": "9666e2a319ec81c18bb40d89023ee0798ce0803bc108c7bf74b3a5e47a2c0f0e",
+    "final/verification/tb_wave_response.v": "4c3290bb9b0663e274422b5700c6db5c8159aed5b99a9a71e91ebb41b707f01b",
+    "final/verification/test_acceptance_gui.py": "3e3d8fe80f23c2155cd35292c4d953a3b3051f2ee089fca3d4d028d22026335c",
+    "final/verification/warning_review_20261031/before/source/project/instrument_24_rgb_top.v": "7f26ab77adbbde46e75a2884324a7643d944f84524b79650427742c9783d968e",
+    "final/verification/warning_review_20261031/before/source/rtl/input/encoder_b_control.v": "055c06ea29659277ff3661b53cf40707424ece854d91229bbf34bc8d46428d7a",
+    "final/verification/warning_review_20261031/before/source/rtl/ui/audio_visualizer.v": "25ebac560c0a5db0954aa0bdb808a1c84049f4aee674a1f0905942ade4bf3e29",
+    "final/verification/warning_review_20261031/before/source/rtl/ui/new_screen/new_screen_dashboard.v": "3756c1550675e5566008c6a4ea0352d46cbf9388e945ef1161f9139cbe42176a",
+    "final/verification/warning_review_20261031/before.json": "d9db41bfaeb9242d27cb85cb8ac795eba94f6173a67bd3a1ce44c3c9abb83e6a",
+    "final/verification/warning_review_20261031/before_pnr.log": "9a6783e2ee534e2fb4262b7de16d5f7cbb651a1d0d50495a08cb26b464eb374a",
+    "final/verification/warning_review_20261031/before_syn.log": "af6a991e22aa4c4ba448cec605122f388d8f969dd563c7015ec3e4f79f51da2d",
+    "final/verification/warning_review_20261031/original_audio_visualizer.v": "9f9b6bf2e98e2eddf4a76660dd88fd028bae3167e845eaf19d1567dc72f29ec9",
+    "final/verification/warning_review_20261031/probe/probe.tcl": "46b88e252f9c485f096dfaa7c0eb873d8f2f06f107198847e68f9613e9628803",
+    "final/verification/warning_review_20261031/probe/warning_probe/warning_probe.gprj": "263925b0a4f089feb9842609d6718bfae6b7b6d5fe9f7a1ca5d57e90dbc0fae5",
+    "final/verification/warning_review_20261031/probe/warning_probe_top.v": "ce3832a7872d09bd4918b5457d9a7854e05d7a770363ef60664f7d29fa24d6cc",
+    "final/verification/warning_review_20261031/README.md": "76447dcc34467260a88716ca96386288a4e3550e4529819e2328dad7f1cacfd4",
+    "final/verification/warning_review_20261031/regression/results.json": "e96f8fa1e241b8a1c428ce025af8635cfed211bad08c4eea30fa29c61b8d5935",
+    "final/verification/warning_review_20261031/regression/tb_acceptance_default_timing_64.log": "c1adcb194739acefa89194c6226a45810c6b7faee4dfd8ef28230348f72dfa05",
+    "final/verification/warning_review_20261031/regression/tb_acceptance_default_timing_64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/regression/tb_acceptance_sweep_64.log": "0f6d20a4117b1f9f18b1e30306593b31efcef6fe1758828765f5e17773f8c6df",
+    "final/verification/warning_review_20261031/regression/tb_acceptance_sweep_64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/regression/tb_debounce15_64.log": "0276d5b621384ed9cddb11be7c5978f38d627cd942563ec2c7452d26c8cb034c",
+    "final/verification/warning_review_20261031/regression/tb_debounce15_64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/regression/tb_oscillator_state_bank_64.log": "4f64f232691aefbfbb8df7a9d5a3c75811428b364b9f6fd7644548fde8188835",
+    "final/verification/warning_review_20261031/regression/tb_oscillator_state_bank_64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/regression/tb_scan_debounce15_64.log": "a7e8cc738b50511e7658c86d88977c7f9c581448c65ca239c7c67d8995209963",
+    "final/verification/warning_review_20261031/regression/tb_scan_debounce15_64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/regression/tb_wave_response_64.log": "2de7b31dee37610b1a9ba588abae2e05e55702f8505ae5a5f1e3977d23b69e6c",
+    "final/verification/warning_review_20261031/regression/tb_wave_response_64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/regression/top64_PLL_stub.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/results.json": "6b983c2a6da559df12dd516295f8cc086be5d848423a5f2738277bfa392d96ba",
+    "final/verification/warning_review_20261031/syn.log": "02da0c58025c8f3c1c8cdbf5e22b1084f617dbb3883a2e0bb9b3e11f63e069a0",
+    "final/verification/warning_review_20261031/syn_live.json": "80872768237cea1cc0a8138e4b9a2acf2e643509eac2716e854b134230d80a88",
+    "final/verification/warning_review_20261031/top64_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final/verification/warning_review_20261031/visualizer_equivalence.log": "8b4aa646c66ae4d3dd46ff3c10a23dfd8ab66fc172b8d63d8010379ad46001e6",
+    "final/verification/warning_review_20261031/visualizer_equivalence_compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_inventory": [
+    {
+      "path": ".gitignore",
+      "bytes": 189,
+      "sha256": "28c124d7a87ed3e8256b2cb3ab7df1445bf4a0884a1c636865928ced3e091840",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "bitstream/integrated_instrument_64.fs",
+      "bytes": 42340871,
+      "sha256": "47bcf4691f686c3d37a95079da622d7c526ffe9051ff8f47fbb9b646d56fb794",
+      "included": false,
+      "reason": "superseded bitstream backup; user selected impl/pnr/integrated_instrument_64.fs"
+    },
+    {
+      "path": "bitstream/integrated_instrument_64_row_pullup.fs",
+      "bytes": 42340871,
+      "sha256": "6eda1725fd4f5da1acd33eace5c261872af24064203c493c64e98bda5be576a2",
+      "included": false,
+      "reason": "superseded bitstream backup; user selected impl/pnr/integrated_instrument_64.fs"
+    },
+    {
+      "path": "bitstream/integrated_instrument_64_row_pullup.fs.sha256",
+      "bytes": 105,
+      "sha256": "b2e96539f3ea7c7bf16dfb765f678df3c52c26825b9c473e453c638533e2d7b6",
+      "included": false,
+      "reason": "superseded bitstream backup; user selected impl/pnr/integrated_instrument_64.fs"
+    },
+    {
+      "path": "builds/row_pullup_001/gwsynthesis_timeout/integrated_instrument_64.log",
+      "bytes": 63900,
+      "sha256": "1bd926202857d2eb73d41db18206a6b678c7497e099596e54a07e5c752ca2b80",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/gwsynthesis_timeout/integrated_instrument_64.prj",
+      "bytes": 9835,
+      "sha256": "1f8ad37393b45587fbab444a94efa841f82cf2a3f415683a3058cf409ab8953a",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/matrix_pullup.log",
+      "bytes": 554,
+      "sha256": "b7e43a36811b2251b07060de6d67767629ff83c5218eda9a097631010bb8650a",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/matrix_pullup.vvp",
+      "bytes": 94339,
+      "sha256": "6178c35e8e081c4d859edd7dde5573e82677226d3f67831fc4e8fa08b591d10c",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/result.json",
+      "bytes": 21106,
+      "sha256": "31a71b86f5263670b2429ca53ffbee424475a5b8d01df889f49ac25242e52608",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/results.json",
+      "bytes": 532,
+      "sha256": "e96f8fa1e241b8a1c428ce025af8635cfed211bad08c4eea30fa29c61b8d5935",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_acceptance_default_timing_64.log",
+      "bytes": 151,
+      "sha256": "f45f988aa2f7146013aa18674d39cdca8c8bf7d3770012b8c2b5fc3d67f5b961",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_acceptance_default_timing_64.vvp",
+      "bytes": 24991,
+      "sha256": "fa1789169677a048b8ecf858d0f7af29f8c1793fdb496c6042e64a5def03ed39",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_acceptance_default_timing_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_acceptance_sweep_64.log",
+      "bytes": 162,
+      "sha256": "0380cb36aa7d202e8d19c730628970bda7ed0741a10ad09c4eeeec355966a5f6",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_acceptance_sweep_64.vvp",
+      "bytes": 30107,
+      "sha256": "fd5bb40e13e51f73d4986f9da5e6f2f5222715db6b51467b0aae4e7ce6a2c80a",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_acceptance_sweep_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_debounce15_64.log",
+      "bytes": 194,
+      "sha256": "66815b3ce2deb9ef3bbca13a45f242d885ecda2bd8b8d9a80dbe06397ac8bce8",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_debounce15_64.vvp",
+      "bytes": 109759,
+      "sha256": "2aa3f4d9411ddf980831aedf004c42503142517a3d4451249d5e1279b02bd252",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_debounce15_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_oscillator_state_bank_64.log",
+      "bytes": 183,
+      "sha256": "01f740725376243f3df7632375c80910a3ed62a1f835d1de903c18015275bf67",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_oscillator_state_bank_64.vvp",
+      "bytes": 1567594,
+      "sha256": "5ffc20cdd7a508552f86b1a47dab2adb8a8bfdebd347199d830839088cc5a202",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_oscillator_state_bank_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_scan_debounce15_64.log",
+      "bytes": 177,
+      "sha256": "988e6d2877d10b27f966ae61a5d7fbc5acf8ea00d43db859b4a713de12931d6e",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_scan_debounce15_64.vvp",
+      "bytes": 80130,
+      "sha256": "777af4090984c5626792313dbf4fecdab1d05845fac661cda1549912b662cfb8",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_scan_debounce15_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_wave_response_64.log",
+      "bytes": 186,
+      "sha256": "4e0054dc8f2238bfe4f68a1b654b15870f038adc762a1f02cd391c8691a39026",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_wave_response_64.vvp",
+      "bytes": 32008,
+      "sha256": "6d12221a8a460ca2099318a8a62ece9d8f5bfccb832916e89852bc9d167ca84a",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/tb_wave_response_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/top64.vvp",
+      "bytes": 11657593,
+      "sha256": "ed2ad866c78c245bf790200b406af0fabd677fb73a9291599c821a97f173cc22",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks/top64_PLL_stub.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks_driver.log",
+      "bytes": 425,
+      "sha256": "bfbdbba5ae7dcb2626bc1adadbf672632332d0b403fd42d1a3edb98ad53f59e7",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/rtl_checks_driver_error.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/run_rtl_checks.py",
+      "bytes": 267,
+      "sha256": "c5b663de579690d80a9d385f9748bfb636d9ea3ad7d3346ba6bba836c8ca2958",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/syn.log",
+      "bytes": 64080,
+      "sha256": "2b1272c23440dce0e668a9cdc1c6154a1717d99b3006a5e1219dbf40b4f7b267",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_001/syn_live.json",
+      "bytes": 256,
+      "sha256": "497a6ad8baefea613d4af74e61a9530ecabec01a53b17fe83f9dff3f4ae5fd33",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64.pin.html",
+      "bytes": 111912,
+      "sha256": "c6d2d563ae05cb05f74006b8f796429cee96b7467921f74fd9ad9ae98706014e",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64.power.html",
+      "bytes": 41427,
+      "sha256": "9a279a32ca579d0da6a5df58f8fc032b6f719016e085f18fefeb98fb3ee28125",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64.rpt.html",
+      "bytes": 118559,
+      "sha256": "1c2102b1cbf727e20b023184b3fd692027304121a09bb8faf8c6a1ec1541a4ff",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64.rpt.txt",
+      "bytes": 94916,
+      "sha256": "5c3b6342752e7561a21ef65d6afd90ea45565c624ffa467b667ef7b35a35f94c",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64.tr.html",
+      "bytes": 383,
+      "sha256": "2b6bbe1334e85841441acf8e4955974a74a8757d47ff7c7227cfa1b8629a2029",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64_tr_cata.html",
+      "bytes": 8243,
+      "sha256": "629a8f0ee6abe107b24fd83fe780236e572d800f3cffac0f1dc834cffc89f7ee",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/integrated_instrument_64_tr_content.html",
+      "bytes": 463272,
+      "sha256": "b80632b4b19d1ec14ea3a585db336a3db0df473b7f752d6607466c908d753192",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/physical_pin_delta.json",
+      "bytes": 1160,
+      "sha256": "fd362e94bbbdeeacd2a33cb2d1b2f15a1a7490a89a588773128e7c43864cbb23",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/pnr.log",
+      "bytes": 2056,
+      "sha256": "5f70526515eda24dc5abb9ab38af02f9e81300a3580f882aeba60ad4a425bf82",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/pnr_live.json",
+      "bytes": 271,
+      "sha256": "5ef1ff3114309395b2fccd0defd0397735b1c25a6b996b953ac1a316580e6c68",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/result.json",
+      "bytes": 25877,
+      "sha256": "97afe5f4218aa18c4f8347b86df77663d0b8132ea472b1a4826a5d771969cf7b",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/syn.log",
+      "bytes": 65542,
+      "sha256": "3acdf535d1d4e0c7901b1f7eeeb432b26449e53fa18bdae9f71a7068e4f9153a",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_002/syn_live.json",
+      "bytes": 270,
+      "sha256": "de5566429816d3c74e5e58962c4246cf248ed7372d2f3bd9e715ec59697d1af1",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_driver.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_driver_error.log",
+      "bytes": 289,
+      "sha256": "f96da7c1e87a47fdd00d194069f1649b1356820bb54570d5c4309e322c5af80a",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_retry_driver.log",
+      "bytes": 123,
+      "sha256": "562f446bd895ec9d1016c8b39c43df5c3eabfb0d2dbe73bc4c009f13af268902",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "builds/row_pullup_retry_driver_error.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": false,
+      "reason": "historical build trials; active PNR reports kept in project/impl/pnr"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 3776,
+      "sha256": "5ba866ea2367e5075ec273d1f3e6e539889cf2ad33b3c43472b2b0f6a08ce990",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/FUNCTIONS.md",
+      "bytes": 2984,
+      "sha256": "f2bbe1963d02a01191da92fb12a63ad13d3dfd805f4187b6678353975853f940",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/PROGRAMMING.md",
+      "bytes": 1616,
+      "sha256": "76d9ba2770b82fef2eab4de91d1f1da930316196ee24304b003f467431c72b8b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/ROW_PULLUP_TEST.md",
+      "bytes": 4822,
+      "sha256": "5f889684407d96bee448176e072b52674272008b9d586b8909fe74a40b994c30",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/simulation/page_0.png",
+      "bytes": 20832,
+      "sha256": "6239c4fd574d38b317ca440e30f4e4cbf9c7a549b27e59e8d3f90a2fb964f636",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/simulation/page_4.png",
+      "bytes": 18482,
+      "sha256": "2aee42356b15d5425b0202f9a2addd179a4977f8e8ac376a23a6be60870032bd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/simulation/page_5.png",
+      "bytes": 19355,
+      "sha256": "1caec47c9d7a0ca5a6e0368f0e574db1d9ea5f0f9da9abfed84e34ac2f10f48f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "docs/simulation/six_pages.gif",
+      "bytes": 391847,
+      "sha256": "8e1ae3064d8f35812f57ac75d95ea7a75a6a9df16c7b1fd331cde391bd69c616",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/build_single_file.py",
+      "bytes": 2559,
+      "sha256": "1d7f38c32528226bfc979b748ae14d2ae0e3084aa27c4b4f6a21acf63bebfb95",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/camera_lcd_test.py",
+      "bytes": 1351,
+      "sha256": "e25e8386a9b293bc14bc146112c736ae2a0cc01c2cc1969ad6cce91e1fd25627",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/gesture_fpga_control.py",
+      "bytes": 772,
+      "sha256": "395a77b2d1aaad959f6d1c686806fcca48b1055b1ce6932737874eab274a480e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/gesture_music_control_test.py",
+      "bytes": 25731,
+      "sha256": "7b7bfa7b5b1d146c70f3ee209432e9fb9c5790ec07fcdc5d28feb3b62edf4809",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/gesture_page_control_test.py",
+      "bytes": 36017,
+      "sha256": "75a1b4ca6ced730da19d04c9d037a0a3e02d326c98b6a2aa9695ef03947e45f4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/gesture_screen_test.py",
+      "bytes": 12064,
+      "sha256": "d9280a3e4a1225c35597f46227d1a95fe4a61dc329a5590f403d748dcf5b8e26",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/k230_fpga_uart.py",
+      "bytes": 5374,
+      "sha256": "d6cee4b9a76d9617112fe543e2af67825737f171a6f4230ad72ac966510ff45c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/main.py",
+      "bytes": 42031,
+      "sha256": "c0ff596f8a2a75863e7565f338b299336c79e79c5b0f409670b3ebe75f3e69e8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/pinch_screen_test.py",
+      "bytes": 15382,
+      "sha256": "a127399b2130cb5c8d1270e2c1aed25aed8af90725ec5fff31dbe1ed270a9ab7",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/README.md",
+      "bytes": 1026,
+      "sha256": "3468a8e94a36bbbe98e1fe121bf0130da98053d259db36fc6ef1bb8c6d5f9ceb",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_control_logic.py",
+      "bytes": 9714,
+      "sha256": "4fdb217e307005bf7f457cb931c42780e0b634fa49314f0e0b70c89eb9e6dc7b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_fpga_uart.py",
+      "bytes": 4515,
+      "sha256": "35e95ffb9b4b8ea9242fb57c26292e0bc87df168cce4744496689c53133cc417",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_interaction_logic.py",
+      "bytes": 198,
+      "sha256": "a59c304619eb17a3dff60cb4238eaee3b6a9c4ba1cf862f179a5ed080c35f93e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_page_control_logic.py",
+      "bytes": 198,
+      "sha256": "a59c304619eb17a3dff60cb4238eaee3b6a9c4ba1cf862f179a5ed080c35f93e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_preprocess_cache.py",
+      "bytes": 2980,
+      "sha256": "9b2941eec1f8a0e3f54c3e79114f48157df9be93df9a16c8c4dd137c32d8e3c8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_single_file.py",
+      "bytes": 3892,
+      "sha256": "3fc1e90d40f1e8a0a370e61ec27d4a41ef3b56137c2fe242672b94b4ae5ca2c5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_static_control_logic.py",
+      "bytes": 13935,
+      "sha256": "4130808ce67415b0aaf90c2b6dc7ef0e1346e7ffb3fda4a463154375ab3ed5d8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_touch_control.py",
+      "bytes": 10866,
+      "sha256": "81c2e4233eadbc808e35d7b915e6a32aebf5018e0969add99d39c80fe5d569b0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/test_uart_header.py",
+      "bytes": 3446,
+      "sha256": "bd9387566f8293c7b67268e276bb9fa5fb88c24b535c83fb675fd063a33e5449",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/uart_link_diagnostic.py",
+      "bytes": 2507,
+      "sha256": "0bd9b9c6af19f66a1c240514b0f5172a28692e562f8b7a5c6d85f0360d356dc5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/uart_loopback_test.py",
+      "bytes": 2711,
+      "sha256": "46b00b9bdc13c17225c543591fcab8d1ae777f26bd17cf87f2b820129b343e1a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "k230/uart_parameter_smoke_test.py",
+      "bytes": 1141,
+      "sha256": "0fc9f0e65cc8c4b23bda38e6033942a3256e288d1a4758f6d30da2b03e00376b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "package_manifest.json",
+      "bytes": 36630,
+      "sha256": "62c5bfca3e2f5162043f6487f1fe26def7aa7ba0ca6c9721be24dc458a25ee65",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/build.tcl",
+      "bytes": 808,
+      "sha256": "0fb80320484cdb1ebf607c20eac2786eb9015276dd65a1844feb83bfe6a786dd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/build_stage.tcl",
+      "bytes": 931,
+      "sha256": "ed202409bbf26d8e801277b78983129e40c0a219061d938a582a411babe77458",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/check_physical_result.tcl",
+      "bytes": 2854,
+      "sha256": "837bcd48f45521caef4851282992592fedef30032687a42b15290e0a67f4b2a1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/gwsynthesis/integrated_instrument_64.log",
+      "bytes": 86907,
+      "sha256": "12e6c1fe20f7445a9420a555ee6482310dde9f84287422f36bd0f1631d1e2ca8",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/gwsynthesis/integrated_instrument_64.prj",
+      "bytes": 13966,
+      "sha256": "eac676d4fb437dcf76fcda1a3eb7efe4a97ae3bdcf887f9d56e1311446579d7a",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/gwsynthesis/integrated_instrument_64.vg",
+      "bytes": 26619466,
+      "sha256": "7b09d3d247eedc73f38bab98ba9c9d6a30f73c67f9a321461635aa5b3d22163d",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/gwsynthesis/integrated_instrument_64_syn.rpt.html",
+      "bytes": 72336,
+      "sha256": "5bc97b21f6548ca98276d3c98bbcc74a28acdef8d1d8fd92ff8b3760c9644619",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/gwsynthesis/integrated_instrument_64_syn_resource.html",
+      "bytes": 120622,
+      "sha256": "fe36af7e2552587aac52396e0004c3b85c2c891a55143a6dc59fc418e77e87a3",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/gwsynthesis/integrated_instrument_64_syn_rsc.xml",
+      "bytes": 34011,
+      "sha256": "844cfbfc1f42ff7e0074d05d41d2905d36168ed88c52d692ebe8a4d418106a36",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/integrated_instrument_64_process_config.json",
+      "bytes": 2761,
+      "sha256": "e15f048ccc1f20fe0e756fd0a121124b565c75cb2bc6df16170c24c2fecc74c3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/cmd.do",
+      "bytes": 755,
+      "sha256": "65001ad3f9ab9fcd819aa6cdcdb4f6da2c52e61a0eef1b9301fa79bebfdc2f71",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/device.cfg",
+      "bytes": 605,
+      "sha256": "79ba1b7ed107b7e76bd3e27dbc482c595c63451857ae30252a0207364397112c",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.bin",
+      "bytes": 5283212,
+      "sha256": "bbcd89abafdaceea6a48eaef8be78ead6eb8a039eed0f578e779a9ac3e7ce25c",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.binx",
+      "bytes": 5283832,
+      "sha256": "5b55b13370f032a73e97f71531005317a2b5933376229e78f3fcf13733216797",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.db",
+      "bytes": 2584832,
+      "sha256": "0e2ba5705c9ccbea25fc2551a8b9b83f46de669040c1160dae542883475a25a9",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.fs",
+      "bytes": 42340871,
+      "sha256": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.log",
+      "bytes": 2086,
+      "sha256": "dd9a170eff2a2ed0a3b7072b21d96c03b635ac58b8fa7a2b648cfdb117b68da8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.p",
+      "bytes": 10838965,
+      "sha256": "62b30a9b99a346597077e288a10260c5cdfa7629bd255654803e58bb4cebacdf",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.pin.html",
+      "bytes": 112065,
+      "sha256": "6e0b61bdff01d30a40c22fa3d71e28e82b670715a212e244018ed5625526ee81",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.power.html",
+      "bytes": 41580,
+      "sha256": "9f4923061df52d7c5214ca0e68e5790985726d25d8d950010c67d2e2978d010f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.pr",
+      "bytes": 287799800,
+      "sha256": "67ae25784e6478d238ac3130d35d06640b83042b7465f7d81403b073697bdd05",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.rpt.html",
+      "bytes": 118709,
+      "sha256": "df6463064c86f6155cbad658b16441bc36c9dc74cd12def84524629b175cae5f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.rpt.txt",
+      "bytes": 95066,
+      "sha256": "0a60463790811ba8138602a0ec21ee1a79d8cde85424b5e29a381b3f8e18b91a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.timing_paths",
+      "bytes": 15189,
+      "sha256": "3ebe49e5b5daf5a8a3a132cb67b5336505f1476bbbb1b2bc7fe307ec9f61788a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64.tr.html",
+      "bytes": 383,
+      "sha256": "2b6bbe1334e85841441acf8e4955974a74a8757d47ff7c7227cfa1b8629a2029",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64_tr_cata.html",
+      "bytes": 8243,
+      "sha256": "629a8f0ee6abe107b24fd83fe780236e572d800f3cffac0f1dc834cffc89f7ee",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/pnr/integrated_instrument_64_tr_content.html",
+      "bytes": 463361,
+      "sha256": "39fb2cc7550bb7ac024e9e59540539b19acb46cdf11b6ef1398b5570d454061f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/temp/rtl_parser.result",
+      "bytes": 121362,
+      "sha256": "07bf21fa2d4925a46c0554af8585550ee8ed56cc4d047fcd2a17c2e9284e4c39",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/impl/temp/rtl_parser_arg.json",
+      "bytes": 12462,
+      "sha256": "9f1662c4252498741bebd0eef463816cdf26858136dccf5f64bfe4386cb36851",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "project/integrated_instrument_64/integrated_instrument_64.gprj",
+      "bytes": 7341,
+      "sha256": "313d4f1a27546207a2831c355fd2a93bc6b4a82fc6045a5133779596be84d9f3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/integrated_instrument_64.gprj.user",
+      "bytes": 3093,
+      "sha256": "b5d0d36525a2f2acb1cc4526368349e67e231fdc60b2ef8d45802a5bdffa9890",
+      "included": false,
+      "reason": "machine-specific IDE state"
+    },
+    {
+      "path": "project/integrated_instrument_64/keyboard_build_guard.tcl",
+      "bytes": 753,
+      "sha256": "492a21df0cfd470a0027b6be09d33fe52d3bbb4aaf25937815f8a2244bdd72cf",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/constraint/instrument_24_rgb_mega138k.cst",
+      "bytes": 6366,
+      "sha256": "2c2ef92bf1ff2b66a2ee4bbdbfbd2629b66e39d35058af5dae47660cafa71f59",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/constraint/instrument_64.sdc",
+      "bytes": 1473,
+      "sha256": "13ec4334d19ee234781a5a824821077596185efbb2dd70486da00a0753a3f845",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/project/instrument_24_rgb_top.v",
+      "bytes": 28009,
+      "sha256": "55bf94c196a912021eb48635209c7917c136f86c90af39b1804b646d04c6062e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/project/instrument_64_top.v",
+      "bytes": 1390,
+      "sha256": "ea516a5d7442c838979ecfb9ba9405cad2cfae4a614bb4c9dea0df6632baf2f2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/adsr.v",
+      "bytes": 9487,
+      "sha256": "4fa40315455e0caabd98bb7739160aebafdf85b69a39f0c8248512825b4b0491",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/adsr_state_bank.v",
+      "bytes": 10165,
+      "sha256": "ab12dbde25d36f20bf85ac435306ef16ac626716b450fc29363fc5f412469fb4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/audio_core.v",
+      "bytes": 44522,
+      "sha256": "098ed18d8dce40f24595bedb64b20ea4c879344cf69b93d101eb5f9d3459ef6f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/bell_mode_profile.v",
+      "bytes": 1528,
+      "sha256": "258343b782599137e2d89dc950049a459258ca3d719b1f8c928277133bb7e1dc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/bianzhong.v",
+      "bytes": 12388,
+      "sha256": "497096477850431d4f186b2a3f384d4480156c03cc9c5d04d862246aa962bdc9",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/bianzhong_ram_bank.v",
+      "bytes": 5928,
+      "sha256": "bfaa90cd0b4b0dd5ab39c2497848c9cf5870bf473db1fa9c24d45834601c8d2a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/fm_operator.v",
+      "bytes": 61,
+      "sha256": "5128920e28af2f8e31e5da2854c3eec271e280f24deb94d674886660336120fd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/guitar_body.v",
+      "bytes": 7967,
+      "sha256": "c9038ddfa8f9528ab008ab5f4723db3f0effda0d2e8f4a855c0ba3333a9d4d71",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/guitar_body_ram_bank.v",
+      "bytes": 7653,
+      "sha256": "3276866ae238582505d72559fc89c4f6307f253b79474dd5874bca5f7e1ce81d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/guitar_body_tone_bank.v",
+      "bytes": 4873,
+      "sha256": "7a702b54df9608b5748ba9010e3fcce773989cc7bc96ed07e497f2dfa0627b8b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/mixer.v",
+      "bytes": 19296,
+      "sha256": "9ad6fc5d46a6470567b66b8cd3b29676e2d6d8929699239ee1a92efe55a9fa84",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/note_to_fc.v",
+      "bytes": 8309,
+      "sha256": "787ca65fb5504cce8ccf6d2443144d670240d6cd95178cd2d4c361a235772f25",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/note_to_period.v",
+      "bytes": 6388,
+      "sha256": "67ae0bc3f11125fdfe55b51012d9c1784fc497e918a12e989e86b2ce95fa55bd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/oscillator.v",
+      "bytes": 16971,
+      "sha256": "e10dc3c0ab3dec82c3115a0ef62024c080d5b03f7ca7700816f438f3e3bb7b5a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/oscillator_state_bank.v",
+      "bytes": 9326,
+      "sha256": "33a4974cbaf9bd7f577d7ddceb1a5bfc9176df350d2dcd5e622273a415788feb",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/phase_acc.v",
+      "bytes": 1011,
+      "sha256": "a197f68db87a48553f3078f4b5f50f396d1bd971b7a6d7b87aeb6a4f8d5ad2f2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/pitch_expression.v",
+      "bytes": 28031,
+      "sha256": "5158e83a0905f3c9ab34c75f4e8e8bb06a703de21aa4153bfb732102319bd776",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/pitch_fraction_rom.v",
+      "bytes": 18131,
+      "sha256": "cc34038da62dc15a8eaed3627abac3180115edd8d531d4a3eac28d5e44b2f01e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/pitch_lookup_sync.v",
+      "bytes": 16994,
+      "sha256": "00093d050fadc9d24743cdf0c1ee78a1e9eef6952eb46f0d245eca7ddd05e446",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/plucked_string.v",
+      "bytes": 12111,
+      "sha256": "796c8e5ce4179028f47820bbec17ecc4d4242b44f4772a501e5da314200fcf31",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/plucked_string_bank.v",
+      "bytes": 17046,
+      "sha256": "d831dae85034b0dfa1c43bfcd474abf37cff4ea5a237a3c4e44b69853a3b2d52",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/voice.v",
+      "bytes": 20736,
+      "sha256": "c593b126b33511e7ed8f0a557fa203dbbf1574b802d52993e6eeb04576a98589",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/voice_allocator.v",
+      "bytes": 14165,
+      "sha256": "1402d6dbd1428f1a983ba46119d7f01780ddf6dac088da4d60e23853fe41ac89",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/audio_core/wavetable.v",
+      "bytes": 33169,
+      "sha256": "a50227cc7ffbb94adeb203b0402826e9a2a0c4dbc356832327edc81ea874344c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/common/event_defs.vh",
+      "bytes": 6514,
+      "sha256": "a2709ebf383c24b01602acee2ad28401284196772614a8db92360f9a6cbad2f2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/common/note_functions.vh",
+      "bytes": 13708,
+      "sha256": "2fbb51d2a3a8b5bb509f6124ae4d11f7a937a55af93284084c98648deae066a3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/common/reset_sync.v",
+      "bytes": 779,
+      "sha256": "e94a4f5238f8b636080824ec290945e3a6e41f8613c8ff3e2d1c7eb109b4f1c8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/common/status_defs.vh",
+      "bytes": 3676,
+      "sha256": "2f2192570aea0fbb51d422c2a1bfa841c87cde470a09df0fa68046cdf7165044",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/ble_uart_rx.v",
+      "bytes": 4361,
+      "sha256": "f09dd9552eb9758557f6f07875bb365982f21bdc92910f921280b25af0ec25b8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/encoder.v",
+      "bytes": 4175,
+      "sha256": "bf8f6126aa0e3bef6093a789ff9d243be4c104181862ce30b4fd2a74631696a3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/encoder_b_control.v",
+      "bytes": 4018,
+      "sha256": "344d480f54dfae905be034afe45d4a8481d01608e1af45ac200392229d4fc669",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/encoder_b_input.v",
+      "bytes": 859,
+      "sha256": "0580979ccd983104ace7fe6a5ad07df0b478bbc95c9df67bd77084072040a46b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/encoder_control.v",
+      "bytes": 2572,
+      "sha256": "0846f4a46f88f3a47d553b946d3efef3cdc51601336ded825450f10566cb75c0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/encoder_param_queue.v",
+      "bytes": 1748,
+      "sha256": "921edf7f33760fb680295fa355e0967b28ec2359b47cc07a117d56bf64de5c08",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/expression_mapper.v",
+      "bytes": 2167,
+      "sha256": "c1eadca627070f3df4d1c220835a92554dc2b4bfeeb0f16744e4cec0a12f33b7",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/fsr_expression_control.v",
+      "bytes": 6738,
+      "sha256": "389c7549a550a35098a2fd89b47c6d09c2273b4daed6bba6873720d65d1812f1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/input_defs.vh",
+      "bytes": 165,
+      "sha256": "287f2de114590fd9225f2e43af3538263d8f5cd8ce91e5a24568118012bf9ed7",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/instrument_link.v",
+      "bytes": 7659,
+      "sha256": "0e29a6c8f10c5bc198d0f9efdb3430d303219c390cde5d8b286aee616f5ea49c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/joystick_control.v",
+      "bytes": 8238,
+      "sha256": "9487b8ff3d92feccb7a46e45aedece933835db814e8b752916cf1b85bde9521e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/k230_control_rx.v",
+      "bytes": 5010,
+      "sha256": "ffd8a8c3b594fc18d8f10616663939e04df5da462d13091b5edd6a1408ad668f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/key_debounce.v",
+      "bytes": 1986,
+      "sha256": "51b8145a08911595e8412975c7fc93f95325cb4f3ab74a87c3de4eba8085b72b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/keyboard_24_dual.v",
+      "bytes": 14139,
+      "sha256": "bd6c6be51ff8970914e053becbae0a209d09ce50c5318086cb995140c11a9ec7",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/keyboard_24_input.v",
+      "bytes": 2629,
+      "sha256": "15092d94f66985fb0fb3447ed61c6f514fe6150f7e37fa730ad08115671e63cd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/matrix_scan_8x6.v",
+      "bytes": 2299,
+      "sha256": "e7092e95cf98b9f3884dab46c415e88036fc30b51b1e56390e56e1cf2b9491c4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/mcp3008_sampler.v",
+      "bytes": 2032,
+      "sha256": "81816490ba92f332ac6431cb113da796abcf072f30cd969742631327fbd66e3e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/mcp3008_spi.v",
+      "bytes": 3128,
+      "sha256": "7788ba35a0d5c00c9e9257d18e04d5ae1e6a56b3c5a4a507cbc8900a2ec2d94b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/input/performance_event_merge.v",
+      "bytes": 1778,
+      "sha256": "b7bfec1220457217407e4afdb05344a22132f26613cd1ef2a7d8489ac26cb048",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/audio_delay_fx.v",
+      "bytes": 1272,
+      "sha256": "f7570e48f5a3e16e511dd15630f8dcae5848670930c6c47cee103828afceae2a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/clock_gen.v",
+      "bytes": 7036,
+      "sha256": "34ff48a23b2882f81845d8e0524af657fb9600ad75904b5059700a172b614011",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/i2s_tx_pcm5102a.v",
+      "bytes": 1691,
+      "sha256": "d23b5d72ab53a171cb543ef241373074b02678556fd1694110fb662ade65ab7d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/keyboard_led_strip.v",
+      "bytes": 3111,
+      "sha256": "417c4a4099ee623ffcb0ea06ac53efc58b35c790a4ac1de9e99ec941634a3d96",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/lesson_guide.v",
+      "bytes": 6838,
+      "sha256": "c974c8b503af396e73e1b1bf531a841da9c86d2611e097c977b036d42bce6d85",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/polyphony_test.v",
+      "bytes": 4079,
+      "sha256": "f122c3c32dc4c531aca7c93b7043431203fc36aa9430995e6d7a0f7398b44fb5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/sample_scheduler.v",
+      "bytes": 2291,
+      "sha256": "4942125e2ed9ff5bb9c800892b760a75d1ab3e4c11664892db3ebd9db432e722",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/system/system_status.v",
+      "bytes": 1469,
+      "sha256": "c2cdff2ef2547df1f906c661f0976753afa8113f48ae6df9b5a5a662db006290",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/audio_visualizer.v",
+      "bytes": 7855,
+      "sha256": "bd62e5f4b5d13a8418397bb1d11a6ed2f73802ae516eba20907f2c90ddd59da1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/DelayBuffer.v",
+      "bytes": 975,
+      "sha256": "28780f268d2aae2601fe3b618b1ec21c1326949d6ead76e6d662c6e5f2cddeaf",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_band_compact.v",
+      "bytes": 5095,
+      "sha256": "00bb969935193ea94db7d3ee2b2357be5eb115786d6fda17c569f7993ae830c3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_band_rom.v",
+      "bytes": 179349,
+      "sha256": "8ac563f3989ba46972c7ddd32e799ca65122ce240ef471c83ccb804d53fa7a3f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_fft16384.v",
+      "bytes": 673,
+      "sha256": "ac3eea445ab0ca373070fc027ac1bfc165f60bb31dd3380758092f13406f2f6e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_frequency_rom.v",
+      "bytes": 1701,
+      "sha256": "19766133cdd9d4cbe668f30d72001953919fef4808bb6bb56479e87c436bb1e0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_hann_rom.v",
+      "bytes": 203927,
+      "sha256": "a7bd10d0404b4a03b4fb756899b585f04b42753ff54a1bba3d6ad41b4a59320f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_trace_compact.v",
+      "bytes": 6588,
+      "sha256": "45eb3ba951bf65bcd73ee1a8cbcd23eec209d8c95f51b6448c7d1eed033f3a31",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_trace_rom.v",
+      "bytes": 187542,
+      "sha256": "b4c2a02c189777019c50f51be345062690b751231d0aa16a15ae95931349fb47",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/spectral_twiddle_rom.v",
+      "bytes": 78565,
+      "sha256": "4eea3f2619c03edf1d47297abf04992f358e332fcd1bedf9096661dca250c601",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/fft16384/Twiddle.v",
+      "bytes": 389,
+      "sha256": "5a8e343aa6fa2a64400de9b0956c896de0fa51e9ba3e8485c6206f1b80374d23",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/lcd_status_bridge.v",
+      "bytes": 1560,
+      "sha256": "2670f708804012a73cada4346b529f93010b74a40d9a9628fbbb53cd89768101",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/display_targets.vh",
+      "bytes": 13679,
+      "sha256": "d76f9222759dd6db4764a4cbed2ccecf0df1b016ca468ea989a17d87802f48de",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/glyph_tiles.hex",
+      "bytes": 147456,
+      "sha256": "907d271efa9052a36b4c4b4eb51c9c7dc6eaf732ee2deab0962cf7ec9cf1cfb1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_cells.hex",
+      "bytes": 81920,
+      "sha256": "d90891509d67470fc3a104b86154818c75e4eda17dea9450eb952ac092a02121",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_compact_cells.hex",
+      "bytes": 57344,
+      "sha256": "ec1f95b0806defa35deb54fea75eb1f362e23ec49a2a138f7458e257755b05c5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_descriptors.hex",
+      "bytes": 40960,
+      "sha256": "b3c2d375fce62bd5fdb2eb524a1513b81d98e99f370f22a6398dc17c2ebca465",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_glyphs.hex",
+      "bytes": 36864,
+      "sha256": "2079619502f671cb328d5629f7070ce9c7cdd8e19d1f13adb836912ab298a5ca",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_group_cells.hex",
+      "bytes": 40960,
+      "sha256": "9c8da6f98792c8c6a34b6d1a13a4bc4e2a7821d355ff18b1a36d812379587996",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_groups.hex",
+      "bytes": 20480,
+      "sha256": "057a9d1b640c76c59dcc6ed679be221db59162fd8c3c5420b84201cc02380830",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_labels.hex",
+      "bytes": 10240,
+      "sha256": "ddf3762026e0d6afe217e817730b2485ef852b0dd4b09e1c2c49c5b043735851",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/hardware_rows.hex",
+      "bytes": 2048,
+      "sha256": "c864f0647783a6b231b4f19c56f8a052801db38b174d42e9250ea5a2e959bca3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/label_tiles.hex",
+      "bytes": 196608,
+      "sha256": "dcc81f2df65751eedff8ebee0acb53d99dff2a7289a82e5db4749c36c2ce86fe",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/new_screen_dashboard.v",
+      "bytes": 28675,
+      "sha256": "9c3c3080ec44a2c3d181ed09cb804f57c56a45613a6a9701b9b6db98a7f233b1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/new_screen_font_defs.vh",
+      "bytes": 809,
+      "sha256": "405e24c92e2aeb49cf824754f00e2b4da2ec56ac4a1e72b8a151c31fbb476a32",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/screen_fft_store.v",
+      "bytes": 12843,
+      "sha256": "023fdfb72c223a3a2f3966eff9909cf9302a7a20a41bf9b4ca9d2de760db06e7",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/text_map.hex",
+      "bytes": 480000,
+      "sha256": "c5c8b1db1f046784a7616983bb1ad01bc80e92ac2d43695b892bd066b48ecf9a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/new_screen/zoom_plot_map.hex",
+      "bytes": 3168,
+      "sha256": "59d664d4b23b08572d940435efb520ff90abb8570e0e34d52a8a0010fe7b46a2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/parameter_manager.v",
+      "bytes": 8645,
+      "sha256": "734b090b171612a5c121e9777a48de353c0b819d4f8d8a29b655938c1c095561",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/rgb_lcd_800x480.v",
+      "bytes": 13907,
+      "sha256": "d7d70d73746c9c2306dc64f4b83c632d1ecc051ac4fce2411a932592d9b77a66",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/spectral/spectral_analyzer.v",
+      "bytes": 10126,
+      "sha256": "e8a6cefbce76869944bcc041598358a4f32461255c4cb084865862897e191605",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/strike_display_formatter.v",
+      "bytes": 3324,
+      "sha256": "692ba9c5ff083d6e126cfb4f1604d52cbf7e4e13ddb9fdd17c905c8122b79560",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/rtl/ui/waveform_buffer.v",
+      "bytes": 3493,
+      "sha256": "e2e4cb9062cc5a858dab5f37a2458dbe3c0b79d57fd4ccb492866d0359fe2fc2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/vendor/r22sdf/LICENSE",
+      "bytes": 1093,
+      "sha256": "5ac7f1eb8175b547bd391278244b9197b76fd513f2a8daac4bf70a0dd484ef05",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/vendor/r22sdf/verilog/Butterfly.v",
+      "bytes": 1203,
+      "sha256": "cc9aa6e8966e6d3dc37440ebbeaf39fe38ac4e2e3e84e7f826c02703769d373e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/vendor/r22sdf/verilog/Multiply.v",
+      "bytes": 1068,
+      "sha256": "ce27257962968067c68605d81c1ef9b8d7aa31200c55da54b290425cb795bd3c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/vendor/r22sdf/verilog/SdfUnit_TC.v",
+      "bytes": 14127,
+      "sha256": "aa2b81ca96e0a1f49a0c5f52fb471747d1956480d73c7a7a901d502f432c32af",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/vendor/r22sdf/verilog/TwiddleConvert4.v",
+      "bytes": 2208,
+      "sha256": "a559529b36cb861dc97495099da56f6f456f7731e0a3e11bc0cc204fa66644bc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/source/vendor/r22sdf/verilog/TwiddleConvert8.v",
+      "bytes": 2729,
+      "sha256": "1bd41121289612cd329822062b5363a7e70813a968b265da58db0d9ad9c0936d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "project/integrated_instrument_64/verification/clock_gen_stub.v",
+      "bytes": 460,
+      "sha256": "bb0c092910b5af70d36c1ea752bd365a9fa1519ce1a74b29848e71306d055bc0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "README.md",
+      "bytes": 3689,
+      "sha256": "d15de89109226e5eac6e47f822f9992f1362e5208180477c383af879046abadb",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/build_result.json",
+      "bytes": 1195,
+      "sha256": "3bc7319b673581ec862614d35653eb2b2116541b35458bfa09847b8bf2dc5fe8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/implementation_resources.txt",
+      "bytes": 94901,
+      "sha256": "39341b109b29f716bdd520b7f02cdeaf077101ee26146d41fa39772f856c86c3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/implementation_timing.html",
+      "bytes": 463231,
+      "sha256": "d2d8ac4cd5ef57f9f1c904629f0bcd9deba7115c43cc972431ad07f2046ec764",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/migration_audit.json",
+      "bytes": 5071,
+      "sha256": "cda5bcc1e435123803100473976f7edd575b4c971e1ea8eefa49ac9dbbe35931",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/package_validation.json",
+      "bytes": 3216,
+      "sha256": "b4319b869c4c99a6307cb1f632554807a57d387cbedc3f7c8234bf0692a02feb",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/pinout.html",
+      "bytes": 111935,
+      "sha256": "d8298868a4b02343c1ce07e22816ce4273f97b410a362be61fccb5770a459f78",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/report_provenance.json",
+      "bytes": 881,
+      "sha256": "483dc36cb19cf74bc661ab60a60ff2ca52da58fa5ae5eca7d05f225704deb7f5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "reports/row_pullup_source_before.cst",
+      "bytes": 6382,
+      "sha256": "54bb8c6078f5764715fd6232f5ed370fc415f838b29fb9101472c25567e6a8fc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "requirements-dev.txt",
+      "bytes": 27,
+      "sha256": "dbc95b74d18fc3770c157fa58d61f7cc94feb5c8b3c6bf1883eaed48fc31b07d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 17,
+      "sha256": "6d4cdf924e8b6fe2cf827f647ca740148e2e8b4c44ea31578dbea46cbd403417",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 499,
+      "sha256": "5cce00828e1c56fff0afdf4dd3b3369c87c6635a345eea5dfb3cfe0a8c52cd07",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/__pycache__/build_row_pullup.cpython-313.pyc",
+      "bytes": 14035,
+      "sha256": "0d15278230d8005ea79d2aba95fc0a933ac20c6cb2626e2a083db87c1409345f",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "tools/__pycache__/build_runtime.cpython-313.pyc",
+      "bytes": 13152,
+      "sha256": "a911cb3da545a3fd40583fd275b11a54720a78c4fc76fc698eb9d8acbc21f960",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "tools/acceptance_gui.py",
+      "bytes": 20234,
+      "sha256": "cc6fab2fd3170548ce2926b332e9f6825cfd7ba9885aa04c35aeeadd97a9a8bc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/acceptance_reports.py",
+      "bytes": 10273,
+      "sha256": "615a1de58138bb87a8f8a9eb69a0d16ad73656ebf4efa4cc6915f6c54ae50e85",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/acceptance_scope.py",
+      "bytes": 20482,
+      "sha256": "b36244fbef896f60561fb78c6e18532f3db5bda391f9686ae80fcd62018aa190",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/build_project.py",
+      "bytes": 4279,
+      "sha256": "e913e1584f9feb1c589c966054fa9103f66b929d6010720161d5bdfac56c31ba",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/build_row_pullup.py",
+      "bytes": 7982,
+      "sha256": "4456486625291cb27d07ee20843fd3196e58ac0512800b60c887448801b0d18f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/build_runtime.py",
+      "bytes": 8026,
+      "sha256": "d5cdfb2cbca0ab4337ae0cc7bcab091a83af36aca51b0f2ae379723f19b3a850",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/start_acceptance.cmd",
+      "bytes": 116,
+      "sha256": "4824b092718a88326b9f8aacb35c8fa390ce269d9e3780f39cbe0e84dd3cac75",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/start_acceptance.ps1",
+      "bytes": 723,
+      "sha256": "aa8768c94dbd99f1f4361ee818e551418ca39056f85d203bf1094b1317c3b36f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "tools/verify_package.py",
+      "bytes": 5663,
+      "sha256": "56cf0b8ee5969deb5fb7c12165c0b6994b586794bcfb47f0ab792a527cff6fc4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/acceptance_gui_chinese.png",
+      "bytes": 58774,
+      "sha256": "66a84fef49a68268346393dcca5c1d24db10f70c07da422041dd5544e91f3709",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio.vvp",
+      "bytes": 8893419,
+      "sha256": "61a4b3900b4dd1d97f9cd3a2fda60c2e6c9cfa3d02547c2e270921f2e39ff571",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_000.log",
+      "bytes": 219,
+      "sha256": "b962e6fb234f53517bc78bf899684fba596337e0177dec600a7264eade8d8eac",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_001.log",
+      "bytes": 219,
+      "sha256": "0443434015fd6a49cd5067dbace66e18f992e7a4d5af7a99997d463896006c5d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_002.log",
+      "bytes": 219,
+      "sha256": "f6ea512846b63a0c9d2497cfa4f3d1d39e199d2e645681812d7161876e9303ae",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_003.log",
+      "bytes": 220,
+      "sha256": "c4d7b531f514c80ed634fc81f7f0d3cc69673dbcbf529c31cdeb4d0243df1d32",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_004.log",
+      "bytes": 221,
+      "sha256": "f76e989db7f87d83c05b4336582faa46eef3db2c65aebc5615c3bea7f323a2a8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_005.log",
+      "bytes": 221,
+      "sha256": "e5e4e44041f9f70664556aec9905355e2a10d6a4a9b1716c6afbd1f85d742e1f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_006.log",
+      "bytes": 221,
+      "sha256": "600b7e962e09017ab5b607083665d168f5fd706348b6be213b1d0761f8ffc944",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_007.log",
+      "bytes": 221,
+      "sha256": "95238299aec090f109a71cbef420eb5fc0bfe2ee79ef3fab9e87cde849b2d36c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_008.log",
+      "bytes": 221,
+      "sha256": "2fab564ef25a2db16176c5bf997e22065086aec20548236ac14fbecdce4551a6",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_009.log",
+      "bytes": 221,
+      "sha256": "df563e3a3d248210d3cc0e1dabeb4f346f723bd7d3fb0908168ec2d61e628788",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_010.log",
+      "bytes": 221,
+      "sha256": "1ba6ba006582bd0af0cfc078162b9bbb62cad984cc1933fbcf181df4d47d873f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_011.log",
+      "bytes": 219,
+      "sha256": "c63d2ddc85cbc19bd1cecdf1d3949ff2378ecf1ffac62bb2d521d873602350e8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_012.log",
+      "bytes": 219,
+      "sha256": "b20848a4d2d51f4ccf8d1c02fe90a97af87d5fcddebb191e529c4229cb7fbd3d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_013.log",
+      "bytes": 219,
+      "sha256": "5b90c6cbebf9298707b384a779baf97c7caac231c75a03de65ad533bc98ea051",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_014.log",
+      "bytes": 219,
+      "sha256": "b87f58485027e2dbf79e588f30ccb7098f1b494db364003cf79cdcc8d4eef9cc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_015.log",
+      "bytes": 219,
+      "sha256": "bad17b1000221c94bfe21a23917c88c7466ba5507ddf9c52c9d280c84c8ed1ce",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_016.log",
+      "bytes": 223,
+      "sha256": "228ff9d6ce444d0571bbf911b00ca442a97bce4741dbc36707fd108efd3d2eac",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_017.log",
+      "bytes": 219,
+      "sha256": "7314511cb6e7c0231aab9f39db1ba08464e5bcb044ba43d97794492230c6f866",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_018.log",
+      "bytes": 239,
+      "sha256": "6b1655f093486e67ab1de7c7cf2d0da732f9d6b1ad6157df57536c3d87cb7cae",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_019.log",
+      "bytes": 319,
+      "sha256": "e84978cf9071f19517fa98f0eca609dc00172f69549516128e819c7c9b7ae11d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_020.log",
+      "bytes": 681,
+      "sha256": "5c4191f66979a6eadafbfabd38455d3ebbd34bdc3063de476bd7a28127c389fa",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_021.log",
+      "bytes": 219,
+      "sha256": "b962e6fb234f53517bc78bf899684fba596337e0177dec600a7264eade8d8eac",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_queue.csv",
+      "bytes": 886,
+      "sha256": "e50d7fdcf14a06432fbba76a6e232367bbcfae696da1fd9037d42e4ecb87c764",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/audio_timing.csv",
+      "bytes": 1230,
+      "sha256": "9e4b3936defea84ede99ef8044f8194f09afce1eb04cb1be3894cecea9bfec70",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/result.json",
+      "bytes": 16935,
+      "sha256": "f2981d4713cce05369b7ec4c674187d0cebcdb88c2da5c4cff64164d4151d72b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio/tb_audio_timing.v",
+      "bytes": 6949,
+      "sha256": "e3250bc8eb61d113dd0fe4cd63ef2a1cfc50a75237d9c3f342a4de5f214fb9ee",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio_stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/audio_stdout.log",
+      "bytes": 610,
+      "sha256": "0cea34bfc9e022658abf7ce468af1c2dfb36c5714dfe6edd7ccd844fffc43302",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_000.log",
+      "bytes": 200,
+      "sha256": "076a97591d164188ba8b9fa260e11a1fd481b7e7478961c7fbac2dea64e4e180",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_001.log",
+      "bytes": 202,
+      "sha256": "dbd6b58c26adee725590ae4ba1facac61b2f0df81abf43795fe1dc5972eb4738",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_002.log",
+      "bytes": 202,
+      "sha256": "cc209f96d0b2a244c1fdf32407b19bf3eee2fe2fa22dfb38787751e72bd76987",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_003.log",
+      "bytes": 203,
+      "sha256": "2761d444d52bc3a01c0ce9bdf21af0b34d2d9e4174484223246fd6a28507aabc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_004.log",
+      "bytes": 200,
+      "sha256": "88b951422917b31d7e8372f44b3959269e03c265cd050c830be2e498dc4a38c0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_005.log",
+      "bytes": 202,
+      "sha256": "83f244591614451820c8f13717d0133a2c5516c5756af1815dfe20a8ea65d455",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_006.log",
+      "bytes": 202,
+      "sha256": "f8cfdf4bac17247310fe947f5003530b5b669ce9788afa6bfc74b07e1c285dd4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_007.log",
+      "bytes": 203,
+      "sha256": "85cbe9a24da952617760e2f040d71d1a194fba163ec4d059cdd04d31166eb7ea",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_008.log",
+      "bytes": 199,
+      "sha256": "a6288dfd39dfccfc0f66a2d96912aa789bf393afa4f9fa5d1516a58f0ffbff5b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_009.log",
+      "bytes": 201,
+      "sha256": "7a1297ade77256fe8b06cf0d6cb3b4d04957cf06abd30868904b1f8cf3d4d5c1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_010.log",
+      "bytes": 201,
+      "sha256": "ad27eb063ffdd6b5f986c1823e1d4c4fd2507891ef325f3f033cbf5a8ea77c1f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_011.log",
+      "bytes": 202,
+      "sha256": "16adeb9e6dbc498299575b9b02f61f1070f820d34fb00852e544ab97ae443e44",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_012.log",
+      "bytes": 199,
+      "sha256": "4cae2e172cb874320cb976a564e6dbcd2b0e84f4b52abcd68d184f03a9ea25e0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_013.log",
+      "bytes": 201,
+      "sha256": "0b777bc2c48564891e667e128b9eb567fca65a560ff707858c9658e319a81006",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_014.log",
+      "bytes": 201,
+      "sha256": "076bd66a97ce771ecc89725713885217f82801501bbe98ecf7d67156c59d92a3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_015.log",
+      "bytes": 202,
+      "sha256": "b4bbd25b4bebf1b607d0a37414f84bdd4ecdb26d5b8492755d6d4d262b0f3d99",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_016.log",
+      "bytes": 201,
+      "sha256": "0cb2ae622ffd768d7be5dcf743da48fbc50030ac04c8fbc4212b715a766c35a2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_017.log",
+      "bytes": 203,
+      "sha256": "b6ddc7482c26d6ed03a63904bdf0d72821c693c94003b8e0f92a19212485d523",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_018.log",
+      "bytes": 203,
+      "sha256": "75fd2101dcfca6e26564c038da4b0203a4713e8ad2b6fe66e9e158607969cd4b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_019.log",
+      "bytes": 204,
+      "sha256": "1a784bda7d7948d250bf68f77f4189edd6bcff193e44945ce40f9b5186f5c5f4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_020.log",
+      "bytes": 201,
+      "sha256": "cd000980926523e7268b1dac918ca650ae7d137653cf30c59ee7e4d3967219bd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_021.log",
+      "bytes": 203,
+      "sha256": "b5055c14c039c107177055d74cd0e46dd7daa96a0a6d6e0200611c0bee659d06",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_022.log",
+      "bytes": 203,
+      "sha256": "2ae054f7e3117c6a2803cbdb0cab4f5901b3e49ab2a984d3f63bd580d3f14cf0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_023.log",
+      "bytes": 204,
+      "sha256": "967216a6f61ba191a2b140e9d7358285762a9af60c875a7a0fd239debe0b3cae",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_024.log",
+      "bytes": 201,
+      "sha256": "509a938bb9e4234881fbe653fb74f7d4a8bd9ba7c3a1c70b6e33c9c35f632aad",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_025.log",
+      "bytes": 204,
+      "sha256": "764583aa53b5a8058dd61704eedd2d9b7ab5cee105fcd3697164508968e45b5c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_026.log",
+      "bytes": 204,
+      "sha256": "ef090396be3d58561b40fa432cb5a105ae26fd1d7e8db012e6a93f17d8fedb6f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_027.log",
+      "bytes": 204,
+      "sha256": "f800fb786945faf2521c134ed7c7a5872d1244e04e206828afcb7cda0b65a0b0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_028.log",
+      "bytes": 202,
+      "sha256": "cc7cf5135533f13538c0d93edf1b23f35ea9bf30feb2314349bd7bf70210dcf4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_029.log",
+      "bytes": 205,
+      "sha256": "952704377b351fdc28f32e9845d6a6e1d07816a0c66e05ffff1cebe023f503fd",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_030.log",
+      "bytes": 205,
+      "sha256": "33695fd14e74e2f5e4c52c587c61e32a2e435ff9f65844968e5d6e836b95a83a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_031.log",
+      "bytes": 205,
+      "sha256": "3f289882e069521b446cc6ee18d5b8de20c350130e956cc1e7119213dec49cbe",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_032.log",
+      "bytes": 201,
+      "sha256": "3203b6dd9b913503e67a94bcc0bfd4431995aeb747d9d66c3358400329fd67c1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_033.log",
+      "bytes": 204,
+      "sha256": "ffde7ed798e6e0bfb3c0d4a939a9e0171a5f0fc5b1de28ebedf42afec878a650",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_034.log",
+      "bytes": 204,
+      "sha256": "192bdefd39e24d0b4bd3c147a30833f5cdf7b1805316b7ad8f67b77e80bdfacf",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_035.log",
+      "bytes": 204,
+      "sha256": "821123938a3551b32cc07f41d0e4ca82d00dbc4e3aa36928cddef976e74d4da0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_036.log",
+      "bytes": 203,
+      "sha256": "cf3f95cce53b5da4ac778aceb2a8d9753eb101b019767a630523e07c9b3169ca",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_037.log",
+      "bytes": 206,
+      "sha256": "1e0439d1bf41748c85c8c124966984b5cf56011a6347e3468233a7c633efb6b8",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_038.log",
+      "bytes": 206,
+      "sha256": "99e015c92900cd55169dd04deae106667318ecc94799d66f5885113a9de962ff",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_039.log",
+      "bytes": 206,
+      "sha256": "1c422791e888fee5de4c95716978390aa5d089e218028d9af3e26f40dbf52d1b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_040.log",
+      "bytes": 203,
+      "sha256": "11d3e2cdda4ef79bcddbd38d13b07ff74f1875276d25f6ed9361a1556782eba1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_041.log",
+      "bytes": 206,
+      "sha256": "d07919aa0f2598551803b6019073a4fc25ec2d6b91fb5ef00c0e87adc7893026",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_042.log",
+      "bytes": 206,
+      "sha256": "2817223f6e12bf0dc6e2db7fdb149cf25a6101c11627bb83942fadf6b3063f81",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_043.log",
+      "bytes": 206,
+      "sha256": "cecb3979fe9704a0887d5f213852a6a1229d9d614458876c9a4f5e46bc4eb058",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_044.log",
+      "bytes": 203,
+      "sha256": "463a8903e6eb6d279263657379d03ec9804733af266498c7f13fe28488e174fe",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_045.log",
+      "bytes": 206,
+      "sha256": "bdd3a26edee486ac8cb580de438f27b070710b979eaa581091d238466855ad2b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_046.log",
+      "bytes": 206,
+      "sha256": "813537503d2c46f28df584cf65ad15dab5c4637184d3a3971cfc009a8ab557cc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_047.log",
+      "bytes": 206,
+      "sha256": "58f9287682e538ddac54c19f6e6b70d5f1c52689a1e33d59dcae8dc0bab47408",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_048.log",
+      "bytes": 204,
+      "sha256": "3768a1496a0a2db89231b804f4d6269cc8a276bf6b8a357dd903ce9c6f63d259",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_049.log",
+      "bytes": 207,
+      "sha256": "a8da1b5ed365dc12af1cb475a9d78765403beb5d673083a07a00f2f5e03b3a57",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_050.log",
+      "bytes": 207,
+      "sha256": "6e585d1bf1bc491167ed9e4c9f5c7ed00cea0bb609420a2b9e8e28c4cc4e434c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_051.log",
+      "bytes": 207,
+      "sha256": "2f1b7ad5111d53001ce163529393dab49e695725532fcc545270f46336ad8604",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_052.log",
+      "bytes": 204,
+      "sha256": "7fe824179997f6585d9791a4f2ea4754fb359b54170f099a778c3ba4a65d5083",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_053.log",
+      "bytes": 207,
+      "sha256": "703ab6bae2d346d9896a6120563b50c4e1d39ec8c6d27b780cad4cf11792d390",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_054.log",
+      "bytes": 207,
+      "sha256": "a4bc171e3746e60d9d593a3d06b8e6a53f8e74d03b6c3cfb6bd3ac239ead5a5c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_055.log",
+      "bytes": 207,
+      "sha256": "4f0d99e3aa44301b429b08a99a3bb04d9fc3d34678409a646ad76d6d0e0a3859",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_056.log",
+      "bytes": 205,
+      "sha256": "104026f8ed33eccd48af67e633ab94a7ec0b37b29c2db591ab6e402102f45de2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_057.log",
+      "bytes": 208,
+      "sha256": "6b78d2acbe4d27ad76c55539624fd7ab23726eb9d3d2ef77c633067ca7ad36c5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_058.log",
+      "bytes": 208,
+      "sha256": "4bbee4ce976fc425a9ba8311806b655ec1f856a525ac3b964e35da2ef7ac133a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_059.log",
+      "bytes": 208,
+      "sha256": "02beb289a09ec5dd7cada9e04bcface54eda551f15016e0c31622193f13c5d1b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_060.log",
+      "bytes": 205,
+      "sha256": "99817ef4c144fd579110dc6d5091a084ffed2ef1ab4c00155fcd4a7a21219f04",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_061.log",
+      "bytes": 208,
+      "sha256": "74d5d3dca7ee143a6d2604b18e8cd679ecda9afdf69eb3042752a6b40511d6c2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_062.log",
+      "bytes": 208,
+      "sha256": "8bde0b91c19d05614ed5c5defc2009a5b979df2ac61e1120037bc90f7344ca3b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_063.log",
+      "bytes": 208,
+      "sha256": "96de4b7c57b8c181d20310e0b6b9913871b834f493622f1ad0f061a6b7640e01",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_064.log",
+      "bytes": 205,
+      "sha256": "639d70c4d6d9ff02091dcf02721534faad48edac6e566d5fcf5d1bda452b407c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_065.log",
+      "bytes": 208,
+      "sha256": "47b0efd1608a06787627c3199298f36a8d43598de12fdde25fd7328b99973a76",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_066.log",
+      "bytes": 208,
+      "sha256": "48769270e157be02c885e74fc76f81920959e947ed09fe4af86618ccf66fc316",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_067.log",
+      "bytes": 208,
+      "sha256": "6dcab618bb9183424c68be44d74bc46e1e02f43664784c723531eaededa01d1c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_068.log",
+      "bytes": 205,
+      "sha256": "92c5905be175731b41ab742336acad4efb8f92a2579efd95f6782f3d0ce5a98f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_069.log",
+      "bytes": 208,
+      "sha256": "722fb78425023db5a772ef052212c3b6467ddf92f00dc2c1b6211c6587e7bf00",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_070.log",
+      "bytes": 208,
+      "sha256": "788bdcac563c55c87cce177369184895c0e14312127ee9466efa01723d061941",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_071.log",
+      "bytes": 208,
+      "sha256": "11f616b085993ea8920300fdab4017cd384d1821ac6c486d668a16532780fcb2",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_072.log",
+      "bytes": 206,
+      "sha256": "55840bc96880d65344bb0b4f6af586eb9f8b628d432bcc424b531389125d68f9",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_073.log",
+      "bytes": 209,
+      "sha256": "69ab1bc4528f430ecc04139bde7db7bc8e359ed8a28b9647b82dbf93a7398701",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_074.log",
+      "bytes": 209,
+      "sha256": "a1feed180c896116d6ac2413bf5a06dc4c6985aa1980b3e19cdcc0e2d1779c9f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_075.log",
+      "bytes": 205,
+      "sha256": "3e2d515b533f2db6f7082a023eb107317736f3185a5a5259dff4b1e3b5072a6c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_076.log",
+      "bytes": 208,
+      "sha256": "95ccf9bf468606387651bd784704f5ff43667b8857fa0ef8fdf99fce84f2cd32",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_077.log",
+      "bytes": 208,
+      "sha256": "7dec662d0f22605560746ffd73ef52f5238796a5ceee494c40c1a64d23581fc9",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_078.log",
+      "bytes": 207,
+      "sha256": "a4de065738d7d24d5ef852c89fc9419e53a20b6972dcebac58db961d85fe6059",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_079.log",
+      "bytes": 210,
+      "sha256": "26b8cbe7a18a32695dd1dba5b65d89e80f4d9507b593d0e7a94f8c06608441b1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_080.log",
+      "bytes": 210,
+      "sha256": "11cb8c303bcadc2c08003ac759511c232c12594dbab6ddcfead47e0ce8a13733",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_081.log",
+      "bytes": 206,
+      "sha256": "925d2cb1100715477086c7c22b7ff6b79de10b6ce06da61097b9eaf7d896064c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_082.log",
+      "bytes": 209,
+      "sha256": "cb3b1efa4a166314972fa187670830c669af2503be554717800242717205e8b9",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_083.log",
+      "bytes": 209,
+      "sha256": "0bf644a19fd9493c94dc341141a6b387cc682fef20912d5ce5e4b54ac35be044",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_084.log",
+      "bytes": 207,
+      "sha256": "afee032cfce8ccc9f250a81acf12c9ac2ab431ef8cf2eb4f327cba5e1b36840a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_085.log",
+      "bytes": 210,
+      "sha256": "6d986bd2b4addfa038af6ad09e85caeb5d194874097fff4fc62265f5ff11d4ae",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_086.log",
+      "bytes": 210,
+      "sha256": "7a040eb307155731ee2a69e1cc65cbf99a3631a083c36b2b9706551b5ef6f92d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_087.log",
+      "bytes": 207,
+      "sha256": "6aeaa6e3401faebf7655667b0e5b9b703cf66763c49a2a0f71310ffffe885472",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_088.log",
+      "bytes": 210,
+      "sha256": "dd6aa7d83e0be75b8e37ccdce1ea62a812e13bd969be540e3bc71f6bd435440a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_089.log",
+      "bytes": 210,
+      "sha256": "3070179e3d0e7a3d0bffe47a1ac69b8fc6fed0812c50bdb121885e7a5c0dbfca",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_090.log",
+      "bytes": 200,
+      "sha256": "20c78c88d31c62f889e0f7a1bde63929e642f5fd02ca1c197d96522703964afb",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_091.log",
+      "bytes": 200,
+      "sha256": "c48458abf2648ed685db7a5feb90b5dfc5454c9b1f030698322ecbcd29352681",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_092.log",
+      "bytes": 200,
+      "sha256": "a1db32919ed49eca05edbfc0dd97a2f2fa0608a3f29bf0f7a3a9fbe26395b42a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_093.log",
+      "bytes": 200,
+      "sha256": "0ab435dc55109f841cf997d79ad4c49f0ab943cf4a0e14f3e22e87de2545f5d5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_094.log",
+      "bytes": 200,
+      "sha256": "5052cfda14d7771a1a3df9ccdf89a9e19bd07dcea30aafc924b346f34076d4ff",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_095.log",
+      "bytes": 200,
+      "sha256": "bf851347d97dc6c50261d458ecc49edaf5a72828edbbeade40af735191393a77",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_096.log",
+      "bytes": 200,
+      "sha256": "d12ee9578697ab6d0348cab09d2b1963a73fbb9eb70c3dce659c5064b19193ca",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_097.log",
+      "bytes": 200,
+      "sha256": "da5b2c680fd59cf4288a0841a2b2d201ae791a034a7ccf52ba805c32623d4c38",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_098.log",
+      "bytes": 200,
+      "sha256": "3e042e959c636bbda0e975b78304503f42ddc139ab21ba1d19c1f7ef5e22e6cc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_099.log",
+      "bytes": 201,
+      "sha256": "d9aeb6e2b8063cc8018e759ede184cc31f7d6f977014d88f11781450396c594c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_100.log",
+      "bytes": 201,
+      "sha256": "170073b3721daa2ed4f05e4edbf1f799a06807dac60f45af7fe994982d56f62e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_101.log",
+      "bytes": 201,
+      "sha256": "23f74623eb993f8fc9cf491c17afe8d4054607763a5bb611a171348c4e8e3ebc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_102.log",
+      "bytes": 201,
+      "sha256": "267f3e779d5e02e789b201f1775be1c60b93d4575fec0632010ec373b4990827",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_103.log",
+      "bytes": 201,
+      "sha256": "cff1b4e61ef26a8c58a46a9b0c48821fde557f406bbc597fd4855088d9852093",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_104.log",
+      "bytes": 201,
+      "sha256": "b138d6cbf983f729fe146b61adf3f6d8835ecce741252da43a909feb74228373",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_105.log",
+      "bytes": 201,
+      "sha256": "332fee8c82c7baf0bf6b73f170eae24330857ea061b7741067074f11de18a591",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_106.log",
+      "bytes": 201,
+      "sha256": "9bfb46d2622c4d00d08ab04cc780b824f6094b42898c9b855326e723f953a324",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_107.log",
+      "bytes": 201,
+      "sha256": "653919e1e832109487e91ce8e660fb6729a93a6966c703f58088d76769939480",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_108.log",
+      "bytes": 201,
+      "sha256": "16658338f0d2c8b6bf291daca9a05727c70037103bfcae2425ff7c215afd439e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_109.log",
+      "bytes": 201,
+      "sha256": "2c192e64ca48965c4f73fc656fd11467693bbf38888129673366c1f19cb66466",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_110.log",
+      "bytes": 201,
+      "sha256": "47e77ad11074ff8fdc2208603170408741611922c6043cb84a43d0b8c6fe35f3",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_111.log",
+      "bytes": 201,
+      "sha256": "00e5defc5f8f8757228d75d10757eb8decb0e51e1fc6194c4306f2c518d80ee1",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_112.log",
+      "bytes": 201,
+      "sha256": "25cf4bccca684bc8aedccb80c68600f6ef279423cf25fb97538379239ce69b1c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_113.log",
+      "bytes": 247,
+      "sha256": "9ec1182fed8908d84cbe5c3e6213b382aff53f5a0007760e20c3074aef374419",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_114.log",
+      "bytes": 251,
+      "sha256": "5ef399afe73511c32409ff6a326acae7035ecf3740af761c8c2708125be6e6ef",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_115.log",
+      "bytes": 253,
+      "sha256": "0a4f6cae661445c76a59a947e590a5b2c41f086fe7ef62d84a486f2e7ff6bd7b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_116.log",
+      "bytes": 441,
+      "sha256": "05937c5934747f02562345cc99869aa383aa25318742f4cf66d8c3431c4e2f35",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_117.log",
+      "bytes": 453,
+      "sha256": "877620830fdae9a3915e1e2235ba9581cf64c403a7982ae61ec9ac39e9743863",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_118.log",
+      "bytes": 459,
+      "sha256": "fc9060d9f6c12a9b6b029b48645727ea83e1fd8eddae8622e3d3181c57e93d91",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_119.log",
+      "bytes": 1440,
+      "sha256": "e236b7829c87d66150952446cb798e606e1340e62cb859c026a8b6a6fc8a6fbb",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_120.log",
+      "bytes": 1512,
+      "sha256": "d2318c06d0083f874e6a69e824d7729ae860ec291d749222a3bf629bc7919cb6",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_121.log",
+      "bytes": 1536,
+      "sha256": "2e9bcd17488d0fa052571ee83d9bb88df63da4e7f072b3073b1222a4945c2d9a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_122.log",
+      "bytes": 203,
+      "sha256": "da13a98a6902d2232305fb9cca3c121e4f52d6d3226298ffd9b1b7ee9e91777b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/key_123.log",
+      "bytes": 204,
+      "sha256": "e4d05b4fca4bb86cf0aa1fa4c8f9cfe47d08396236721b9392dd5a93b08af522",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/keyboard.vvp",
+      "bytes": 88873,
+      "sha256": "d309fce5dc18ab08876799baf4728b31b72bceb825346e8e568d62bab00d5a7b",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/keyboard_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/keyboard_timing.csv",
+      "bytes": 11090,
+      "sha256": "f4f45cf10c6d685416dd4b2f9db3de20554cc6f8c9e8bcf32968faec9a9eecb5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/result.json",
+      "bytes": 31756,
+      "sha256": "fa58887bbc8039ed1ec0d1f851ad718b1a91a1fc7b8e82055fe63348c14888ee",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard/tb_keyboard_timing.v",
+      "bytes": 4171,
+      "sha256": "26a0d20fa7cc8bcb9ba6ec980a7533a4953c90be867b562cd6e7919f9d274f8f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard_stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/keyboard_stdout.log",
+      "bytes": 3370,
+      "sha256": "de93b0570431672c30d75f52bb7bc6e3c0e37d861488ecd43bcea44f6334246e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/report.md",
+      "bytes": 11051,
+      "sha256": "195a02d6b7c9ce9520c9ec89af2a9bc4932520775c87eea7b7b4b93e9bea924e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/audio.vvp",
+      "bytes": 8893419,
+      "sha256": "65e4b06e6a6a91dbf4379218138d29a99cf5525acefc37b0cddfc87feaf9b236",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/audio_000.log",
+      "bytes": 219,
+      "sha256": "b962e6fb234f53517bc78bf899684fba596337e0177dec600a7264eade8d8eac",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/audio_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/audio_queue.csv",
+      "bytes": 45,
+      "sha256": "46493b6a1667c24e7439ed120df8f5af8e6a8b747b0ad50f2a3bd925e75626b6",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/audio_timing.csv",
+      "bytes": 169,
+      "sha256": "8d90edefd0e7c0a38517a6478ff7a31877f2d8d7a0d31bc45063f9bfbb78156e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/key_000.log",
+      "bytes": 200,
+      "sha256": "076a97591d164188ba8b9fa260e11a1fd481b7e7478961c7fbac2dea64e4e180",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/keyboard.vvp",
+      "bytes": 88873,
+      "sha256": "3e809502410f8776373f76940ef98af3033f2736acfad2e00c67c317fd7b55b5",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/keyboard_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/keyboard_timing.csv",
+      "bytes": 142,
+      "sha256": "30ef6be6a5bacfc14430001af846be696155be6bed93b766c9cb82bced58808e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/result.json",
+      "bytes": 13584,
+      "sha256": "8f8e8302c436a6b142fb8fcb4efeed084f9c6c6d0ca1eb4cbb81dbb37346cf7b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/tb_audio_timing.v",
+      "bytes": 6949,
+      "sha256": "e3250bc8eb61d113dd0fe4cd63ef2a1cfc50a75237d9c3f342a4de5f214fb9ee",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/smoke/tb_keyboard_timing.v",
+      "bytes": 4171,
+      "sha256": "26a0d20fa7cc8bcb9ba6ec980a7533a4953c90be867b562cd6e7919f9d274f8f",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/latency_determinism_001/summary.json",
+      "bytes": 10317,
+      "sha256": "5806ef8092f0da2a9cf8ca4609c62ee44363eedfe0e9200a26a44bac9a8a049c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/tb_acceptance_default_timing.v",
+      "bytes": 1489,
+      "sha256": "f0366ffb7a0de8cbd61987200f2583dc875e2139621b3ed0de21e1949d49d6cc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/tb_acceptance_sweep.v",
+      "bytes": 2361,
+      "sha256": "0b011a6adc9a8f6c5712b89809b477156647bcf4b2bd6b106761bf04a9d1a837",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/tb_debounce15.v",
+      "bytes": 3136,
+      "sha256": "6d5b4d071865cef395012273b603401a3cd8cefa7fe4718481998349c28d64a6",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/tb_oscillator_state_bank.v",
+      "bytes": 2220,
+      "sha256": "314274626128f171a638da005ec4a527e2fc3bb371f9d34c201a0f93f2d64a32",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/tb_scan_debounce15.v",
+      "bytes": 1885,
+      "sha256": "9666e2a319ec81c18bb40d89023ee0798ce0803bc108c7bf74b3a5e47a2c0f0e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/tb_wave_response.v",
+      "bytes": 2557,
+      "sha256": "4c3290bb9b0663e274422b5700c6db5c8159aed5b99a9a71e91ebb41b707f01b",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/test_acceptance_gui.py",
+      "bytes": 4617,
+      "sha256": "3e3d8fe80f23c2155cd35292c4d953a3b3051f2ee089fca3d4d028d22026335c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before/source/project/instrument_24_rgb_top.v",
+      "bytes": 27749,
+      "sha256": "7f26ab77adbbde46e75a2884324a7643d944f84524b79650427742c9783d968e",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before/source/rtl/input/encoder_b_control.v",
+      "bytes": 3952,
+      "sha256": "055c06ea29659277ff3661b53cf40707424ece854d91229bbf34bc8d46428d7a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before/source/rtl/ui/audio_visualizer.v",
+      "bytes": 7583,
+      "sha256": "25ebac560c0a5db0954aa0bdb808a1c84049f4aee674a1f0905942ade4bf3e29",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before/source/rtl/ui/new_screen/new_screen_dashboard.v",
+      "bytes": 28622,
+      "sha256": "3756c1550675e5566008c6a4ea0352d46cbf9388e945ef1161f9139cbe42176a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before.json",
+      "bytes": 27083,
+      "sha256": "d9db41bfaeb9242d27cb85cb8ac795eba94f6173a67bd3a1ce44c3c9abb83e6a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before_pnr.log",
+      "bytes": 2086,
+      "sha256": "9a6783e2ee534e2fb4262b7de16d5f7cbb651a1d0d50495a08cb26b464eb374a",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/before_syn.log",
+      "bytes": 88082,
+      "sha256": "af6a991e22aa4c4ba448cec605122f388d8f969dd563c7015ec3e4f79f51da2d",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/original_audio_visualizer.v",
+      "bytes": 7780,
+      "sha256": "9f9b6bf2e98e2eddf4a76660dd88fd028bae3167e845eaf19d1567dc72f29ec9",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/probe.tcl",
+      "bytes": 313,
+      "sha256": "46b88e252f9c485f096dfaa7c0eb873d8f2f06f107198847e68f9613e9628803",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/gwsynthesis/warning_probe.log",
+      "bytes": 1716,
+      "sha256": "510563295bd417bbce99254683df728659e6b50ae0ad3f910ea28dbf7bea7dd9",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/gwsynthesis/warning_probe.prj",
+      "bytes": 1120,
+      "sha256": "6ae7863472981d11588544020f33a3c65a5e7dba8f43528a63975701398bb351",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/gwsynthesis/warning_probe.vg",
+      "bytes": 102285,
+      "sha256": "011fd8a81d2332aa35a9b4fcac40a1806bdb8cc9cf4d95a1be50de058372af22",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/gwsynthesis/warning_probe_syn.rpt.html",
+      "bytes": 33272,
+      "sha256": "ac504ed23696bd9d4802b5f6de397c0b8ebbfac7efe15ed8a38b35e779ec887c",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/gwsynthesis/warning_probe_syn_resource.html",
+      "bytes": 1590,
+      "sha256": "10a98894453e80a02270e5160c79b7a2aeb88498ce4c54064ea7fb6afeb43ac9",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/gwsynthesis/warning_probe_syn_rsc.xml",
+      "bytes": 183,
+      "sha256": "a380c4383226b496b635da72b8b6ad60c399a09ade526b3594004b05b3fabc85",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/impl/warning_probe_process_config.json",
+      "bytes": 2680,
+      "sha256": "dc9acb2605e8e8de277f5e77b7c9b01d0555f638f7be22e35e06eab68c1b9fbd",
+      "included": false,
+      "reason": "generated implementation database or temporary build state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/warning_probe.gprj",
+      "bytes": 429,
+      "sha256": "263925b0a4f089feb9842609d6718bfae6b7b6d5fe9f7a1ca5d57e90dbc0fae5",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe/warning_probe.gprj.user",
+      "bytes": 800,
+      "sha256": "ade894d5a93ee78f20966909a92c4baff036d4847aa39679a76409a7ec5ecadc",
+      "included": false,
+      "reason": "machine-specific IDE state"
+    },
+    {
+      "path": "verification/warning_review_20261031/probe/warning_probe_top.v",
+      "bytes": 8049,
+      "sha256": "ce3832a7872d09bd4918b5457d9a7854e05d7a770363ef60664f7d29fa24d6cc",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/README.md",
+      "bytes": 6120,
+      "sha256": "76447dcc34467260a88716ca96386288a4e3550e4529819e2328dad7f1cacfd4",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/results.json",
+      "bytes": 532,
+      "sha256": "e96f8fa1e241b8a1c428ce025af8635cfed211bad08c4eea30fa29c61b8d5935",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_acceptance_default_timing_64.log",
+      "bytes": 202,
+      "sha256": "c1adcb194739acefa89194c6226a45810c6b7faee4dfd8ef28230348f72dfa05",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_acceptance_default_timing_64.vvp",
+      "bytes": 25093,
+      "sha256": "c090d79fe029ccd538d0c8b58d281ac27e9083dc6d989fbefffa33c9c462ae47",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_acceptance_default_timing_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_acceptance_sweep_64.log",
+      "bytes": 213,
+      "sha256": "0f6d20a4117b1f9f18b1e30306593b31efcef6fe1758828765f5e17773f8c6df",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_acceptance_sweep_64.vvp",
+      "bytes": 30209,
+      "sha256": "43cdf902afad60f7a4cc5855f28f4cba6eb1ef3b507b997b3192ae10978c0d93",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_acceptance_sweep_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_debounce15_64.log",
+      "bytes": 245,
+      "sha256": "0276d5b621384ed9cddb11be7c5978f38d627cd942563ec2c7452d26c8cb034c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_debounce15_64.vvp",
+      "bytes": 109861,
+      "sha256": "0cc52ab34a2a4c69d77e7e6a1d21fbbeddad3e755c4769370b4ebc1c78966349",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_debounce15_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_oscillator_state_bank_64.log",
+      "bytes": 234,
+      "sha256": "4f64f232691aefbfbb8df7a9d5a3c75811428b364b9f6fd7644548fde8188835",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_oscillator_state_bank_64.vvp",
+      "bytes": 1567849,
+      "sha256": "634b3251abbc87465f0500364be46f2893b157b63694390be3ddb7bcd8a0be62",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_oscillator_state_bank_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_scan_debounce15_64.log",
+      "bytes": 228,
+      "sha256": "a7e8cc738b50511e7658c86d88977c7f9c581448c65ca239c7c67d8995209963",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_scan_debounce15_64.vvp",
+      "bytes": 80334,
+      "sha256": "7a0468cf6d429a50060bd6b068da4a3ca33709d7fd8057454bca273b1254f5fd",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_scan_debounce15_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_wave_response_64.log",
+      "bytes": 237,
+      "sha256": "2de7b31dee37610b1a9ba588abae2e05e55702f8505ae5a5f1e3977d23b69e6c",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_wave_response_64.vvp",
+      "bytes": 32110,
+      "sha256": "e17e505e8b96eb35e686ae0fc920d59a87d609cdb8a64012c290aa1d3f75229e",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/tb_wave_response_64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/top64.vvp",
+      "bytes": 11661506,
+      "sha256": "68953dc445e6b67783cfad4acd1dc03a2391f05fff7b6e143633d594a8d8dfee",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/regression/top64_PLL_stub.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/results.json",
+      "bytes": 1788,
+      "sha256": "6b983c2a6da559df12dd516295f8cc086be5d848423a5f2738277bfa392d96ba",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/syn.log",
+      "bytes": 2057,
+      "sha256": "02da0c58025c8f3c1c8cdbf5e22b1084f617dbb3883a2e0bb9b3e11f63e069a0",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/syn_live.json",
+      "bytes": 267,
+      "sha256": "80872768237cea1cc0a8138e4b9a2acf2e643509eac2716e854b134230d80a88",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/top.vvp",
+      "bytes": 11661506,
+      "sha256": "ad20cec6bc122a17da9886cc18f8bd4ae895acb91e7bc4026e0c09a7d089517d",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/top64_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/visualizer_equivalence.log",
+      "bytes": 237,
+      "sha256": "8b4aa646c66ae4d3dd46ff3c10a23dfd8ab66fc172b8d63d8010379ad46001e6",
+      "included": true,
+      "reason": null
+    },
+    {
+      "path": "verification/warning_review_20261031/visualizer_equivalence.vvp",
+      "bytes": 318975,
+      "sha256": "9c77619fdba8490e1549378282aeb1322525dcd8fab8ab9afc0ea7687b5f704b",
+      "included": false,
+      "reason": "generated simulation cache"
+    },
+    {
+      "path": "verification/warning_review_20261031/visualizer_equivalence_compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "included": true,
+      "reason": null
+    }
+  ],
+  "remote_branch_snapshot": {
+    "codex/integrated-instrument": "a4df0dd8fe15a2b40f214dd205e96e2e45b2747b",
+    "dev-audio": "6035c116207c51a1fe39e66c6c768080184737bc",
+    "dev-input": "14b7f09d1ba10685d67918a5c86333ba604b2c2d",
+    "dev-system": "9a302a5e6aa27d55dc44951a545dcbe21189aaa5",
+    "feat/fsr-mcp3008": "508480ca96b5a13fb2e109b5940f66209471a093",
+    "feature/c-joystick-bend-test-20261015": "63ef83b38afce4d1a961b3f8b48716b63a921f48",
+    "feature/c-k230-uart-20261022": "1140e69647dd1d4e2e4a9fc23bbf945ea2c2fc9c",
+    "fix/ab-order": "4e708a0fae404b36cfde51c32b97540570a247fb",
+    "fix/b-integrated-20261016": "2b47168907d6cbe6c8c2d251dacc7d1938750e6a",
+    "fix/c-legato-glide-20261021": "b0fa52857229316629f1cb3bfcb8d85ec3241c7d",
+    "integration/b-complete-20261011": "dbc77e5de698c6f59c5d27d4139bca24e037b8d9",
+    "integration/b-current-20261015": "75e652fa900900c3facd5a7f67c072cc5556ecec",
+    "integration/b-stage3-fsr": "732163d110d4c4bba3a2c54bc0ce42cb52228bb7",
+    "integration/c-stage3": "841892c51a33f09fe9aa0f85c2a85b35575d8131",
+    "main": "1b47f2594b9a9d2acf0e14f857eebca9c915c04b"
+  },
+  "historical_notes": [
+    {
+      "path": "archive/member-notes/dev-audio/README.md",
+      "branch": "dev-audio",
+      "commit": "6035c116207c51a1fe39e66c6c768080184737bc",
+      "source_path": "sim/audio_core_tb/README.md",
+      "sha256": "73ff1b32e0efa2114ffa64422e0fe72bf2eb89005b9d0bccb8be3927c51c6c06"
+    },
+    {
+      "path": "archive/member-notes/dev-input/KEYBOARD_24_PINOUT.md",
+      "branch": "dev-input",
+      "commit": "14b7f09d1ba10685d67918a5c86333ba604b2c2d",
+      "source_path": "docs/KEYBOARD_24_PINOUT.md",
+      "sha256": "b9c9982c692a96a46761beb1050673b1e33e1c4d391a5ddc58166a8febf1fd01"
+    },
+    {
+      "path": "archive/member-notes/dev-input/RGB_LCD_800x480.md",
+      "branch": "dev-input",
+      "commit": "14b7f09d1ba10685d67918a5c86333ba604b2c2d",
+      "source_path": "docs/RGB_LCD_800x480.md",
+      "sha256": "021a739a4bc34efb408eb35f0f486f0e6f3e070e820fc3227e7b182752eca4af"
+    },
+    {
+      "path": "archive/member-notes/dev-system/JOYSTICK_MCP3008_RTL.md",
+      "branch": "dev-system",
+      "commit": "9a302a5e6aa27d55dc44951a545dcbe21189aaa5",
+      "source_path": "docs/JOYSTICK_MCP3008_RTL.md",
+      "sha256": "47a82d5078f28ddb16a69f0ef18c2a92a9804cd0790c080bae11afc2379164a7"
+    },
+    {
+      "path": "archive/member-notes/dev-system/EC11_FORMAL_CONTROLS.md",
+      "branch": "dev-system",
+      "commit": "9a302a5e6aa27d55dc44951a545dcbe21189aaa5",
+      "source_path": "docs/EC11_FORMAL_CONTROLS.md",
+      "sha256": "0b6ea71444206b50e996746ab18c2e95c1597daa1e2f243f663b6341abde7475"
+    },
+    {
+      "path": "archive/member-notes/dev-system/KEYBOARD_24_PINOUT.md",
+      "branch": "dev-system",
+      "commit": "9a302a5e6aa27d55dc44951a545dcbe21189aaa5",
+      "source_path": "docs/KEYBOARD_24_PINOUT.md",
+      "sha256": "074a44d30bdfabafe6a0818370c09593ad41e36750027755b82a8e30e68bf768"
+    },
+    {
+      "path": "archive/member-notes/dev-system/INSTRUMENT_24_RGB_INTEGRATION.md",
+      "branch": "dev-system",
+      "commit": "9a302a5e6aa27d55dc44951a545dcbe21189aaa5",
+      "source_path": "docs/INSTRUMENT_24_RGB_INTEGRATION.md",
+      "sha256": "fb61643f872bf33a8a12dc8fa40183136520adf4c110181119451ef29c4453a4"
+    },
+    {
+      "path": "archive/member-notes/codex--integrated-instrument/AUDIO_DYNAMICS.md",
+      "branch": "codex/integrated-instrument",
+      "commit": "a4df0dd8fe15a2b40f214dd205e96e2e45b2747b",
+      "source_path": "docs/AUDIO_DYNAMICS.md",
+      "sha256": "f696224a09b0193c4c1c6fa7ba5ad5491f510ef0015de126d3f7dbcbb63a37aa"
+    },
+    {
+      "path": "archive/member-notes/codex--integrated-instrument/AUDIO_RESOURCES.md",
+      "branch": "codex/integrated-instrument",
+      "commit": "a4df0dd8fe15a2b40f214dd205e96e2e45b2747b",
+      "source_path": "docs/AUDIO_RESOURCES.md",
+      "sha256": "0906373e044d81cf0f3805fc11082dd728f96e3afb49f8685f60e2a32b48be06"
+    },
+    {
+      "path": "archive/member-notes/codex--integrated-instrument/PCM5102A_I2S_WIRING.md",
+      "branch": "codex/integrated-instrument",
+      "commit": "a4df0dd8fe15a2b40f214dd205e96e2e45b2747b",
+      "source_path": "local_gowin/merged_candidate/docs/PCM5102A_I2S_WIRING.md",
+      "sha256": "85be5dcf0d3c5df3a3df4073dc1f53d7a3cd9bebad8ce621fa023e2aa60f6456"
+    },
+    {
+      "path": "archive/member-notes/codex--integrated-instrument/EXTENSIONS_PROTOCOL.md",
+      "branch": "codex/integrated-instrument",
+      "commit": "a4df0dd8fe15a2b40f214dd205e96e2e45b2747b",
+      "source_path": "local_gowin/merged_candidate/docs/EXTENSIONS_PROTOCOL.md",
+      "sha256": "229bfafa65d8a90311bc814654fa359d727346d15ecf01b517f4c82c60c791c5"
+    },
+    {
+      "path": "archive/member-notes/codex--integrated-instrument/LED_STRIP_BRINGUP.md",
+      "branch": "codex/integrated-instrument",
+      "commit": "a4df0dd8fe15a2b40f214dd205e96e2e45b2747b",
+      "source_path": "local_gowin/merged_candidate/docs/LED_STRIP_BRINGUP.md",
+      "sha256": "eca1df2612ed254134a7bb7b49beec27beac86dad2c03bcf6fd10d580eed589f"
+    }
+  ],
+  "companion_files": {
+    "companion/phone/app.js": "42719dc702c4b0b027db41ae4761016509b9c4394ae12fee9a2b899d83b75bae",
+    "companion/phone/app_test.cjs": "f7ca3a57a3097bd2bb97339f287b7c0a3df325dcf1a29f0086bbbdcb59ac92d7",
+    "companion/phone/example_score.txt": "71892dd036a3a07dfc93dbeccb28b7c11f1d320cd02975c3e3e36386c6d65797",
+    "companion/phone/index.html": "146fadf400b76df794eacdcf50ece55fd27ecea05d8db7af32495d6a7ff77c35",
+    "companion/phone/protocol.js": "e136f5c2101e40512d3e94acd0591287356d9e0215cd74fd3b6c6b0cf23432a8",
+    "companion/phone/protocol_test.cjs": "e1c647fb8a0b74be4f2d06c5f56d03aed48d67e3dc5e6f7b2fa9f155167203e5",
+    "companion/phone/scores/README.md": "ec2292d4daf602b45c446d12ac150cde553767f579bd2cc0dd90e411f3625345",
+    "companion/phone/scores/YEQU_REVISION.md": "2905b2aba465a99de0c1af06c54cda4b696dadf27cd9e9462ac81719f39054f8",
+    "companion/phone/scores/greensleeves_guitar_short.txt": "38cdc36b4c7173975ea238549befc534c2ba74e07350265318823c45a6ed44a4",
+    "companion/phone/scores/happy_birthday_guitar_short.txt": "e5e41797686770706a4e31e10a398fc5f3cadb21ca97184973e4a7832860cd3c",
+    "companion/phone/scores/ode_to_joy_bell_short.txt": "101c6915213947620716373633fb297610b7d2351e649485f32aa89375c59f5d",
+    "companion/phone/scores/yequ_guitar_chorus.txt": "7a4e40fa0bde3e5a2c720ff47aa706380546f4cd7e1d6f823b0cde1bd6c43147",
+    "companion/phone/scores/yequ_guitar_opening.txt": "7a4e40fa0bde3e5a2c720ff47aa706380546f4cd7e1d6f823b0cde1bd6c43147",
+    "companion/esp32c3/CMakeLists.txt": "1052f7ae489f65ff5f364ceebedfae02e29c4ada14f13b09d4ccf3dbc6613f7a",
+    "companion/esp32c3/sdkconfig.defaults": "245c2a84e047e5c2d0bdd59134779a52f1754cff8319e77893fea323dd1f8ad8",
+    "companion/esp32c3/sdkconfig": "13cd8c985e195c2d12ca04829dc8b6c361543a97c00c8ae557842dbfe77ee95d",
+    "companion/esp32c3/main/CMakeLists.txt": "d806d674415a2439026f50e300b801fea0699e2bb55f02cd6f72d22c90c2c960",
+    "companion/esp32c3/main/main.c": "f6c82372ccdb3dd4e8e2939d57b2c581ac5fa14a00e96e9c0851f7ce8e0cf9d0"
+  },
+  "phone_source": {
+    "branch": "fix/b-integrated-20261016",
+    "commit": "2b47168907d6cbe6c8c2d251dacc7d1938750e6a",
+    "path": "local_gowin/merged_candidate/tools/phone/"
+  },
+  "esp_source": "E:\\Gowin\\Prj_music\\esp32c3\\bluetooth",
+  "source_to_destination_mismatches": []
+}
