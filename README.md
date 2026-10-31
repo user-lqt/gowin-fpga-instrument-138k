@@ -18,6 +18,9 @@
 
 ## 文档
 
+![整机硬件连接图](docs/figures/hardware_overview.png)
+
+- [整机硬件连接与工作原理](docs/HARDWARE_OVERVIEW.md)：连接总图及各模块详细说明；[矢量PDF](docs/figures/hardware_overview.pdf)。
 - [系统架构](docs/ARCHITECTURE.md)：信号链、音频引擎、显示与源码目录。
 - [硬件接线](docs/HARDWARE.md) · [完整引脚表](docs/PINOUT.md)。
 - [操作说明](docs/USER_GUIDE.md)：双EC11、曲目指引、复音测试和分析页面。
