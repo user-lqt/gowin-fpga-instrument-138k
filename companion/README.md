@@ -1,12 +1,10 @@
-# 配套应用源码
+# 配套应用
 
-这些文件为最终FPGA的外围交互参考，单列来源，不混入最终RTL工程。
+| 目录 | 内容 |
+| --- | --- |
+| `phone/` | Web Bluetooth网页、通信协议、测试和示例曲谱 |
+| `esp32c3/` | ESP-IDF NimBLE BLE-UART桥接工程 |
 
-| 目录 | 来源 | 状态 |
-| --- | --- | --- |
-| `phone/` | 团队远端fix/b-integrated-20261016，2b471689 | 原样提取，包含旧帮助文字和URL入口；本次未改网页 |
-| `esp32c3/` | 本机Prj_music/esp32c3/bluetooth | 原样复制main、CMake和配置；未重编译/烧录 |
+网页部署与通信协议见[蓝牙说明](../docs/BLUETOOTH.md)。K230程序位于 [final/k230](../final/k230/)。
 
-最终包自带的K230程序位于 `final/k230/`。详见[蓝牙与手机说明](../docs/BLUETOOTH.md)，每个文件哈希见发布清单。
-
-手机网页尚需部署到HTTPS；本次没有创建互联网服务地址或验证手机实连。已烧录且正常工作的ESP无需因仓库整理重新下载。
+网页来源为团队提交 `2b471689`；ESP源码来自团队现有ESP32-C3工程。文件校验见 `release/manifest.json`。

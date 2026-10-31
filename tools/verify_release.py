@@ -60,7 +60,7 @@ def verify(source=None):
             different = sorted(k for k in expected.keys() | actual.keys() if expected.get(k) != actual.get(k))
             raise ValueError('Original folder changed: ' + repr(different))
         print(f'PASS original folder unchanged: {len(expected)} files')
-    for doc in [ROOT/'README.md',*(ROOT/'docs').glob('*.md'),ROOT/'archive/README.md',ROOT/'companion/README.md']:
+    for doc in [ROOT/'README.md',*(ROOT/'docs').glob('*.md'),ROOT/'companion/README.md']:
         for relative in re.findall(r'\]\(([^)]+)\)', doc.read_text(encoding='utf-8')):
             if relative.startswith(('http:', 'https:', '#')):
                 continue

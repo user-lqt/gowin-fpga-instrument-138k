@@ -1,3 +1,0 @@
-KEY,131072,1843,0,18,50968,53423,54037,88422,88439,90
-PASS keyboard timing
-C:\Users\lenovo\gowin-fpga-instrument-138k\tools\latency_timing_audit\tb_keyboard_timing.v:100: $finish called at 884390000 (1ps)

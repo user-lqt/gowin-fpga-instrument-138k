@@ -1,2 +1,0 @@
-PASS visualizer equivalence: 4 DFT/stereo configurations, 300000 cycles
-C:\Users\lenovo\gowin-fpga-instrument-138k\local_gowin\integrated_instrument\verification\tb_warning_equivalence_20261031.v:20: $finish called at 3000000000 (1ps)

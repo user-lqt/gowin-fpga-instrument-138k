@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "checked_files": 397,
+  "checked_files": 172,
   "project_inputs": 79,
   "selected_bitstream_sha256": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
   "synthesis_run": false,

@@ -1,4 +1,0 @@
-AUDIO,252,60,0,1,2306,2310,2310,2310,2802,2825,0,3336
-QUEUE,60,2306,2310
-PASS audio timing
-C:\Users\lenovo\gowin-fpga-instrument-138k\tools\latency_timing_audit\tb_audio_timing.v:129: $finish called at 33360000 (1ps)

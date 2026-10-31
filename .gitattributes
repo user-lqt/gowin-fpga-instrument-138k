@@ -7,8 +7,6 @@
 # Preserve the exact bytes supplied by the user and historical companion sources.
 final/** -text
 companion/** -text
-archive/** -text
 *.v linguist-language=Verilog
 *.vh linguist-language=Verilog
-archive/** linguist-vendored
 final/project/*/source/vendor/** linguist-vendored

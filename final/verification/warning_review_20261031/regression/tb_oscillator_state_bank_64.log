@@ -1,2 +1,0 @@
-PASS oscillator state bank: 8192 exact samples, four instruments, eight frequency/brightness lanes
-C:\Users\lenovo\Desktop\FPGA\FPGA_Instrument_20261031\verification\tb_oscillator_state_bank.v:52: $finish called at 2621480000 (1ps)
