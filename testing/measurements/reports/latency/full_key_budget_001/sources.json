@@ -1,0 +1,12 @@
+[
+  {
+    "title": "RIGOL MSO/DS2000A官方英文数据手册，第6及11页",
+    "url": "https://download.rigol.com/en/Manual/Digital%20Oscilloscope/MSO%26DS2000A/MSO2000A%26DS2000A_Datasheet_EN.pdf",
+    "base_ppm": 15,
+    "aging_ppm_per_year": 5,
+    "channel_skew_max_ns": 2,
+    "base_accuracy_is_typical": true,
+    "selection": "时基精度带注[1]，第11页明确为典型值。25 ppm仅为高于官方典型值的保守计算假设，非官方保证值或校准上限。",
+    "conditions": "规定工作温度，连续运行超过30分钟；本机校准、预热及温度记录未核实。"
+  }
+]

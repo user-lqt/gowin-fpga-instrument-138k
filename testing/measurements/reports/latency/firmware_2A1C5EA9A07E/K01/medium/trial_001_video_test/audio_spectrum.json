@@ -1,0 +1,16 @@
+{
+  "source": "\u4fdd\u5b58\u7684 CH2 DAC \u6a21\u62df\u8f93\u51fa RAW BYTE \u6570\u636e\uff0c\u4e0d\u662f\u793a\u6ce2\u5668\u5c4f\u5e55\u622a\u56fe",
+  "raw_sha256": "700d814a2435430c4c2fbb3d79386786032c70ebd8015feea556fe224f019b43",
+  "samples": 5600000,
+  "sample_rate_hz": 200000000.0,
+  "record_seconds": 0.028,
+  "start_seconds_relative_trigger": -0.00105,
+  "end_seconds_relative_trigger": 0.026949995,
+  "fft_bin_spacing_hz": 35.714285714285715,
+  "window": "\u5468\u671f Hann \u7a97\uff0c\u4f7f\u7528\u5b8c\u6574\u8bb0\u5f55\uff0c\u53bb\u5747\u503c\uff0c\u4e0d\u91cd\u91c7\u6837\u3001\u4e0d\u8865\u96f6",
+  "amplitude": "\u76f8\u5e72\u589e\u76ca\u6821\u6b63\u7684\u5355\u8fb9\u5e45\u5ea6\uff1bdBV \u4ee5 1 V \u4e3a\u53c2\u8003\uff0c\u4e0d\u662f dBFS",
+  "near_rail_samples": 0,
+  "raw_voltage_step_v": 0.02,
+  "largest_audio_bin_hz": 250.0,
+  "caution": "\u5305\u542b\u9759\u97f3\u4e0e\u8d77\u97f3\uff0c\u4e0d\u80fd\u4f5c\u4e3a\u7a33\u6001\u97f3\u8c03\u5e45\u5ea6\u6216\u5ef6\u8fdf\u8bc1\u660e\u3002Hann \u7a97\u7684\u5b9e\u9645\u9891\u7387\u5206\u8fa8\u80fd\u529b\u5f31\u4e8e\u9891\u70b9\u95f4\u9694\uff0c\u77ed\u8bb0\u5f55\u4e0d\u80fd\u53ef\u9760\u5206\u8fa8 50 Hz\u3002"
+}

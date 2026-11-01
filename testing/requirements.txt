@@ -1,0 +1,6 @@
+numpy
+scipy
+matplotlib
+PyVISA
+PyVISA-py
+logic2-automation

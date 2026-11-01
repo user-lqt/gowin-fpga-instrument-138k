@@ -1,0 +1,215 @@
+{
+  "key": 7,
+  "trial": 13,
+  "original_delay_ms": 3.5362936016733877,
+  "original_envelope_ms": 3.740712714484123,
+  "original_latest_onset_s": 0.029179995,
+  "phase_latest_onset_s": 0.02919375,
+  "phase_increment_us": 13.755000000000711,
+  "scope_dt_s": 1e-08,
+  "raw_sha256": {
+    "CH1": "1ffc689b94a74a8f149cca360e66fd1afe349fe7926cdb4f12cd59817f4816a3",
+    "CH2": "f289b7046078fdebf063aac8eb7af1563657f79b44428921ddc9862ba34ff06d"
+  },
+  "groups": [
+    {
+      "method": "polyphase",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 10.0,
+      "phases": 4000,
+      "min_onset_s": 0.02913235,
+      "max_onset_s": 0.02917234,
+      "latest_phase": 1234,
+      "phase_zero_onset_s": 0.029160000000000002,
+      "reference_max_difference_V": 1.9984014443252818e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 15.0,
+      "phases": 4000,
+      "min_onset_s": 0.02914403,
+      "max_onset_s": 0.02918402,
+      "latest_phase": 2402,
+      "phase_zero_onset_s": 0.029160000000000002,
+      "reference_max_difference_V": 1.9984014443252818e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 20.0,
+      "phases": 4000,
+      "min_onset_s": 0.02915376,
+      "max_onset_s": 0.02919375,
+      "latest_phase": 3375,
+      "phase_zero_onset_s": 0.029160000000000002,
+      "reference_max_difference_V": 1.9984014443252818e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 10.0,
+      "phases": 2000,
+      "min_onset_s": 0.0291321,
+      "max_onset_s": 0.029152090000000002,
+      "latest_phase": 1209,
+      "phase_zero_onset_s": 0.02914,
+      "reference_max_difference_V": 2.19824158875781e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 15.0,
+      "phases": 2000,
+      "min_onset_s": 0.02914459,
+      "max_onset_s": 0.02916458,
+      "latest_phase": 458,
+      "phase_zero_onset_s": 0.029160000000000002,
+      "reference_max_difference_V": 2.19824158875781e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 20.0,
+      "phases": 2000,
+      "min_onset_s": 0.029154410000000002,
+      "max_onset_s": 0.0291744,
+      "latest_phase": 1440,
+      "phase_zero_onset_s": 0.029160000000000002,
+      "reference_max_difference_V": 2.19824158875781e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 10.0,
+      "phases": 1000,
+      "min_onset_s": 0.02913113,
+      "max_onset_s": 0.02914112,
+      "latest_phase": 112,
+      "phase_zero_onset_s": 0.02914,
+      "reference_max_difference_V": 1.1435297153639112e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 15.0,
+      "phases": 1000,
+      "min_onset_s": 0.02914541,
+      "max_onset_s": 0.0291554,
+      "latest_phase": 540,
+      "phase_zero_onset_s": 0.029150000000000002,
+      "reference_max_difference_V": 1.1435297153639112e-14
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 20.0,
+      "phases": 1000,
+      "min_onset_s": 0.02915403,
+      "max_onset_s": 0.029164020000000002,
+      "latest_phase": 402,
+      "phase_zero_onset_s": 0.029160000000000002,
+      "reference_max_difference_V": 1.1435297153639112e-14
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 10.0,
+      "phases": 4000,
+      "min_onset_s": 0.029130625,
+      "max_onset_s": 0.029170655,
+      "latest_phase": 3066,
+      "phase_zero_onset_s": 0.029139995000000002,
+      "reference_max_difference_V": 1.1871059690804486e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 15.0,
+      "phases": 4000,
+      "min_onset_s": 0.029142935000000002,
+      "max_onset_s": 0.029182965,
+      "latest_phase": 297,
+      "phase_zero_onset_s": 0.029179995,
+      "reference_max_difference_V": 1.1871059690804486e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 20.0,
+      "phases": 4000,
+      "min_onset_s": 0.029152955,
+      "max_onset_s": 0.029192945,
+      "latest_phase": 1295,
+      "phase_zero_onset_s": 0.029179995,
+      "reference_max_difference_V": 1.1871059690804486e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 10.0,
+      "phases": 2000,
+      "min_onset_s": 0.029130865000000002,
+      "max_onset_s": 0.029151195,
+      "latest_phase": 120,
+      "phase_zero_onset_s": 0.029149995,
+      "reference_max_difference_V": 1.3979928326079971e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 15.0,
+      "phases": 2000,
+      "min_onset_s": 0.029144245,
+      "max_onset_s": 0.029164235,
+      "latest_phase": 1424,
+      "phase_zero_onset_s": 0.029149995,
+      "reference_max_difference_V": 1.3979928326079971e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 20.0,
+      "phases": 2000,
+      "min_onset_s": 0.029153975000000002,
+      "max_onset_s": 0.029173995,
+      "latest_phase": 400,
+      "phase_zero_onset_s": 0.029169995,
+      "reference_max_difference_V": 1.3979928326079971e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 10.0,
+      "phases": 1000,
+      "min_onset_s": 0.029131565,
+      "max_onset_s": 0.029141585,
+      "latest_phase": 659,
+      "phase_zero_onset_s": 0.029134995,
+      "reference_max_difference_V": 1.5963896871085126e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 15.0,
+      "phases": 1000,
+      "min_onset_s": 0.029145175000000002,
+      "max_onset_s": 0.029155305,
+      "latest_phase": 31,
+      "phase_zero_onset_s": 0.029154995,
+      "reference_max_difference_V": 1.5963896871085126e-12
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 20.0,
+      "phases": 1000,
+      "min_onset_s": 0.029153765,
+      "max_onset_s": 0.029163995,
+      "latest_phase": 900,
+      "phase_zero_onset_s": 0.029154995,
+      "reference_max_difference_V": 1.5963896871085126e-12
+    }
+  ],
+  "evaluations": 42000
+}

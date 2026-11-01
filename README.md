@@ -26,6 +26,7 @@
 - [操作说明](docs/USER_GUIDE.md)：双EC11、曲目指引、复音测试和分析页面。
 - [蓝牙与手机](docs/BLUETOOTH.md)：网页、ESP32-C3、通信协议和曲谱格式。
 - [测试与测量](docs/TESTING.md)：文件校验、仿真入口、采样率和延迟测量。
+- [测试软件与实测结果](testing/README.md)：LRCK、64复音和24键联合延迟的测试软件、报告及数据入口。
 - [版本记录](docs/HISTORY.md)：开发分支归档与恢复方法。
 
 ## 目录
@@ -37,6 +38,7 @@ final/tools/         PC采集与分析工具
 final/verification/  独立验证脚本和testbench
 companion/phone/     手机网页
 companion/esp32c3/   BLE串口桥接工程
+testing/            三项测量软件、报告与实测结果
 docs/               方案、接线和使用说明
 release/            文件校验清单
 ```

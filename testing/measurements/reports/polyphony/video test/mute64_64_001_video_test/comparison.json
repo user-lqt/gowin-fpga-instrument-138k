@@ -1,0 +1,394 @@
+{
+  "source": "DAC_OUTPUT_SCOPE_COMPARISON",
+  "baseline": "C:\\Users\\lenovo\\Desktop\\高云音乐\\测试软件\\measurements\\raw\\polyphony\\all_64_002_video_test",
+  "changed": "C:\\Users\\lenovo\\Desktop\\高云音乐\\测试软件\\measurements\\raw\\polyphony\\mute64_64_001_video_test",
+  "bitstream_sha256": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
+  "common_gain_change_db": -0.0010032073347072158,
+  "comparison": "PASS",
+  "rows": [
+    {
+      "voice": 1,
+      "enabled": true,
+      "normalized_change_db": 0.00278515211292757,
+      "match": true
+    },
+    {
+      "voice": 2,
+      "enabled": true,
+      "normalized_change_db": 0.010061455257236401,
+      "match": true
+    },
+    {
+      "voice": 3,
+      "enabled": true,
+      "normalized_change_db": -0.01744896448136399,
+      "match": true
+    },
+    {
+      "voice": 4,
+      "enabled": true,
+      "normalized_change_db": 0.17791663495879584,
+      "match": true
+    },
+    {
+      "voice": 5,
+      "enabled": true,
+      "normalized_change_db": 0.010005333778507193,
+      "match": true
+    },
+    {
+      "voice": 6,
+      "enabled": true,
+      "normalized_change_db": 0.00037185068475193464,
+      "match": true
+    },
+    {
+      "voice": 7,
+      "enabled": true,
+      "normalized_change_db": 0.016993041679216715,
+      "match": true
+    },
+    {
+      "voice": 8,
+      "enabled": true,
+      "normalized_change_db": -0.0006680610853403987,
+      "match": true
+    },
+    {
+      "voice": 9,
+      "enabled": true,
+      "normalized_change_db": -0.014151415339688283,
+      "match": true
+    },
+    {
+      "voice": 10,
+      "enabled": true,
+      "normalized_change_db": -0.0030763100878383213,
+      "match": true
+    },
+    {
+      "voice": 11,
+      "enabled": true,
+      "normalized_change_db": -0.008988784233113846,
+      "match": true
+    },
+    {
+      "voice": 12,
+      "enabled": true,
+      "normalized_change_db": -0.024023628979768317,
+      "match": true
+    },
+    {
+      "voice": 13,
+      "enabled": true,
+      "normalized_change_db": -0.011420807859310773,
+      "match": true
+    },
+    {
+      "voice": 14,
+      "enabled": true,
+      "normalized_change_db": 0.013013213756798822,
+      "match": true
+    },
+    {
+      "voice": 15,
+      "enabled": true,
+      "normalized_change_db": 0.015823850525752355,
+      "match": true
+    },
+    {
+      "voice": 16,
+      "enabled": true,
+      "normalized_change_db": -0.005121442608529892,
+      "match": true
+    },
+    {
+      "voice": 17,
+      "enabled": true,
+      "normalized_change_db": -0.002600470784477761,
+      "match": true
+    },
+    {
+      "voice": 18,
+      "enabled": true,
+      "normalized_change_db": -0.00042604883418458057,
+      "match": true
+    },
+    {
+      "voice": 19,
+      "enabled": true,
+      "normalized_change_db": 0.007659974835988022,
+      "match": true
+    },
+    {
+      "voice": 20,
+      "enabled": true,
+      "normalized_change_db": 0.005839445647343885,
+      "match": true
+    },
+    {
+      "voice": 21,
+      "enabled": true,
+      "normalized_change_db": -0.003726229650693334,
+      "match": true
+    },
+    {
+      "voice": 22,
+      "enabled": true,
+      "normalized_change_db": -0.006678668063115952,
+      "match": true
+    },
+    {
+      "voice": 23,
+      "enabled": true,
+      "normalized_change_db": -0.005019946602583595,
+      "match": true
+    },
+    {
+      "voice": 24,
+      "enabled": true,
+      "normalized_change_db": 0.006011820418000553,
+      "match": true
+    },
+    {
+      "voice": 25,
+      "enabled": true,
+      "normalized_change_db": 0.00878328990670111,
+      "match": true
+    },
+    {
+      "voice": 26,
+      "enabled": true,
+      "normalized_change_db": -0.009296303130610539,
+      "match": true
+    },
+    {
+      "voice": 27,
+      "enabled": true,
+      "normalized_change_db": 0.0021869865601757683,
+      "match": true
+    },
+    {
+      "voice": 28,
+      "enabled": true,
+      "normalized_change_db": 0.004243803259819615,
+      "match": true
+    },
+    {
+      "voice": 29,
+      "enabled": true,
+      "normalized_change_db": -0.006546367690589788,
+      "match": true
+    },
+    {
+      "voice": 30,
+      "enabled": true,
+      "normalized_change_db": -0.002387625589403312,
+      "match": true
+    },
+    {
+      "voice": 31,
+      "enabled": true,
+      "normalized_change_db": 0.0030887316572423417,
+      "match": true
+    },
+    {
+      "voice": 32,
+      "enabled": true,
+      "normalized_change_db": -0.0011315317661746622,
+      "match": true
+    },
+    {
+      "voice": 33,
+      "enabled": true,
+      "normalized_change_db": 0.002979481702922579,
+      "match": true
+    },
+    {
+      "voice": 34,
+      "enabled": true,
+      "normalized_change_db": -0.025390082538972184,
+      "match": true
+    },
+    {
+      "voice": 35,
+      "enabled": true,
+      "normalized_change_db": 0.0025933776630876607,
+      "match": true
+    },
+    {
+      "voice": 36,
+      "enabled": true,
+      "normalized_change_db": -0.01122485388689556,
+      "match": true
+    },
+    {
+      "voice": 37,
+      "enabled": true,
+      "normalized_change_db": -0.011222016482197148,
+      "match": true
+    },
+    {
+      "voice": 38,
+      "enabled": true,
+      "normalized_change_db": -0.009366340122798474,
+      "match": true
+    },
+    {
+      "voice": 39,
+      "enabled": true,
+      "normalized_change_db": -0.005661982682642869,
+      "match": true
+    },
+    {
+      "voice": 40,
+      "enabled": true,
+      "normalized_change_db": 0.00022578169116951294,
+      "match": true
+    },
+    {
+      "voice": 41,
+      "enabled": true,
+      "normalized_change_db": 0.00832857960271928,
+      "match": true
+    },
+    {
+      "voice": 42,
+      "enabled": true,
+      "normalized_change_db": -0.0046511373633338566,
+      "match": true
+    },
+    {
+      "voice": 43,
+      "enabled": true,
+      "normalized_change_db": 0.001721809140106167,
+      "match": true
+    },
+    {
+      "voice": 44,
+      "enabled": true,
+      "normalized_change_db": 0.0191868900476099,
+      "match": true
+    },
+    {
+      "voice": 45,
+      "enabled": true,
+      "normalized_change_db": -0.007585454278022057,
+      "match": true
+    },
+    {
+      "voice": 46,
+      "enabled": true,
+      "normalized_change_db": -0.011985443471891608,
+      "match": true
+    },
+    {
+      "voice": 47,
+      "enabled": true,
+      "normalized_change_db": -0.002829675828959963,
+      "match": true
+    },
+    {
+      "voice": 48,
+      "enabled": true,
+      "normalized_change_db": 0.005403656709287878,
+      "match": true
+    },
+    {
+      "voice": 49,
+      "enabled": true,
+      "normalized_change_db": 0.007569585799453463,
+      "match": true
+    },
+    {
+      "voice": 50,
+      "enabled": true,
+      "normalized_change_db": 0.0013601574812069212,
+      "match": true
+    },
+    {
+      "voice": 51,
+      "enabled": true,
+      "normalized_change_db": -0.001078787869930242,
+      "match": true
+    },
+    {
+      "voice": 52,
+      "enabled": true,
+      "normalized_change_db": 0.010154717750609936,
+      "match": true
+    },
+    {
+      "voice": 53,
+      "enabled": true,
+      "normalized_change_db": 0.011330728588101916,
+      "match": true
+    },
+    {
+      "voice": 54,
+      "enabled": true,
+      "normalized_change_db": -0.00965856642446146,
+      "match": true
+    },
+    {
+      "voice": 55,
+      "enabled": true,
+      "normalized_change_db": 0.011460362010559872,
+      "match": true
+    },
+    {
+      "voice": 56,
+      "enabled": true,
+      "normalized_change_db": -0.005470727901324636,
+      "match": true
+    },
+    {
+      "voice": 57,
+      "enabled": true,
+      "normalized_change_db": 0.004340854645902456,
+      "match": true
+    },
+    {
+      "voice": 58,
+      "enabled": true,
+      "normalized_change_db": 0.002283743301247642,
+      "match": true
+    },
+    {
+      "voice": 59,
+      "enabled": true,
+      "normalized_change_db": 0.0,
+      "match": true
+    },
+    {
+      "voice": 60,
+      "enabled": true,
+      "normalized_change_db": -0.01895527440851668,
+      "match": true
+    },
+    {
+      "voice": 61,
+      "enabled": true,
+      "normalized_change_db": 0.015438796418832149,
+      "match": true
+    },
+    {
+      "voice": 62,
+      "enabled": true,
+      "normalized_change_db": 0.016989093598613548,
+      "match": true
+    },
+    {
+      "voice": 63,
+      "enabled": true,
+      "normalized_change_db": -0.021521780106791594,
+      "match": true
+    },
+    {
+      "voice": 64,
+      "enabled": false,
+      "normalized_change_db": -41.40706001740935,
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,334 @@
+{
+  "scan_period_min_us": 199.87499999984948,
+  "scan_period_max_us": 199.91700000021595,
+  "b_window_scope_s": [
+    0.0065253718781539405,
+    0.0065509946542290365
+  ],
+  "conditional_closure_earliest_scope_s": 0.0063255142247702345,
+  "maximum_scan_allowance_us": 225.48042945880198,
+  "alignment_scale": 0.9999132126780874,
+  "alignment_offset_s": -1.416086652718011,
+  "alignment_max_residual_us": 0.367527657498673,
+  "digital_resolution_us": 0.04166666666666667,
+  "scope_sample_interval_us": 0.005000000000837668,
+  "boundary_policy": "常规仅排除宽度≤1 µs且位于主边界±2 µs内的低跳变；首次 A 接触瞬态和首次 B 中途导通独立归类（如有，见明细）；首次 B 碎片化接触仅按独立区间模型核对；不接受后续 B 窗口内部断开，后续 B 窗口须完整列低。",
+  "boundary_exclusion_us": 2.0,
+  "boundary_additional_margin_us": 3.9996528507123497,
+  "ab_boundary_delta_min_us": -0.8750000000112834,
+  "ab_boundary_delta_max_us": -0.6659999998159805,
+  "excluded_short_low_pulses": {
+    "A": 27,
+    "B": 21,
+    "column": 102
+  },
+  "initial_a_contact_transient": null,
+  "previous_a_contact": null,
+  "b_midwindow_contact": null,
+  "b_onset_model": "full_b_window_v1",
+  "alignment_rejected_shift_candidates": [
+    {
+      "pulse_index_shift": -2,
+      "pairs": 119,
+      "max_residual_us": 24.49486838615022,
+      "conflicts_with_observed_prepress_quiet": true
+    },
+    {
+      "pulse_index_shift": -1,
+      "pairs": 120,
+      "max_residual_us": 24.786809401079747,
+      "conflicts_with_observed_prepress_quiet": true
+    },
+    {
+      "pulse_index_shift": 1,
+      "pairs": 121,
+      "max_residual_us": 24.168103821184047,
+      "conflicts_with_observed_prepress_quiet": true
+    },
+    {
+      "pulse_index_shift": 2,
+      "pairs": 121,
+      "max_residual_us": 24.187870625377514,
+      "conflicts_with_observed_prepress_quiet": true
+    }
+  ],
+  "alignment_fit_limit_us": 2.093333333335009,
+  "alignment_first_contact_anchor": true,
+  "alignment_anchor_assumptions": "人工确认同一次、单键按压；两份记录都包含首次列导通前至少两个扫描周期静止段；全起止沿逐一配对；错帧若在对方已观测静止段引入导通则排除。",
+  "logic_trailing_incomplete_pulse_omitted": false,
+  "startup_prefix": {
+    "excluded_duration_us": 0.0,
+    "excluded_short_low_pulses": {}
+  },
+  "audio_latest_scope_s": 0.010099997500000001,
+  "additional_allowance_us": 0.0,
+  "scope_clock_error_ppm": 0.0,
+  "conditional_below_5ms": null,
+  "strict_metrological_upper_bound": false,
+  "kind": "joint_scan_latency",
+  "csv_columns": [
+    "Time [s]",
+    "Channel 0",
+    "Channel 1",
+    "Channel 2"
+  ],
+  "analysis_model_version": "digital_rows_v6_common_window",
+  "common_recording_window": {
+    "policy": "仅列异常全部晚于完整示波器终点加固定1ms保留段时，按共同范围重验；窗口内任何异常仍拒绝，不按声音起点或通过结果挑选终点。",
+    "original_logic_end_s": 1.728,
+    "validated_logic_end_s": 1.4452119870086375,
+    "scope_end_logic_s": 1.4442119870086376,
+    "retained_tail_guard_us": 999.9999999998898,
+    "excluded_tail_duration_s": 0.28278801299136247,
+    "prefit_scale": 0.9999132126780874,
+    "prefit_offset_s": -1.416086652718011,
+    "prefit_max_residual_us": 0.367527657498673,
+    "prefit_initial_b_fragment": null,
+    "prefit_initial_a_interval": null,
+    "prefit_previous_a_contact": null,
+    "prefit_short_initial_b": null,
+    "original_full_record_error": "列信号存在 1～10 µs 的非主脉冲，不能作为边沿短跳变排除。",
+    "error_category": "intermediate_pulses",
+    "excluded_intermediate_events": [
+      {
+        "start_s": 1.484677167,
+        "end_s": 1.484678708,
+        "width_us": 1.5409999998272639
+      },
+      {
+        "start_s": 1.48467875,
+        "end_s": 1.484679917,
+        "width_us": 1.1669999999686098
+      },
+      {
+        "start_s": 1.484680833,
+        "end_s": 1.484688125,
+        "width_us": 7.291999999825549
+      },
+      {
+        "start_s": 1.484688167,
+        "end_s": 1.484689333,
+        "width_us": 1.1659999998858694
+      },
+      {
+        "start_s": 1.484689375,
+        "end_s": 1.484696667,
+        "width_us": 7.291999999825549
+      }
+    ],
+    "excluded_short_events": [],
+    "excluded_tail_is_not_scan_validation": true
+  },
+  "scope_only_B_inference_required": false,
+  "measurement_window": {
+    "policy": "首个主列导通前固定 5 ms 至数字记录末尾；不裁剪按下后异常。",
+    "original_start_s": 0.0,
+    "original_end_s": 1.728,
+    "first_main_column_s": 1.420112167,
+    "excluded_duration_s": 1.4151121670000002,
+    "validated_start_s": 1.4151121670000002,
+    "excluded_digital_rows": 32548,
+    "excluded_prefix_is_not_scan_validation": true
+  },
+  "audio_evidence": {
+    "kind": "joint_audio_onsets",
+    "raw_sha256": {
+      "CH1": "a76ed79da1a9c8649a9cb92f46d4746441d63e5d1abf06bd8b0349af51219db0",
+      "CH2": "8011886384346180bd930a06d035639d980abb593c74914202e87949e08f7d1b"
+    },
+    "raw_hashes_verified": true,
+    "rails": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "version_user_recorded": {
+      "recorded_date": "2026-11-01",
+      "confirmation_source": "用户在延迟测量界面选择并确认；未从 FPGA 读回。",
+      "bitstream_path": "C:\\Users\\lenovo\\Desktop\\FPGA\\FPGA_Instrument_20261031\\project\\integrated_instrument_64\\impl\\pnr\\integrated_instrument_64.fs",
+      "sha256": "2A1C5EA9A07E9421049F5E1623558A684046DF6744FAAC9D5258CDDCDEC18EF8",
+      "size_bytes": 42340871,
+      "file_last_write_time_local": "2026-10-31T21:35:46.933928+08:00",
+      "scope": "本记录仅对应人工选择文件；软件不能自动核实实际烧录版本。"
+    },
+    "version_correction": null,
+    "first_column_contact_scope_s": 0.003902135,
+    "terminal_censored_pulse": null,
+    "sensitivities": [
+      {
+        "method": "polyphase",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 10.0,
+        "onset_scope_s": 0.01008,
+        "onset_from_contact_ms": 6.177865000000001,
+        "baseline_std_mV": 0.7591018067701247
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 15.0,
+        "onset_scope_s": 0.01008,
+        "onset_from_contact_ms": 6.177865000000001,
+        "baseline_std_mV": 0.7591018067701247
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 20.0,
+        "onset_scope_s": 0.01008,
+        "onset_from_contact_ms": 6.177865000000001,
+        "baseline_std_mV": 0.7591018067701247
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 10.0,
+        "onset_scope_s": 0.01006,
+        "onset_from_contact_ms": 6.157864999999999,
+        "baseline_std_mV": 0.7944212608320952
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 15.0,
+        "onset_scope_s": 0.01008,
+        "onset_from_contact_ms": 6.177865000000001,
+        "baseline_std_mV": 0.7944212608320952
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 20.0,
+        "onset_scope_s": 0.01008,
+        "onset_from_contact_ms": 6.177865000000001,
+        "baseline_std_mV": 0.7944212608320952
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 10.0,
+        "onset_scope_s": 0.01006,
+        "onset_from_contact_ms": 6.157864999999999,
+        "baseline_std_mV": 0.8309701436945057
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 15.0,
+        "onset_scope_s": 0.01007,
+        "onset_from_contact_ms": 6.167865000000001,
+        "baseline_std_mV": 0.8309701436945057
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 20.0,
+        "onset_scope_s": 0.01007,
+        "onset_from_contact_ms": 6.167865000000001,
+        "baseline_std_mV": 0.8309701436945057
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 10.0,
+        "onset_scope_s": 0.0100599975,
+        "onset_from_contact_ms": 6.1578625,
+        "baseline_std_mV": 0.7479739924177401
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 15.0,
+        "onset_scope_s": 0.0100599975,
+        "onset_from_contact_ms": 6.1578625,
+        "baseline_std_mV": 0.7479739924177401
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 20.0,
+        "onset_scope_s": 0.010099997500000001,
+        "onset_from_contact_ms": 6.197862500000001,
+        "baseline_std_mV": 0.7479739924177401
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 10.0,
+        "onset_scope_s": 0.0100699975,
+        "onset_from_contact_ms": 6.1678625,
+        "baseline_std_mV": 0.781541485356557
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 15.0,
+        "onset_scope_s": 0.0100699975,
+        "onset_from_contact_ms": 6.1678625,
+        "baseline_std_mV": 0.781541485356557
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 20.0,
+        "onset_scope_s": 0.0100699975,
+        "onset_from_contact_ms": 6.1678625,
+        "baseline_std_mV": 0.781541485356557
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 10.0,
+        "onset_scope_s": 0.010054997500000001,
+        "onset_from_contact_ms": 6.152862500000001,
+        "baseline_std_mV": 0.8287277960826462
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 15.0,
+        "onset_scope_s": 0.0100649975,
+        "onset_from_contact_ms": 6.1628625,
+        "baseline_std_mV": 0.8287277960826462
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 20.0,
+        "onset_scope_s": 0.0100749975,
+        "onset_from_contact_ms": 6.1728625,
+        "baseline_std_mV": 0.8287277960826462
+      }
+    ]
+  },
+  "logic_csv_sha256": "34df9be1eb4e96c4127e01b640fbee48b688cf80dd2494516173ea961513a688",
+  "raw_sha256": {
+    "CH1": "a76ed79da1a9c8649a9cb92f46d4746441d63e5d1abf06bd8b0349af51219db0",
+    "CH2": "8011886384346180bd930a06d035639d980abb593c74914202e87949e08f7d1b"
+  },
+  "version_user_recorded": {
+    "recorded_date": "2026-11-01",
+    "confirmation_source": "用户在延迟测量界面选择并确认；未从 FPGA 读回。",
+    "bitstream_path": "C:\\Users\\lenovo\\Desktop\\FPGA\\FPGA_Instrument_20261031\\project\\integrated_instrument_64\\impl\\pnr\\integrated_instrument_64.fs",
+    "sha256": "2A1C5EA9A07E9421049F5E1623558A684046DF6744FAAC9D5258CDDCDEC18EF8",
+    "size_bytes": 42340871,
+    "file_last_write_time_local": "2026-10-31T21:35:46.933928+08:00",
+    "scope": "本记录仅对应人工选择文件；软件不能自动核实实际烧录版本。"
+  },
+  "raw_hashes_verified": true,
+  "same_press_and_wiring_user_confirmed": true,
+  "logic_sample_rate_hz_user_or_capture_recorded": 24000000,
+  "origin_definition": "B 触点持续有效导通；不是包含抖动的第一次瞬时接触。",
+  "unbudgeted_timing_envelope_ms": 3.7788971187885068,
+  "conditional_upper_ms": null,
+  "error_budget_verified": false,
+  "batch_budget_evidence": {
+    "status": "unmatched",
+    "reason": "此记录不属于已登记的复核批次；未套用30 µs等历史余量。"
+  }
+}

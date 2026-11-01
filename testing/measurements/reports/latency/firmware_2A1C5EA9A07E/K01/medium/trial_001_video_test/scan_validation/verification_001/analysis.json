@@ -1,0 +1,404 @@
+{
+  "scan_period_min_us": 199.87499999984948,
+  "scan_period_max_us": 199.91700000021595,
+  "b_window_scope_s": [
+    0.005692057366013081,
+    0.005717722130998304
+  ],
+  "conditional_closure_earliest_scope_s": 0.005492199770603001,
+  "maximum_scan_allowance_us": 225.5223603953027,
+  "alignment_scale": 0.9999129226273689,
+  "alignment_offset_s": -3.660152660708889,
+  "alignment_max_residual_us": 0.7676238770373128,
+  "digital_resolution_us": 0.04166666666666667,
+  "scope_sample_interval_us": 0.005000000000837668,
+  "boundary_policy": "常规仅排除宽度≤1 µs且位于主边界±2 µs内的低跳变；首次 A 接触瞬态和首次 B 中途导通独立归类（如有，见明细）；首次 B 碎片化接触仅按独立区间模型核对；不接受后续 B 窗口内部断开，后续 B 窗口须完整列低。",
+  "boundary_exclusion_us": 2.0,
+  "boundary_additional_margin_us": 3.999651690509475,
+  "ab_boundary_delta_min_us": -0.9590000003001364,
+  "ab_boundary_delta_max_us": -0.6669999996766762,
+  "excluded_short_low_pulses": {
+    "A": 24,
+    "B": 24,
+    "column": 84
+  },
+  "initial_a_contact_transient": null,
+  "previous_a_contact": null,
+  "b_midwindow_contact": null,
+  "b_onset_model": "full_b_window_v1",
+  "alignment_rejected_shift_candidates": [
+    {
+      "pulse_index_shift": -2,
+      "pairs": 133,
+      "max_residual_us": 24.440452030862968,
+      "conflicts_with_observed_prepress_quiet": true
+    },
+    {
+      "pulse_index_shift": -1,
+      "pairs": 134,
+      "max_residual_us": 24.387540170636367,
+      "conflicts_with_observed_prepress_quiet": true
+    },
+    {
+      "pulse_index_shift": 1,
+      "pairs": 135,
+      "max_residual_us": 24.29354271162379,
+      "conflicts_with_observed_prepress_quiet": true
+    },
+    {
+      "pulse_index_shift": 2,
+      "pairs": 135,
+      "max_residual_us": 24.439768289492154,
+      "conflicts_with_observed_prepress_quiet": true
+    }
+  ],
+  "alignment_fit_limit_us": 2.093333333335009,
+  "alignment_first_contact_anchor": true,
+  "alignment_anchor_assumptions": "人工确认同一次、单键按压；两份记录都包含首次列导通前至少两个扫描周期静止段；全起止沿逐一配对；错帧若在对方已观测静止段引入导通则排除。",
+  "logic_trailing_incomplete_pulse_omitted": false,
+  "startup_prefix": {
+    "excluded_duration_us": 0.0,
+    "excluded_short_low_pulses": {}
+  },
+  "audio_latest_scope_s": 0.00928,
+  "additional_allowance_us": 0.0,
+  "scope_clock_error_ppm": 0.0,
+  "conditional_below_5ms": null,
+  "strict_metrological_upper_bound": false,
+  "kind": "joint_scan_latency",
+  "csv_columns": [
+    "Time [s]",
+    "Channel 0",
+    "Channel 1",
+    "Channel 2"
+  ],
+  "analysis_model_version": "digital_rows_v6_common_window",
+  "common_recording_window": {
+    "policy": "仅列异常全部晚于完整示波器终点加固定1ms保留段时，按共同范围重验；窗口内任何异常仍拒绝，不按声音起点或通过结果挑选终点。",
+    "original_logic_end_s": 3.968,
+    "validated_logic_end_s": 3.6894738383197487,
+    "scope_end_logic_s": 3.688473838319749,
+    "retained_tail_guard_us": 999.9999999998898,
+    "excluded_tail_duration_s": 0.27852616168025124,
+    "prefit_scale": 0.9999129226273689,
+    "prefit_offset_s": -3.660152660708889,
+    "prefit_max_residual_us": 0.7676238770373128,
+    "prefit_initial_b_fragment": null,
+    "prefit_initial_a_interval": null,
+    "prefit_previous_a_contact": null,
+    "prefit_short_initial_b": null,
+    "original_full_record_error": "列信号存在 1～10 µs 的非主脉冲，不能作为边沿短跳变排除。",
+    "error_category": "intermediate_pulses",
+    "excluded_intermediate_events": [
+      {
+        "start_s": 3.889614833,
+        "end_s": 3.889621833,
+        "width_us": 7.000000000090267
+      }
+    ],
+    "excluded_short_events": [],
+    "excluded_tail_is_not_scan_validation": true
+  },
+  "scope_only_B_inference_required": false,
+  "measurement_window": {
+    "policy": "首个主列导通前固定 5 ms 至数字记录末尾；不裁剪按下后异常。",
+    "original_start_s": 0.0,
+    "original_end_s": 3.968,
+    "first_main_column_s": 3.661541708,
+    "excluded_duration_s": 3.6565417080000002,
+    "validated_start_s": 3.6565417080000002,
+    "excluded_digital_rows": 86848,
+    "excluded_prefix_is_not_scan_validation": true
+  },
+  "audio_evidence": {
+    "kind": "joint_audio_onsets",
+    "raw_sha256": {
+      "CH1": "0b5949a990426e5d716ec76569692826b5e2af4b2b941484b52823ef5894e13c",
+      "CH2": "700d814a2435430c4c2fbb3d79386786032c70ebd8015feea556fe224f019b43"
+    },
+    "raw_hashes_verified": true,
+    "rails": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "version_user_recorded": {
+      "recorded_date": "2026-11-01",
+      "confirmation_source": "用户在延迟测量界面选择并确认；未从 FPGA 读回。",
+      "bitstream_path": "C:\\Users\\lenovo\\Desktop\\FPGA\\FPGA_Instrument_20261031\\project\\integrated_instrument_64\\impl\\pnr\\integrated_instrument_64.fs",
+      "sha256": "2A1C5EA9A07E9421049F5E1623558A684046DF6744FAAC9D5258CDDCDEC18EF8",
+      "size_bytes": 42340871,
+      "file_last_write_time_local": "2026-10-31T21:35:46.933928+08:00",
+      "scope": "本记录仅对应人工选择文件；软件不能自动核实实际烧录版本。"
+    },
+    "version_correction": null,
+    "first_column_contact_scope_s": 0.00107011,
+    "terminal_censored_pulse": null,
+    "sensitivities": [
+      {
+        "method": "polyphase",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 10.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 3,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.00924,
+        "onset_from_contact_ms": 8.169889999999999,
+        "baseline_std_mV": 0.6842288191138555
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 15.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 3,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.00928,
+        "onset_from_contact_ms": 8.209890000000001,
+        "baseline_std_mV": 0.6842288191138555
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 20.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 3,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.00928,
+        "onset_from_contact_ms": 8.209890000000001,
+        "baseline_std_mV": 0.6842288191138555
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 10.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 5,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.00924,
+        "onset_from_contact_ms": 8.169889999999999,
+        "baseline_std_mV": 0.8249995029033387
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 15.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 5,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.009260000000000001,
+        "onset_from_contact_ms": 8.189890000000002,
+        "baseline_std_mV": 0.8249995029033387
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 20.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 5,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.009260000000000001,
+        "onset_from_contact_ms": 8.189890000000002,
+        "baseline_std_mV": 0.8249995029033387
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 10.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 10,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 90.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.00923,
+        "onset_from_contact_ms": 8.159889999999999,
+        "baseline_std_mV": 0.8752237418602715
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 15.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 10,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 90.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.00924,
+        "onset_from_contact_ms": 8.169889999999999,
+        "baseline_std_mV": 0.8752237418602715
+      },
+      {
+        "method": "polyphase",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 20.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 10,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 90.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.009260000000000001,
+        "onset_from_contact_ms": 8.189890000000002,
+        "baseline_std_mV": 0.8752237418602715
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 10.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 3,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092599975,
+        "onset_from_contact_ms": 8.1898875,
+        "baseline_std_mV": 0.7180984180529881
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 15.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 3,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092599975,
+        "onset_from_contact_ms": 8.1898875,
+        "baseline_std_mV": 0.7180984180529881
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 24999.999999999996,
+        "threshold_mV": 20.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 3,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092599975,
+        "onset_from_contact_ms": 8.1898875,
+        "baseline_std_mV": 0.7180984180529881
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 10.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 5,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092299975,
+        "onset_from_contact_ms": 8.1598875,
+        "baseline_std_mV": 0.7729532445061783
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 15.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 5,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092499975,
+        "onset_from_contact_ms": 8.1798875,
+        "baseline_std_mV": 0.7729532445061783
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 49999.99999999999,
+        "threshold_mV": 20.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 5,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 80.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092699975,
+        "onset_from_contact_ms": 8.199887499999999,
+        "baseline_std_mV": 0.7729532445061783
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 10.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 10,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 90.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092349975,
+        "onset_from_contact_ms": 8.164887499999999,
+        "baseline_std_mV": 0.8676181650899014
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 15.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 10,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 90.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092449975,
+        "onset_from_contact_ms": 8.174887499999999,
+        "baseline_std_mV": 0.8676181650899014
+      },
+      {
+        "method": "block_mean",
+        "rate_Hz": 99999.99999999999,
+        "threshold_mV": 20.0,
+        "confirmation_rule": "consecutive_sample_points_abs_threshold_v1",
+        "confirmation_samples": 10,
+        "nominal_confirmation_us": 100.0,
+        "confirmation_first_last_span_us": 90.0,
+        "continuous_between_samples_verified": false,
+        "onset_scope_s": 0.0092549975,
+        "onset_from_contact_ms": 8.184887500000002,
+        "baseline_std_mV": 0.8676181650899014
+      }
+    ]
+  },
+  "logic_csv_sha256": "78a3e14259a015100524fe1ccfaaa3a22fd6fa6337587a30dbd8e42691581d43",
+  "raw_sha256": {
+    "CH1": "0b5949a990426e5d716ec76569692826b5e2af4b2b941484b52823ef5894e13c",
+    "CH2": "700d814a2435430c4c2fbb3d79386786032c70ebd8015feea556fe224f019b43"
+  },
+  "version_user_recorded": {
+    "recorded_date": "2026-11-01",
+    "confirmation_source": "用户在延迟测量界面选择并确认；未从 FPGA 读回。",
+    "bitstream_path": "C:\\Users\\lenovo\\Desktop\\FPGA\\FPGA_Instrument_20261031\\project\\integrated_instrument_64\\impl\\pnr\\integrated_instrument_64.fs",
+    "sha256": "2A1C5EA9A07E9421049F5E1623558A684046DF6744FAAC9D5258CDDCDEC18EF8",
+    "size_bytes": 42340871,
+    "file_last_write_time_local": "2026-10-31T21:35:46.933928+08:00",
+    "scope": "本记录仅对应人工选择文件；软件不能自动核实实际烧录版本。"
+  },
+  "raw_hashes_verified": true,
+  "same_press_and_wiring_user_confirmed": true,
+  "logic_sample_rate_hz_user_or_capture_recorded": 24000000,
+  "origin_definition": "B 触点持续有效导通；不是包含抖动的第一次瞬时接触。",
+  "unbudgeted_timing_envelope_ms": 3.7926141680029892,
+  "conditional_upper_ms": null,
+  "error_budget_verified": false,
+  "batch_budget_evidence": {
+    "status": "unmatched",
+    "reason": "此记录不属于已登记的复核批次；未套用30 µs等历史余量。"
+  }
+}

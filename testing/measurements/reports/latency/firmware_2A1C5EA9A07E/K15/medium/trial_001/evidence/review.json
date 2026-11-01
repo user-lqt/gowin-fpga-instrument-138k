@@ -1,0 +1,225 @@
+{
+  "trial": "K15 / 中力度 / 第 1 次",
+  "rails": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "kind": "latency_evidence",
+  "raw_sha256": {
+    "CH1": "bf9a45b9f13d4bf31da2f001b7ff91981cf9fa3f79487d161860879d1842c095",
+    "CH2": "4a9a95b53a8cfff23aec2d50620cc338fa6ba6797ed20952883d27836b386782"
+  },
+  "version_user_recorded": {
+    "recorded_date": "2026-11-01",
+    "confirmation_source": "用户在延迟测量界面选择并确认；未从 FPGA 读回。",
+    "bitstream_path": "C:\\Users\\lenovo\\Desktop\\FPGA\\FPGA_Instrument_20261031\\project\\integrated_instrument_64\\impl\\pnr\\integrated_instrument_64.fs",
+    "sha256": "2A1C5EA9A07E9421049F5E1623558A684046DF6744FAAC9D5258CDDCDEC18EF8",
+    "size_bytes": 42340871,
+    "file_last_write_time_local": "2026-10-31T21:35:46.933928+08:00",
+    "scope": "本记录仅对应人工选择文件；软件不能自动核实实际烧录版本。"
+  },
+  "version_correction": null,
+  "primary_latency_from_inferred_B_ms": 3.46635,
+  "raw_hashes_verified": true,
+  "single_width_us": 26.35,
+  "first_widened_width_us": 51.24,
+  "analysis_model_version": "partial_b_v2",
+  "minimum_retained_pulse_us": 1,
+  "partial_B_pulse": null,
+  "B_reference_kind": "full_pulse_width_inference",
+  "scan_period_us": 199.8699931262875,
+  "phase_fit_max_residual_us": 0.02451422664515035,
+  "inferred_B_from_A_ms": 2.2234099999999986,
+  "conditional_physical_closure_interval_relative_B_us": [
+    -201.83082694926955,
+    27.022915317802266
+  ],
+  "phase_allowance_us": 2.0,
+  "method_sensitivity_latency_ms": [
+    3.4513450000000017,
+    3.506345000000001
+  ],
+  "conditional_sensitivity_envelope_upper_ms": 3.7081758269492706,
+  "remaining_to_5ms_ms": 1.2918241730507294,
+  "strict_metrological_upper_bound": false,
+  "cautions": [
+    "B 由相邻扫描行的脉宽变宽间接推断，不是直接观测物理闭合。",
+    "条件性闭合窗口依赖触点稳定闭合和固定八行扫描模型。",
+    "部分脉冲需符合 B 窗口及后续连续稳定条件；符合模型不等于直接证明触点闭合。",
+    "2 µs 相位余量为分析模型假定，不是已校准的全系统误差预算。",
+    "填补约 0.55 µs 毛刺；保留首个长扫描脉冲之后超过 1 µs 的低脉冲，更短导通不在本模型证明范围。",
+    "零相位 FIR 与阈值会影响模拟起音判定。",
+    "接近量程极限的样本和基线噪声需要复核；这不是比赛验收。",
+    "单次记录不证明全键、最坏延迟或无抖动。"
+  ],
+  "sensitivities": [
+    {
+      "method": "polyphase",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 10.0,
+      "onset_from_A_ms": 5.7097599999999975,
+      "latency_from_inferred_B_ms": 3.486349999999999,
+      "conditional_latest_delay_ms": 3.6881808269492686,
+      "baseline_std_mV": 1.321684066344478
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 15.0,
+      "onset_from_A_ms": 5.7097599999999975,
+      "latency_from_inferred_B_ms": 3.486349999999999,
+      "conditional_latest_delay_ms": 3.6881808269492686,
+      "baseline_std_mV": 1.321684066344478
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 20.0,
+      "onset_from_A_ms": 5.7097599999999975,
+      "latency_from_inferred_B_ms": 3.486349999999999,
+      "conditional_latest_delay_ms": 3.6881808269492686,
+      "baseline_std_mV": 1.321684066344478
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 10.0,
+      "onset_from_A_ms": 5.689759999999999,
+      "latency_from_inferred_B_ms": 3.46635,
+      "conditional_latest_delay_ms": 3.6681808269492695,
+      "baseline_std_mV": 1.4282634999258863
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 15.0,
+      "onset_from_A_ms": 5.689759999999999,
+      "latency_from_inferred_B_ms": 3.46635,
+      "conditional_latest_delay_ms": 3.6681808269492695,
+      "baseline_std_mV": 1.4282634999258863
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 20.0,
+      "onset_from_A_ms": 5.7097599999999975,
+      "latency_from_inferred_B_ms": 3.486349999999999,
+      "conditional_latest_delay_ms": 3.6881808269492686,
+      "baseline_std_mV": 1.4282634999258863
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 10.0,
+      "onset_from_A_ms": 5.679759999999999,
+      "latency_from_inferred_B_ms": 3.4563500000000005,
+      "conditional_latest_delay_ms": 3.6581808269492697,
+      "baseline_std_mV": 1.5078992558919584
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 15.0,
+      "onset_from_A_ms": 5.689759999999999,
+      "latency_from_inferred_B_ms": 3.46635,
+      "conditional_latest_delay_ms": 3.6681808269492695,
+      "baseline_std_mV": 1.5078992558919584
+    },
+    {
+      "method": "polyphase",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 20.0,
+      "onset_from_A_ms": 5.699759999999998,
+      "latency_from_inferred_B_ms": 3.4763499999999996,
+      "conditional_latest_delay_ms": 3.6781808269492693,
+      "baseline_std_mV": 1.5078992558919584
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 10.0,
+      "onset_from_A_ms": 5.689754999999998,
+      "latency_from_inferred_B_ms": 3.466344999999999,
+      "conditional_latest_delay_ms": 3.668175826949269,
+      "baseline_std_mV": 1.3211380548602778
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 15.0,
+      "onset_from_A_ms": 5.689754999999998,
+      "latency_from_inferred_B_ms": 3.466344999999999,
+      "conditional_latest_delay_ms": 3.668175826949269,
+      "baseline_std_mV": 1.3211380548602778
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 24999.999999999996,
+      "threshold_mV": 20.0,
+      "onset_from_A_ms": 5.729755,
+      "latency_from_inferred_B_ms": 3.506345000000001,
+      "conditional_latest_delay_ms": 3.7081758269492706,
+      "baseline_std_mV": 1.3211380548602778
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 10.0,
+      "onset_from_A_ms": 5.679754999999998,
+      "latency_from_inferred_B_ms": 3.456345,
+      "conditional_latest_delay_ms": 3.658175826949269,
+      "baseline_std_mV": 1.3916452229884833
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 15.0,
+      "onset_from_A_ms": 5.699754999999997,
+      "latency_from_inferred_B_ms": 3.476344999999999,
+      "conditional_latest_delay_ms": 3.678175826949268,
+      "baseline_std_mV": 1.3916452229884833
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 49999.99999999999,
+      "threshold_mV": 20.0,
+      "onset_from_A_ms": 5.699754999999997,
+      "latency_from_inferred_B_ms": 3.476344999999999,
+      "conditional_latest_delay_ms": 3.678175826949268,
+      "baseline_std_mV": 1.3916452229884833
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 10.0,
+      "onset_from_A_ms": 5.674755,
+      "latency_from_inferred_B_ms": 3.4513450000000017,
+      "conditional_latest_delay_ms": 3.653175826949271,
+      "baseline_std_mV": 1.4941311856727972
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 15.0,
+      "onset_from_A_ms": 5.694754999999999,
+      "latency_from_inferred_B_ms": 3.471345000000001,
+      "conditional_latest_delay_ms": 3.67317582694927,
+      "baseline_std_mV": 1.4941311856727972
+    },
+    {
+      "method": "block_mean",
+      "rate_Hz": 99999.99999999999,
+      "threshold_mV": 20.0,
+      "onset_from_A_ms": 5.704754999999999,
+      "latency_from_inferred_B_ms": 3.481345,
+      "conditional_latest_delay_ms": 3.68317582694927,
+      "baseline_std_mV": 1.4941311856727972
+    }
+  ]
+}

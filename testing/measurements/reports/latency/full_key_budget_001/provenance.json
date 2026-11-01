@@ -1,0 +1,15 @@
+{
+  "official_datasheet": {
+    "file": "RIGOL_MSO_DS2000A_official_datasheet_EN.pdf",
+    "sha256": "ebfc07ce39d22a968e67e599d198fedea9fafafffb7c6ae2aa485ea124cd678d",
+    "url": "https://download.rigol.com/en/Manual/Digital%20Oscilloscope/MSO%26DS2000A/MSO2000A%26DS2000A_Datasheet_EN.pdf"
+  },
+  "scripts": {
+    "evaluate_joint_error_budget.py": "33e1538bc7466ea4b5a1a2535528a88bf7d8c9f2589d6f225e126f6167418d98",
+    "test_joint_error_budget.py": "431f29c454d968e4f3ada8485f26c9e8b019e67848d0af9182016dfdb8e958d3",
+    "summarize_joint_latency.py": "6d7ba4a1249dc92ba00dc56fea9fb21a5878d7e7d68f40a4aad53af09a0f305f"
+  },
+  "tests_passed": 6,
+  "source_files_hash_verified": 504,
+  "phase_threshold_evaluations": 3864000
+}

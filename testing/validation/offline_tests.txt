@@ -1,0 +1,63 @@
+............EE............................................can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+RENDERED 0 ERRORS 0 MISSING 72
+K24 / 轻力度 / 第 7 次 method span 3.569749999999999 3.614750000000001 conditional envelope 3.816664486976631
+K24 / 轻力度 / 第 7 次 method span 3.569749999999999 3.614750000000001 conditional envelope 3.816664486976631
+K24 / 轻力度 / 第 7 次 method span 3.569749999999999 3.614750000000001 conditional envelope 3.816664486976631
+K24 / 轻力度 / 第 7 次 method span 3.7617499999999993 3.806750000000001 conditional envelope 4.0166652416017525
+K24 / 轻力度 / 第 7 次 method span 3.751749999999999 3.7967500000000007 conditional envelope 4.0166652416017525
+............................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_diagnostic_binary_failure_is_not_complete (test_capture_key_trial.CaptureWorkflowTests.test_diagnostic_binary_failure_is_not_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Gowin\Prj_music\report-git-upload\testing\tools\test_capture_key_trial.py", line 384, in test_diagnostic_binary_failure_is_not_complete
+    output, scope = self.capture(Path(temp), diagnostic=True, broken=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Gowin\Prj_music\report-git-upload\testing\tools\test_capture_key_trial.py", line 333, in capture
+    from verify_scope_download import verify
+ModuleNotFoundError: No module named 'verify_scope_download'
+
+======================================================================
+ERROR: test_diagnostic_repeats_without_formal_trial (test_capture_key_trial.CaptureWorkflowTests.test_diagnostic_repeats_without_formal_trial)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Gowin\Prj_music\report-git-upload\testing\tools\test_capture_key_trial.py", line 371, in test_diagnostic_repeats_without_formal_trial
+    output, scope = self.capture(Path(temp), diagnostic=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Gowin\Prj_music\report-git-upload\testing\tools\test_capture_key_trial.py", line 333, in capture
+    from verify_scope_download import verify
+ModuleNotFoundError: No module named 'verify_scope_download'
+
+----------------------------------------------------------------------
+Ran 294 tests in 35.913s
+
+FAILED (errors=2)

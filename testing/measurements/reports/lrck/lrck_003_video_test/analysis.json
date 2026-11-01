@@ -1,0 +1,29 @@
+{
+  "measured_lrck_hz": 47999.86581531439,
+  "mean_period_us": 20.83339157337705,
+  "min_period_us": 20.82007291799245,
+  "max_period_us": 20.848222915177434,
+  "period_std_ns_observed": 9.32901404727981,
+  "complete_periods": 67,
+  "samples_per_period": 20833.12500000001,
+  "level_low_v": -0.08,
+  "level_high_v": 3.48,
+  "threshold_v": 1.7,
+  "sample_interval_ns": 0.9999999,
+  "relative_to_nominal_48000_ppm": -2.795514283504552,
+  "method": "筛选有效上升沿，线性插值定位阈值，使用全部完整周期",
+  "kind": "lrck_analysis",
+  "raw_sha256": "52308751ec792057bc4f95a90f5e5ad97877c2539fd3c46e58248cd123a6b303",
+  "scope_identity": "RIGOL TECHNOLOGIES,DS2202A,DS2D192700914,00.03.05.SP1",
+  "scope_sample_rate_hz": 1000000100.00001,
+  "firmware_user_reported": "C:/Users/lenovo/Desktop/FPGA/FPGA_Instrument_20261031/project/integrated_instrument_64/impl/pnr/integrated_instrument_64.fs",
+  "bitstream_sha256_user_file": "2a1c5ea9a07e9421049f5e1623558a684046df6744faac9d5258cddcdec18ef8",
+  "wiring_user_confirmed": true,
+  "source_capture_sha256": "7cf97ee8532f06383ff3405d4fd5e8ad9adf9a4c7c3f269a99f5d6406ad64ecb",
+  "cautions": [
+    "LRCK 结果依赖正确连接 DAC 的 LCK/WS 输入，不能接 BCK 或模拟 L。",
+    "示波器采集采样率不是 DAC 音频输出采样率。",
+    "观测周期变化包含示波器量化和时基误差，不证明无抖动。",
+    "固件身份和物理接线为人工声明，并非自动核实。"
+  ]
+}
