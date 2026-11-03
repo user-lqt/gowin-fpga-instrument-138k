@@ -27,6 +27,7 @@
 - [蓝牙与手机](docs/BLUETOOTH.md)：网页、ESP32-C3、通信协议和曲谱格式。
 - [测试与测量](docs/TESTING.md)：文件校验、仿真入口、采样率和延迟测量。
 - [测试软件与实测结果](testing/README.md)：LRCK、64复音和24键联合延迟的测试软件、报告及数据入口。
+- [完整测试软件及原始采集下载](https://github.com/user-lqt/gowin-fpga-instrument-138k/releases/tag/testing-archive-20261103)：原压缩包全部内容、750个原始采集文件及SHA256校验清单。
 - [版本记录](docs/HISTORY.md)：开发分支归档与恢复方法。
 
 ## 目录

@@ -38,8 +38,12 @@ python -B tools/verify_release.py
 
 PC分析工具位于 `final/tools/`，依赖见 `final/requirements.txt`，可通过 `start_acceptance.cmd` 启动。
 
-## 2026年11月1日测量资料整理
+## 完整测试软件与原始数据
 
-新增独立目录 [testing](../testing/README.md)，不覆盖旧PC工具或冻结工程。包括LRCK两次采集、DAC模拟输出ALL64／GROUP／部分MUTE、钢琴24键84次联合延迟及吉他和编钟抽样记录。数据来自团队提供的归档，未重新连接仪器。
+[testing目录](../testing/README.md)提供软件源码、结果索引和操作说明。
 
-钢琴84次条件性包络最大3.879094ms；该值依赖起点模型、经验余量及仪器假设，不是校准确认的严格物理上界。不要用旧单次3.72ms或屏幕ACTIVE数代替完整统计与模拟输出证据。
+**[完整原始资料下载：GitHub Release](https://github.com/user-lqt/gowin-fpga-instrument-138k/releases/tag/testing-archive-20261103)**。附件包含原始“测试软件.zip”的全部2341个文件，包括750个原始采集文件，以及逐文件SHA256清单。完整压缩包未经删减，大小855363391字节；校验与解压方法见testing说明。
+
+当前钢琴正式原始记录为24键各3次，共72次，视频补测单列。历史 `full_key_budget_001` 的84次派生汇总保留作方法及经验余量来源，复核当前批次需从当前原始记录重新统计。吉他、编钟按原始文件和采集清单识别批次。历史HTML或绝对路径需要结合完整附件核对。
+
+测量条件、仪器参数假设及经验余量与对应分析记录一同解释。原始资料归档和本次上传均未修改FPGA最终工程，也未重新连接仪器采集。
