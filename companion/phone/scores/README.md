@@ -6,9 +6,9 @@
 | --- | ---: | --- | ---: |
 | [欢乐颂](ode_to_joy_bell_short.txt) | 30 | 编钟 / 钢琴 | 100 |
 | [送别](songbie_short.txt) | 28 | 吉他 / 钢琴 | 72 |
-| [茉莉花](molihua_short.txt) | 34 | 钢琴 / 编钟 | 80 |
+| [康定情歌](kangding_short.txt) | 22 | 吉他 / 钢琴 | 88 |
 
-《欢乐颂》扩展为开头两段；《送别》扩展为“长亭外”至“晚风拂柳笛声残，夕阳山外山”的四个乐句，整体移至 F 大调，使低音与高音均落入键盘范围；《茉莉花》选取重复主题与“满园花草香也香”乐句。保留原有两首文件名，旧链接可继续使用。
+《欢乐颂》扩展为开头两段；《送别》扩展为“长亭外”至“晚风拂柳笛声残，夕阳山外山”的四个乐句，整体移至 F 大调，使低音与高音均落入键盘范围；《康定情歌》选取“跑马溜溜的山上，一朵溜溜的云哟”开头两句的单音简化旋律。保留原有两首文件名，旧链接可继续使用。
 
 ## 使用
 
@@ -16,6 +16,8 @@
 
 - 欢乐颂：https://user-lqt.github.io/gowin-fpga-instrument-138k/scores/ode_to_joy_bell_short.txt
 - 送别：https://user-lqt.github.io/gowin-fpga-instrument-138k/scores/songbie_short.txt
-- 茉莉花：https://user-lqt.github.io/gowin-fpga-instrument-138k/scores/molihua_short.txt
+- 康定情歌：https://user-lqt.github.io/gowin-fpga-instrument-138k/scores/kangding_short.txt
 
 曲谱仅保存键号和节拍，不会自动改变音色或 BPM。其余旧曲谱已移除。
+
+下载目录只保留上述三首；网页内置曲目1《茉莉花》保持原样。《康定情歌》为简化练习版本，尚未经过开发板实际弹奏听辨。
